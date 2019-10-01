@@ -72,7 +72,35 @@
     background-color: #a52828;
 }
 
+.modal-backdrop {
+   background-color: #aaa;
+}
 
+.modal-content {
+    background-color: initial;
+    border: none;
+}
+
+
+button.close {
+        background: blue;
+        border: 0 none !important;
+        color: #fff;
+        font-size: 34px;
+        height: 50px;
+        line-height: 1;
+        margin: 0 auto;
+        opacity: 1;
+        text-align: center;
+        text-shadow: none;
+        -webkit-transition: background 0.2s ease-in-out;
+        transition: background 0.2s ease-in-out;
+        vertical-align: top;
+        width: 50px;
+        border-radius: 50%;
+        padding-bottom : 5px;
+        margin-bottom : 5px;
+    }
     </style>
 @endpush
 
@@ -169,9 +197,8 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span class="float-right pt-2 pr-2" aria-hidden="true">&times;</span>
+          <span aria-hidden="true">&times;</span>
         </button>
-      <div class="modal-body">
         <div class="calculator">
         <div class="calculator__main">
 
@@ -220,7 +247,7 @@
             </div>
 
         </div>
-    </div>
+
       </div>
     </div>
   </div>
