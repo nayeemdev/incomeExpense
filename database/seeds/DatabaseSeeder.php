@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         	UsersTableSeeder::class,
 	        IncomesTableSeeder::class,
 	        ExpensesTableSeeder::class,
+            NotesTableSeeder::class,
     	]);
     }
 }

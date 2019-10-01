@@ -387,6 +387,19 @@ h6, .h6 {
   font-size: 1rem;
 }
 
+.calculatorBtnDiv {
+  float: right;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  height: 50px
+  width: 50px;
+}
+
+.calculatorBtnDiv .calButton {
+  border-radius: 50% !important;
+}
+
 .lead {
   font-size: 1.25rem;
   font-weight: 300;
