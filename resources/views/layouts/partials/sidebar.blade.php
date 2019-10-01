@@ -1,6 +1,6 @@
 <ul class="sidebar navbar-nav">
     <li class="nav-item active">
-        <a class="nav-link" href="index.html">
+        <a class="nav-link" href="{{ route('index') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
@@ -36,7 +36,7 @@
         <span>Monthly View</span></a>
     </li>
     <li class="nav-item" title="This is not calculate in Income/Expense">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('notes.index') }}">
         <i class="fas fa-fw fa-table"></i>
         <span>Notes</span></a>
     </li>
