@@ -8,27 +8,17 @@
     <li class="nav-item">
         <a class="nav-link" href="#">
         <i class="fas fa-fw fa-dollar-sign"></i>
-        <span>Add Income</span></a>
+        <span>Income</span></a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="charts.html">
         <i class="fas fa-fw fa-money-bill"></i>
-        <span>Add Expense</span></a>
+        <span>Expense</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('summary') }}">
         <i class="fas fa-fw fa-table"></i>
         <span>All Summary</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-        <i class="fas fa-fw fa-table"></i>
-        <span>Income List</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-        <i class="fas fa-fw fa-table"></i>
-        <span>Expense List</span></a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="#">

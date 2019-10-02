@@ -120,6 +120,24 @@ button.close {
         </li>
         <li class="breadcrumb-item active">Overview</li>
     </ol>
+    <div class="row">
+            <div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
+                <ul class="list-group">
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    All Income
+                    <span class="badge badge-primary badge-pill">{{ $incomes}}</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    All Expense
+                    <span class="badge badge-danger badge-pill">{{ $expenses }}</span>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Balance
+                    <span class="badge badge-primary badge-pill">{{ $balance }}</span>
+                  </li>
+                </ul>
+            </div>
+        </div>
     <!-- Icon Cards-->
     <div class="row">
         <div class="col-xl-3 col-sm-6 mb-3">
