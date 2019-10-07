@@ -16,15 +16,15 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Income
-				    <span class="badge badge-primary badge-pill">{{ $total_income }}</span>
+				    <span class="badge badge-primary badge-pill"></span>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Expense
-				    <span class="badge badge-danger badge-pill">{{ $total_expense }}</span>
+				    <span class="badge badge-danger badge-pill"></span>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Balance
-				    <span class="badge badge-primary badge-pill">{{ $balance }}</span>
+				    <span class="badge badge-primary badge-pill"></span>
 				  </li>
 				</ul>
         	</div>
@@ -32,16 +32,16 @@
         <div class="row">
             @foreach($results as $result)
                 <div class="col-xl-4 col-sm-6 mb-3">
-                    <div class="card text-white {{($result['type'] == 'income')? 'bg-info':'bg-danger'}} o-hidden h-100">
+                    {{-- <div class="card text-white {{($result['type'] == 'income')? 'bg-info':'bg-danger'}} o-hidden h-100"> --}}
                         <div class="card-header">
-                            <span class="float-left text-dark">{{($result['type'] == 'income')? $result['created_at']:$result['created_at']}}</span>
+                            {{-- <span class="float-left text-dark">{{($result['type'] == 'income')? $result['created_at']:$result['created_at']}}</span> --}}
                         </div>
                         <div class="card-body">
                             <div class="card-body-icon mt-5">
-                                <i class="fas fa-fw {{($result['type'] == 'income')? 'fa-dollar-sign':'fa-money-bill'}} "></i>
+                                {{-- <i class="fas fa-fw {{($result['type'] == 'income')? 'fa-dollar-sign':'fa-money-bill'}} "></i> --}}
                             </div>
-                            <div>{{($result['type'] == 'income')? $result['income_title']:$result['expense_title']}}</div>
-                            <div class="font-weight-bold text-dark">{{($result['type'] == 'income')? '৳ '.$result['income_amount']: '৳ '.$result['expense_amount']}}</div>
+                            {{-- <div>{{($result['type'] == 'income')? $result['income_title']:$result['expense_title']}}</div>
+                            <div class="font-weight-bold text-dark">{{($result['type'] == 'income')? '৳ '.$result['income_amount']: '৳ '.$result['expense_amount']}}</div> --}}
                         </div>
                     </div>
                 </div>

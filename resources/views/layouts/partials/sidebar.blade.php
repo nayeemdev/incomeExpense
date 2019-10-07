@@ -6,14 +6,14 @@
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('incomes.index') }}">
         <i class="fas fa-fw fa-dollar-sign"></i>
-        <span>Income</span></a>
+        <span>Incomes</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="charts.html">
+        <a class="nav-link" href="{{ route('expense.index') }}">
         <i class="fas fa-fw fa-money-bill"></i>
-        <span>Expense</span></a>
+        <span>Expenses</span></a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{{ route('summary') }}">
@@ -27,7 +27,7 @@
     </li>
     <li class="nav-item" title="This is not calculate in Income/Expense">
         <a class="nav-link" href="{{ route('notes.index') }}">
-        <i class="fas fa-fw fa-table"></i>
+        <i class="fas fa-fw fa-sticky-note"></i>
         <span>Notes</span></a>
     </li>
 </ul>
