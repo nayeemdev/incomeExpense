@@ -10,7 +10,7 @@ $factory->define(Income::class, function (Faker $faker) {
     return [
         'income_title' => $faker->sentence(5),
         'income_amount' => $faker->randomDigit,
-        'income_date' => now(),
+        'income_date' => $faker->date('Y-m-d'),
         'user_id' => User::all()->random()->id,
     ];
 });

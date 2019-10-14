@@ -11,12 +11,15 @@
         <div class="row">
         	<div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
         		<ul class="list-group">
+				  <li class="list-group-item d-flex bg-info text-white justify-content-center align-items-center">
+				    All Data
+				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
-				    All Income
+				    Total Income
 				    <span class="badge badge-primary badge-pill">{{ $total_income }}</span>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
-				    All Expense
+				    Total Expense
 				    <span class="badge badge-danger badge-pill">{{ $total_expense }}</span>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -32,10 +35,6 @@
                     <div class="card text-white {{($result['type'] == 'income')? 'bg-info':'bg-danger'}} o-hidden h-100">
                         <div class="card-header">
                             <span class="float-left text-dark">{{($result['type'] == 'income')? $result['created_at']:$result['created_at']}}</span>
-                            <span class="float-right">
-                                <span style="cursor:pointer;" class="mr-2"><i class="fa fa-edit"></i></span>
-                                <span style="cursor:pointer;"><i class="fa fa-trash"></i></span>
-                            </span>
                         </div>
                         <div class="card-body">
                             <div class="card-body-icon mt-5">
@@ -48,4 +47,6 @@
                 </div>
             @endforeach
         </div>
+    </div>
 @endsection
+

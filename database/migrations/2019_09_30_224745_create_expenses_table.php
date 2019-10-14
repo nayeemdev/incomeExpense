@@ -18,7 +18,7 @@ class CreateExpensesTable extends Migration
             $table->integer('user_id');
             $table->string('expense_title');
             $table->decimal('expense_amount',15,2);
-            $table->dateTime('expense_date');
+            $table->date('expense_date');
             $table->timestamps();
         });
     }

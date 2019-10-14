@@ -10,7 +10,7 @@ $factory->define(Expense::class, function (Faker $faker) {
     return [
         'expense_title' => $faker->sentence(5),
         'expense_amount' => $faker->randomDigit,
-        'expense_date' => now(),
+        'expense_date' => $faker->date('Y-m-d'),
         'user_id' => User::all()->random()->id,
     ];
 });

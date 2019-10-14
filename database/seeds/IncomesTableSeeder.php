@@ -11,6 +11,6 @@ class IncomesTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Models\Income::class, 200)->create();
+        factory(App\Models\Income::class, 50)->create();
     }
 }

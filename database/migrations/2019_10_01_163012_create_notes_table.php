@@ -18,6 +18,7 @@ class CreateNotesTable extends Migration
             $table->integer('user_id');
             $table->string('note_title');
             $table->decimal('note_amount',15,2);
+            $table->date('note_date');
             $table->timestamps();
         });
     }
