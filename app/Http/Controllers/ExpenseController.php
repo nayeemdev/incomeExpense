@@ -10,7 +10,7 @@ class ExpenseController extends Controller
 {
     public function index()
     {
-        $data['expenses'] = Expense::where('user_id', Auth::user()->id)->latest()->get();
+        $data['expenses'] = Expense::where('user_id', Auth::user()->id)->latest()->paginate(12);
 
         return view('pages.expenses.index', $data);
     }
@@ -37,7 +37,6 @@ class ExpenseController extends Controller
 
         return redirect('/expense')->with('message', 'New Expense Added');
     }
-
 
     public function edit($id)
     {

@@ -19,7 +19,6 @@
     </ol>
 
     <div class="row">
-
         <div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
             <ul class="list-group">
                 <li class="list-group-item bg-info text-center text-white">
@@ -111,7 +110,6 @@
                 </a>
             </div>
         </div>
-
     </div>
 
     <!-- Chart -->

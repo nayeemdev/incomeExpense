@@ -56,6 +56,9 @@
 
                 </div>
             @endforeach
+            <div class="col-xl-12 col-sm-12">
+                {{ $incomes->links() }}
+            </div>
         </div>
     </div>
 @endsection

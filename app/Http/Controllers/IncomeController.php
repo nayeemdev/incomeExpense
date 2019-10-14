@@ -12,10 +12,9 @@ class IncomeController extends Controller
     {
         $this->middleware('auth');
     }
-
     public function index()
     {
-        $data['incomes'] = Income::where('user_id', Auth::user()->id)->latest()->get();
+        $data['incomes'] = Income::where('user_id', Auth::user()->id)->latest()->paginate(12);
 
         return view('pages.incomes.index', $data);
     }

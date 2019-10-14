@@ -41,12 +41,12 @@
                             </div>
                             <div class="form-group">
                                 <div class="form-label-group">
-                                    <input type="date" id="expense_amount" class="form-control" placeholder="Expense Date" required="required" name="expense_date">
+                                    <input type="date" id="expense_amount" class="form-control" placeholder="Expense Date" required="required" name="expense_date" value="{{ date('Y-m-d') }}">
                                     <label for="expense_amount">Expense Date</label>
                                 </div>
                             </div>
                             <div class="float-right">
-                                <a href="{{ route('expenses.index') }}" class="btn btn-success">Back</a>
+                                <a href="{{ route('expense.index') }}" class="btn btn-success">Back</a>
                                 <button type="submit" class="btn btn-primary">Save</button>
                             </div>
                         </form>

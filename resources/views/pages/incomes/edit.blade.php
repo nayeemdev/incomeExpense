@@ -42,7 +42,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="form-label-group">
-                                    <input type="date" id="income_date" class="form-control" placeholder="Password" required="required" name="income_date" value="{{ $income->income_date }}">
+                                    <input type="date" id="income_date" class="form-control" placeholder="Income Date" required="required" name="income_date" value="{{ $income->income_date }}">
                                     <label for="income_date">Income Date</label>
                                 </div>
                             </div>

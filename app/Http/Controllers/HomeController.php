@@ -26,7 +26,7 @@ class HomeController extends Controller
         $data['incomes'] = Income::where('user_id', Auth::User()->id)->whereYear('income_date', Carbon::now()->year)->whereMonth('income_date', Carbon::now()->month)->sum('income_amount');
         $data['expenses'] = Expense::where('user_id', Auth::User()->id)->whereYear('expense_date', Carbon::now()->year)->whereMonth('expense_date', Carbon::now()->month)->sum('expense_amount');
         $data['balance'] = $data['incomes'] - $data['expenses'];
-        
+
         return view('pages.dashboard', $data);
     }
 
@@ -37,6 +37,7 @@ class HomeController extends Controller
         foreach ($incomes as $key => $value) {
             $incomes[$key]['type'] = 'income';
         }
+
         foreach ($expenses as $key => $value) {
             $expenses[$key]['type'] = 'expense';
         }

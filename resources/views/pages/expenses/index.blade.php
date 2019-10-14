@@ -49,6 +49,9 @@
                     </div>
                 </div>
             @endforeach
+            <div class="col-xl-12 col-sm-12">
+                {{ $expenses->links() }}
+            </div>
         </div>
     </div>
 @endsection
