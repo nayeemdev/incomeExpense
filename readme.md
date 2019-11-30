@@ -1,6 +1,6 @@
 <p align="center">Income Expense Manager with Laravel</p>
 
-See Live Demo <a target="_blank" href="http://incomeexpese.herokuapp.com/">http://incomeexpese.herokuapp.com/</a>
+See Live Demo <a target="_blank" href="http://incomeexpense.herokuapp.com/">http://incomeexpense.herokuapp.com/</a>
 
 ## About Income Expense Manager
 
