@@ -24,7 +24,7 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Income
-				    <span class="badge badge-primary badge-pill">{{ $incomes->sum('income_amount') }}</span>
+                      <span class="badge badge-primary badge-pill">{{ $totalIncomes }}</span>
 				  </li>
 				</ul>
         	</div>
