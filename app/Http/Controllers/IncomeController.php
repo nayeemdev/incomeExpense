@@ -15,6 +15,7 @@ class IncomeController extends Controller
     public function index()
     {
         $data['incomes'] = Income::where('user_id', Auth::user()->id)->latest()->paginate(12);
+        $data['totalIncomes'] = Income::where('user_id', Auth::user()->id)->sum('income_amount');
 
         return view('pages.incomes.index', $data);
     }
