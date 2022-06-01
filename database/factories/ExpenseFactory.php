@@ -1,16 +1,24 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Models\Expense;
 use App\Models\User;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Expense::class, function (Faker $faker) {
-    return [
-        'expense_title' => $faker->sentence(5),
-        'expense_amount' => $faker->randomDigit,
-        'expense_date' => $faker->date('Y-m-d'),
-        'user_id' => User::all()->random()->id,
-    ];
-});
+class ExpenseFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'expense_title' => $this->faker->sentence(5),
+            'expense_amount' => $this->faker->randomDigit,
+            'expense_date' => $this->faker->date('Y-m-d'),
+            'user_id' => User::all()->random()->id,
+        ];
+    }
+}
