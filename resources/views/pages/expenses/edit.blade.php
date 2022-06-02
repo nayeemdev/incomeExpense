@@ -7,7 +7,7 @@
                 <a href="{{ route('index') }}">Dashboard</a>
             </li>
             <li class="breadcrumb-item active">
-                <a href="{{ route('expense.index') }}">Expense</a>
+                <a href="{{ route('expenses.index') }}">Expense</a>
             </li>
             <li class="breadcrumb-item active">Edit</li>
         </ol>
@@ -25,8 +25,9 @@
                 <div class="card mx-auto mt-5">
                     <div class="card-header">Update Expense</div>
                     <div class="card-body">
-                        <form action="{{ route('expenses.update') }}" method="POST">
+                        <form action="{{ route('expenses.update', $expense) }}" method="POST">
                             @csrf
+                            @method('PUT')
                             <input type="hidden" name="expense_id" value="{{ $expense->id }}">
                             <div class="form-group">
                                 <div class="form-label-group">
@@ -47,7 +48,7 @@
                                 </div>
                             </div>
                             <div class="float-right">
-                                <a href="{{ route('expense.index') }}" class="btn btn-success">Back</a>
+                                <a href="{{ route('expenses.index') }}" class="btn btn-success">Back</a>
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </div>
                         </form>

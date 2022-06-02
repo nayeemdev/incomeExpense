@@ -39,7 +39,7 @@ class NoteController extends Controller
         $notes->user_id = Auth::user()->id;
         $notes->save();
 
-        return redirect('/notes')->with('message', 'New note Added');
+        return redirect()->route('notes.index')->with('message', 'New note Added');
     }
 
     public function edit($id)
@@ -62,7 +62,7 @@ class NoteController extends Controller
         $note->note_date = $request->note_date;
         $note->update();
 
-        return redirect('/notes')->with('message', 'note details updated successfully');
+        return redirect()->route('notes.index')->with('message', 'Note details updated successfully');
     }
 
     public function destroy($id)

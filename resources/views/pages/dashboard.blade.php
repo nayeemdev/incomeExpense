@@ -85,7 +85,7 @@
                     </div>
                     <div class="mr-5">{{ App\Models\Expense::where('user_id', Auth::user()->id)->count() }} Expenses</div>
                 </div>
-                <a class="nav-link text-white text-center card-footer clearfix small z-1" href="{{ route('expense.index') }}" href="#">
+                <a class="nav-link text-white text-center card-footer clearfix small z-1" href="{{ route('expenses.index') }}" href="#">
                     <span class="float-left">View All</span>
                     <span class="float-right">
                         <i class="fas fa-angle-right"></i>

@@ -25,8 +25,9 @@
                 <div class="card mx-auto mt-5">
                     <div class="card-header">Update Note</div>
                     <div class="card-body">
-                        <form action="{{ route('notes.update') }}" method="POST">
+                        <form action="{{ route('notes.update', $note) }}" method="POST">
                             @csrf
+                            @method('PUT')
                             <input type="hidden" name="note_id" value="{{ $note->id }}">
                             <div class="form-group">
                                 <div class="form-label-group">

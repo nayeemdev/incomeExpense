@@ -10,8 +10,8 @@
         <i class="fas fa-fw fa-dollar-sign"></i>
         <span>Incomes</span></a>
     </li>
-    <li class="nav-item {{ Route::currentRouteName() == 'expense.index' ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('expense.index') }}">
+    <li class="nav-item {{ Route::currentRouteName() == 'expenses.index' ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('expenses.index') }}">
         <i class="fas fa-fw fa-money-bill"></i>
         <span>Expenses</span></a>
     </li>

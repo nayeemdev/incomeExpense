@@ -25,8 +25,9 @@
                 <div class="card mx-auto mt-5">
                     <div class="card-header">Update Income</div>
                     <div class="card-body">
-                        <form action="{{ route('incomes.update') }}" method="POST">
+                        <form action="{{ route('incomes.update', $income) }}" method="POST">
                             @csrf
+                            @method('PUT')
                             <input type="hidden" name="income_id" value="{{ $income->id }}">
                             <div class="form-group">
                                 <div class="form-label-group">

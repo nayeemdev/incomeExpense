@@ -38,9 +38,13 @@
 
                         <div class="card-header">
                             <span class="float-left text-dark">{{ $income->income_date }}</span>
-                            <span class="btn-group-sm float-right">
-                                <a href="{{ route('incomes.edit',$income->id) }}" class="btn btn-sm btn-success"><i class="fa fa-edit"></i></a>
-                                <a href="{{ route('incomes.delete',$income->id) }}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                            <span class="btn-group-sm float-right d-flex">
+                                <a href="{{ route('incomes.edit',$income->id) }}" class="btn btn-sm btn-success mr-2"><i class="fa fa-edit"></i></a>
+                                <form action="{{ route('incomes.destroy', $income->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                </form>
                             </span>
                         </div>
 

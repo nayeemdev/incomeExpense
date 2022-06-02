@@ -19,7 +19,7 @@
         	<div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
         		<ul class="list-group">
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
-				    <a href="{{ route('expense.create') }}" class="badge badge-primary p-2 mx-auto">Add New Expense</a>
+				    <a href="{{ route('expenses.create') }}" class="badge badge-primary p-2 mx-auto">Add New Expense</a>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Expense
@@ -34,9 +34,13 @@
                     <div class="card text-white bg-danger o-hidden h-100">
                         <div class="card-header">
                             <span class="float-left text-dark">{{ $expense->expense_date }}</span>
-                            <span class="btn-group-sm float-right">
-                                <a href="{{ route('expenses.edit',$expense->id) }}" class="btn btn-sm btn-success"><i class="fa fa-edit"></i></a>
-                                <a href="{{ route('expenses.delete',$expense->id) }}" class="btn btn-sm btn-success"><i class="fa fa-trash"></i></a>
+                            <span class="btn-group-sm float-right d-flex">
+                                <a href="{{ route('expenses.edit',$expense->id) }}" class="btn btn-sm btn-success mr-2"><i class="fa fa-edit"></i></a>
+                                <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                </form>
                             </span>
                         </div>
                         <div class="card-body">

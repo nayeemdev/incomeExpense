@@ -33,9 +33,13 @@
                     <div class="card text-white bg-info o-hidden h-100">
                         <div class="card-header">
                             <span class="float-left">{{ $note->note_date }}</span>
-                            <span class="btn-group-sm float-right">
-                                <a href="{{ route('notes.edit',$note->id) }}" class="btn btn-sm btn-success"><i class="fa fa-edit"></i></a>
-                                <a href="{{ route('notes.delete',$note->id) }}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                            <span class="btn-group-sm float-right d-flex">
+                                <a href="{{ route('notes.edit',$note) }}" class="btn btn-sm btn-success mr-2"><i class="fa fa-edit"></i></a>
+                                <form action="{{ route('notes.destroy', $note->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                                  </form>
                             </span>
                         </div>
                         <div class="card-body">
