@@ -1,6 +1,5 @@
 <p align="center">Income Expense Manager with Laravel</p>
 
-See Live Demo <a target="_blank" href="http://incomeexpense.herokuapp.com/">http://incomeexpense.herokuapp.com/</a>
 
 ## About Income Expense Manager
 
@@ -56,7 +55,7 @@ GoTo [http://127.0.0.1:8000](http://127.0.0.1:8000) for visiting your income exp
 
 For Login:
 
-**email: admin@admin.com**
+**email: user@example.com**
 
 **password: password**
 
