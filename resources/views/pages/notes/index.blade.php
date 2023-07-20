@@ -32,7 +32,7 @@
                 <div class="col-xl-4 col-sm-6 mb-3">
                     <div class="card text-white bg-info o-hidden h-100">
                         <div class="card-header">
-                            <span class="float-left">{{ $note->note_date }}</span>
+                            <span class="float-left">{{ $note->note_date->format(config('setting.date_format')) }}</span>
                             <span class="btn-group-sm float-right">
                                 <a href="{{ route('notes.edit',$note->id) }}" class="btn btn-sm btn-success"><i class="fa fa-edit"></i></a>
                                 <a href="{{ route('notes.delete',$note->id) }}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
@@ -43,7 +43,7 @@
                                 <i class="fas fa-fw fa-sticky-note"></i>
                             </div>
                             <div>{{ $note->note_title }}</div>
-                            <div>{{ $note->note_amount }}</div>
+                            <div>{{ config('setting.currency_symbol') }}  {{ $note->note_amount }}</div>
                         </div>
                     </div>
                 </div>
