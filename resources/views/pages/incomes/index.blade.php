@@ -37,7 +37,7 @@
                     <div class="card text-white bg-info o-hidden h-100">
 
                         <div class="card-header">
-                            <span class="float-left text-dark">{{ $income->income_date }}</span>
+                            <span class="float-left text-dark">{{ $income->income_date->format(config('setting.date_format')) }}</span>
                             <span class="btn-group-sm float-right">
                                 <a href="{{ route('incomes.edit',$income->id) }}" class="btn btn-sm btn-success"><i class="fa fa-edit"></i></a>
                                 <a href="{{ route('incomes.delete',$income->id) }}" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
@@ -49,7 +49,7 @@
                                 <i class="fas fa-fw fa-dollar-sign"></i>
                             </div>
                             <div>{{ $income->income_title }}</div>
-                            <div class="font-weight-bold"><span style="font-weight:900;">৳ </span> {{ $income->income_amount }}</div>
+                            <div class="font-weight-bold"><span style="font-weight:900;">{{ config('setting.currency_symbol') }} </span> {{ $income->income_amount }}</div>
                         </div>
 
                     </div>

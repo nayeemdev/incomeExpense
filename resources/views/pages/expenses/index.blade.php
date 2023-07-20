@@ -33,7 +33,7 @@
                 <div class="col-xl-4 col-sm-6 mb-3">
                     <div class="card text-white bg-danger o-hidden h-100">
                         <div class="card-header">
-                            <span class="float-left text-dark">{{ $expense->expense_date }}</span>
+                            <span class="float-left text-dark">{{ $expense->expense_date->format(config('setting.date_format')) }}</span>
                             <span class="btn-group-sm float-right">
                                 <a href="{{ route('expenses.edit',$expense->id) }}" class="btn btn-sm btn-success"><i class="fa fa-edit"></i></a>
                                 <a href="{{ route('expenses.delete',$expense->id) }}" class="btn btn-sm btn-success"><i class="fa fa-trash"></i></a>
@@ -44,7 +44,7 @@
                                 <i class="fas fa-fw fa-money-bill"></i>
                             </div>
                             <div>{{ $expense->expense_title }}</div>
-                            <div class="font-weight-bold"><span style="font-weight:900;">৳ </span> {{ $expense->expense_amount }}</div>
+                            <div class="font-weight-bold"><span style="font-weight:900;">{{ config('setting.currency_symbol') }} </span> {{ $expense->expense_amount }}</div>
                         </div>
                     </div>
                 </div>
