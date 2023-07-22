@@ -43,7 +43,7 @@
                                 <i class="fas fa-fw fa-sticky-note"></i>
                             </div>
                             <div>{{ $note->note_title }}</div>
-                            <div>{{ config('setting.currency_symbol') }}  {{ $note->note_amount }}</div>
+                            <div>{{ config('setting.currency_symbol') }}  {{ format_amount($note->note_amount) }}</div>
                         </div>
                     </div>
                 </div>

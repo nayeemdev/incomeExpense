@@ -16,15 +16,15 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Income
-				    <span class="badge badge-primary badge-pill">{{ $total_income }}</span>
+				    <span class="badge badge-primary badge-pill">{{ format_amount($total_income) }}</span>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Expense
-				    <span class="badge badge-danger badge-pill">{{ $total_expense }}</span>
+				    <span class="badge badge-danger badge-pill">{{ format_amount($total_expense) }}</span>
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Balance
-				    <span class="badge badge-primary badge-pill">{{ $balance }}</span>
+				    <span class="badge badge-primary badge-pill">{{ format_amount($balance) }}</span>
 				  </li>
 				</ul>
         	</div>
@@ -41,7 +41,7 @@
                                 <i class="fas fa-fw {{($result['type'] == 'income')? 'fa-dollar-sign':'fa-money-bill'}} "></i>
                             </div>
                             <div>{{($result['type'] == 'income')? $result['income_title']:$result['expense_title']}}</div>
-                            <div class="font-weight-bold text-dark">{{ config('setting.currency_symbol') }} {{($result['type'] == 'income')? $result['income_amount']: $result['expense_amount']}}</div>
+                            <div class="font-weight-bold text-dark">{{ config('setting.currency_symbol') }} {{ format_amount(($result['type'] == 'income')? $result['income_amount']: $result['expense_amount']) }}</div>
                         </div>
                     </div>
                 </div>
