@@ -24,7 +24,7 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Income
-                      <span class="badge badge-primary badge-pill">{{ $totalIncomes }}</span>
+                      <span class="badge badge-primary badge-pill">{{ format_amount($totalIncomes) }}</span>
 				  </li>
 				</ul>
         	</div>
@@ -49,7 +49,7 @@
                                 <i class="fas fa-fw fa-dollar-sign"></i>
                             </div>
                             <div>{{ $income->income_title }}</div>
-                            <div class="font-weight-bold"><span style="font-weight:900;">{{ config('setting.currency_symbol') }} </span> {{ $income->income_amount }}</div>
+                            <div class="font-weight-bold"><span style="font-weight:900;">{{ config('setting.currency_symbol') }} </span> {{ format_amount($income->income_amount) }}</div>
                         </div>
 
                     </div>

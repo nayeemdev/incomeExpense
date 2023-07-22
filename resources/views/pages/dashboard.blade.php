@@ -18,7 +18,7 @@
         <li class="breadcrumb-item active">Overview</li>
     </ol>
 
-    <div class="row">
+    <div class="row"> <!-- THIS MONTH COST -->
         <div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
             <ul class="list-group">
                 <li class="list-group-item bg-info text-center text-white">
@@ -26,20 +26,20 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     Total Income
-                    <span class="badge badge-primary badge-pill incomeValue">{{ $incomes}}</span>
+                    <span class="badge badge-primary badge-pill incomeValue">{{ format_amount($incomes)}}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     Total Expense
-                    <span class="badge badge-danger badge-pill expenseValue">{{ $expenses }}</span>
+                    <span class="badge badge-danger badge-pill expenseValue">{{ format_amount($expenses) }}</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     Balance
-                    <span class="badge badge-primary badge-pill">{{ $balance }}</span>
+                    <span class="badge badge-primary badge-pill">{{ format_amount($balance) }}</span>
                 </li>
             </ul>
         </div>
+    </div> <!-- END: THIS MONTH COST -->
 
-    </div>
     <!-- Icon Cards-->
     <div class="row">
 
