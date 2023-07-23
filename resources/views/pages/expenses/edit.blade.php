@@ -42,7 +42,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="form-label-group">
-                                    <input type="date" id="expense_date" class="form-control" placeholder="Password" required="required" name="expense_date" value="{{ $expense->expense_date }}">
+                                    <input type="date" id="expense_date" class="form-control" placeholder="Password" required="required" name="expense_date" value="{{ $expense->expense_date->format('Y-m-d') }}">
                                     <label for="expense_date">Expense Date</label>
                                 </div>
                             </div>
