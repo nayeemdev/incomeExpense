@@ -20,12 +20,28 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index($period='')
     {
+        if($period=='') { $period = date('Y-m'); }
 
-        $data['incomes'] = Income::where('user_id', Auth::User()->id)->whereYear('income_date', Carbon::now()->year)->whereMonth('income_date', Carbon::now()->month)->sum('income_amount');
-        $data['expenses'] = Expense::where('user_id', Auth::User()->id)->whereYear('expense_date', Carbon::now()->year)->whereMonth('expense_date', Carbon::now()->month)->sum('expense_amount');
+        $month = substr($period,5,2) *1;
+        $year = substr($period,0,4)*1;
+        $data['incomes'] = Income::where('user_id', Auth::User()->id)->whereYear('income_date', $year)->whereMonth('income_date', $month)->sum('income_amount');
+        $data['expenses'] = Expense::where('user_id', Auth::User()->id)->whereYear('expense_date', $year)->whereMonth('expense_date', $month)->sum('expense_amount');
         $data['balance'] = $data['incomes'] - $data['expenses'];
+
+        // find first entry, to be use for list_period()
+        $first_expense = Expense::where('user_id', Auth::User()->id)->orderBy('expense_date','desc')->limit(1)->first();
+        $first_income = Income::where('user_id', Auth::User()->id)->orderBy('income_date','desc')->limit(1)->first();
+        if($first_income->income_date>$first_expense->expense_date) {
+            $until = $first_expense->expense_date;
+        } else {
+            $until = $first_income->income_date;
+        }
+
+        $data['list_period'] = list_period(substr($until,0,10));
+        $data['list_period'][date("Y-m")] = "This Month";
+        $data['period'] = $period;
 
         return view('pages.dashboard', $data);
     }
