@@ -12,7 +12,7 @@ class Income extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'income_date' => 'datetime'
+        'income_date' => 'date'
     ];
 
     public function User()
