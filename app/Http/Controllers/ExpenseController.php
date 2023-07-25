@@ -8,10 +8,21 @@ use Illuminate\Support\Facades\Auth;
 
 class ExpenseController extends Controller
 {
-    public function index()
+    public function index($period='')
     {
-        $data['expenses'] = Expense::where('user_id', Auth::user()->id)->latest()->paginate(12);
-        $data['totalExpenses'] = Expense::where('user_id', Auth::user()->id)->sum('expense_amount');
+        if($period=='') { $period = date('Y-m'); }
+        $month = substr($period,5,2) *1;
+        $year = substr($period,0,4)*1;
+
+        $data['expenses'] = Expense::where('user_id', Auth::user()->id)->whereYear('expense_date',$year)->whereMonth('expense_date',$month)->latest()->paginate(12);
+        $data['totalExpenses'] = Expense::where('user_id', Auth::user()->id)->whereYear('expense_date',$year)->whereMonth('expense_date',$month)->sum('expense_amount');
+
+        // find first entry, to be use for list_period()
+        $first_expense = Expense::where('user_id', Auth::User()->id)->orderBy('expense_date','desc')->limit(1)->first();
+
+        $data['list_period'] = list_period(substr($first_expense->expense_date,0,10));
+        $data['list_period'][date("Y-m")] = "This Month";
+        $data['period'] = $period;
 
         return view('pages.expenses.index', $data);
     }
