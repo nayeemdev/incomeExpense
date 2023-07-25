@@ -75,7 +75,7 @@
                     <div class="card-body-icon">
                         <i class="fas fa-fw fa-dollar-sign"></i>
                     </div>
-                    <div class="mr-5">{{ App\Models\Income::where('user_id', Auth::user()->id)->count() }} Income</div>
+                    <div class="mr-5">{{ App\Models\Income::where('user_id', Auth::user()->id)->whereRaw("substr(income_date,1,7)='$period'" )->count() }} Income</div>
                 </div>
                 <a class="nav-link text-white text-center card-footer clearfix small z-1" href="{{ route('incomes.index') }}"  class="card-footer text-white clearfix small z-1" href="#">
                     <span class="float-left">View All</span>
@@ -92,7 +92,7 @@
                     <div class="card-body-icon">
                         <i class="fas fa-fw fa-money-bill"></i>
                     </div>
-                    <div class="mr-5">{{ App\Models\Expense::where('user_id', Auth::user()->id)->count() }} Expenses</div>
+                    <div class="mr-5">{{ App\Models\Expense::where('user_id', Auth::user()->id)->whereRaw("substr(expense_date,1,7)='$period'" )->count() }} Expenses</div>
                 </div>
                 <a class="nav-link text-white text-center card-footer clearfix small z-1" href="{{ route('expense.index') }}" href="#">
                     <span class="float-left">View All</span>
@@ -109,7 +109,7 @@
                     <div class="card-body-icon">
                         <i class="fas fa-fw fa-sticky-note"></i>
                     </div>
-                    <div>{{ App\Models\Note::where('user_id', Auth::user()->id)->count() }} Note</div>
+                    <div>{{ App\Models\Note::where('user_id', Auth::user()->id)->whereRaw("substr(note_date,1,7)='$period'" )->count() }} Note</div>
                 </div>
                 <a class="nav-link text-white text-center card-footer clearfix small z-1" href="{{ route('notes.index') }}"  class="card-footer text-white clearfix small z-1" href="#">
                     <span class="float-left">View All</span>
