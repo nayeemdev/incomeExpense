@@ -12,7 +12,7 @@ class Note extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'note_date' => 'date'
+        'note_date' => 'datetime'
     ];
 
     public function User()
