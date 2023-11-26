@@ -11,10 +11,6 @@ class Income extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'income_date' => 'datetime'
-    ];
-
     public function User()
     {
     	return $this->hasOne('App\Models\User', 'user_id', 'id');

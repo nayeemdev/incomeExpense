@@ -34,14 +34,14 @@
                 <div class="col-xl-4 col-sm-6 mb-3">
                     <div class="card text-white {{($result['type'] == 'income')? 'bg-info':'bg-danger'}} o-hidden h-100">
                         <div class="card-header">
-                            <span class="float-left text-dark">{{ date(config('setting.date_format'), strtotime(($result['type'] == 'income')? $result['created_at']:$result['created_at']))}}</span>
+                            <span class="float-left text-dark">{{($result['type'] == 'income')? $result['created_at']:$result['created_at']}}</span>
                         </div>
                         <div class="card-body">
                             <div class="card-body-icon mt-5">
                                 <i class="fas fa-fw {{($result['type'] == 'income')? 'fa-dollar-sign':'fa-money-bill'}} "></i>
                             </div>
                             <div>{{($result['type'] == 'income')? $result['income_title']:$result['expense_title']}}</div>
-                            <div class="font-weight-bold text-dark">{{ config('setting.currency_symbol') }} {{($result['type'] == 'income')? $result['income_amount']: $result['expense_amount']}}</div>
+                            <div class="font-weight-bold text-dark">{{($result['type'] == 'income')? '৳ '.$result['income_amount']: '৳ '.$result['expense_amount']}}</div>
                         </div>
                     </div>
                 </div>
