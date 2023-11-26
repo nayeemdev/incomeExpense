@@ -22,16 +22,7 @@
         <div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
             <ul class="list-group">
                 <li class="list-group-item bg-info text-center text-white">
-                    <div class="input-group mx-auto" style="max-width:200px" >
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Period</span>
-                        </div>
-                        <select class="form-control" onchange="location.href='/period/'+this.value"> {{-- TODO: ideally, this dropdown generated using javascript --}}
-                            @foreach ($list_period as $key=>$item)
-                                <option value="{{ $key }}" {{ ($key==$period)?'selected':'' }}>{{ $item }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <span>This Month Cost</span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     Total Income

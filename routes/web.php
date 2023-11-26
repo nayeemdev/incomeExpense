@@ -15,7 +15,6 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('index');
 Route::get('/summaries', 'HomeController@summary')->name('summary');
 Route::get('/monthly/index', 'HomeController@monthly')->name('monthly.index');
-Route::get('/period/{period}', 'HomeController@index')->name('period');
 
 //Notes Route
 Route::get('/notes', 'NoteController@index')->name('notes.index');
