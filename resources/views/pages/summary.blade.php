@@ -34,7 +34,7 @@
                 <div class="col-xl-4 col-sm-6 mb-3">
                     <div class="card text-white {{($result['type'] == 'income')? 'bg-info':'bg-danger'}} o-hidden h-100">
                         <div class="card-header">
-                            <span class="float-left text-dark">{{ date(config('setting.date_format'), strtotime(($result['type'] == 'income')? $result['income_date']:$result['expense_date']))}}</span>
+                            <span class="float-left text-dark">{{ date(config('setting.date_format'), strtotime(($result['type'] == 'income')? $result['created_at']:$result['created_at']))}}</span>
                         </div>
                         <div class="card-body">
                             <div class="card-body-icon mt-5">
