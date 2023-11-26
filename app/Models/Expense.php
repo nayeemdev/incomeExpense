@@ -11,10 +11,6 @@ class Expense extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'expense_date' => 'datetime'
-    ];
-
     public function User()
     {
     	return $this->hasOne('App\Models\User', 'user_id', 'id');
