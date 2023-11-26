@@ -18,7 +18,7 @@ class ExpenseController extends Controller
         $data['totalExpenses'] = Expense::where('user_id', Auth::user()->id)->whereYear('expense_date',$year)->whereMonth('expense_date',$month)->sum('expense_amount');
 
         // find first entry, to be use for list_period()
-        $first_expense = Expense::where('user_id', Auth::User()->id)->orderBy('expense_date','asc')->limit(1)->first();
+        $first_expense = Expense::where('user_id', Auth::User()->id)->orderBy('expense_date','desc')->limit(1)->first();
 
         $data['list_period'] = list_period(substr($first_expense->expense_date,0,10));
         $data['list_period'][date("Y-m")] = "This Month";

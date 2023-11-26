@@ -12,21 +12,10 @@ class IncomeController extends Controller
     {
         $this->middleware('auth');
     }
-    public function index($period='')
+    public function index()
     {
-        if($period=='') { $period = date('Y-m'); }
-        $month = substr($period,5,2) *1;
-        $year = substr($period,0,4)*1;
-
-        $data['incomes'] = Income::where('user_id', Auth::user()->id)->whereYear('income_date',$year)->whereMonth('income_date',$month)->latest()->paginate(12);
-        $data['totalIncomes'] = Income::where('user_id', Auth::user()->id)->whereYear('income_date',$year)->whereMonth('income_date',$month)->sum('income_amount');
-
-        // find first entry, to be use for list_period()
-        $first_income = Income::where('user_id', Auth::User()->id)->orderBy('income_date','asc')->limit(1)->first();
-
-        $data['list_period'] = list_period(substr($first_income->income_date,0,10));
-        $data['list_period'][date("Y-m")] = "This Month";
-        $data['period'] = $period;
+        $data['incomes'] = Income::where('user_id', Auth::user()->id)->latest()->paginate(12);
+        $data['totalIncomes'] = Income::where('user_id', Auth::user()->id)->sum('income_amount');
 
         return view('pages.incomes.index', $data);
     }

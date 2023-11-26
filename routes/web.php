@@ -36,7 +36,6 @@ Route::post('/incomes/store', 'IncomeController@store')->name('incomes.store');
 Route::get('/incomes/edit/{id}', 'IncomeController@edit')->name('incomes.edit');
 Route::post('/incomes/update', 'IncomeController@update')->name('incomes.update');
 Route::get('/incomes/delete/{id}', 'IncomeController@destroy')->name('incomes.delete');
-Route::get('/incomes/period/{period}', 'IncomeController@index')->name('incomes.index.period');
 
 //Expense Route
 Route::get('/expense', 'ExpenseController@index')->name('expense.index');
