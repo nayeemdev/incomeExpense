@@ -12,9 +12,6 @@
 */
 Auth::routes();
 
-//TODO: overview page
-//Route::get('/overview', 'PublicView@overview')->name('overview');
-
 Route::get('/', 'HomeController@index')->name('index');
 Route::get('/summaries', 'HomeController@summary')->name('summary');
 Route::get('/monthly/index', 'HomeController@monthly')->name('monthly.index');
@@ -44,4 +41,3 @@ Route::post('/expense/store', 'ExpenseController@store')->name('expense.store');
 Route::get('/expense/edit/{id}', 'ExpenseController@edit')->name('expenses.edit');
 Route::post('/expense/update', 'ExpenseController@update')->name('expenses.update');
 Route::get('/expense/delete/{id}', 'ExpenseController@destroy')->name('expenses.delete');
-Route::get('/expense/period/{period}', 'ExpenseController@index')->name('expense.index.period');

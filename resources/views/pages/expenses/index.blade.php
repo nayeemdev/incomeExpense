@@ -18,23 +18,13 @@
         <div class="row">
         	<div class="col-xl-6 offset-xl-3 col-sm-12 mb-3">
         		<ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="input-group" style="max-width:250px">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Period</span>
-                            </div>
-                            <select class="form-control" onchange="location.href='/expense/period/'+this.value"> {{-- TODO: ideally, this dropdown generated using javascript --}}
-                                @foreach ($list_period as $key=>$item)
-                                    <option value="{{ $key }}" {{ ($key==$period)?'selected':'' }}>{{ $item }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <a href="{{ route('expense.create') }}" class="badge badge-primary p-2 pull-right">Add New Expense</a>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Total Expense
-                        <span class="badge badge-danger badge-pill">{{ format_amount($totalExpenses) }}</span>
-                    </li>
+				  <li class="list-group-item d-flex justify-content-between align-items-center">
+				    <a href="{{ route('expense.create') }}" class="badge badge-primary p-2 mx-auto">Add New Expense</a>
+				  </li>
+				  <li class="list-group-item d-flex justify-content-between align-items-center">
+				    Total Expense
+                      <span class="badge badge-danger badge-pill">{{ format_amount($totalExpenses) }}</span>
+				  </li>
 				</ul>
         	</div>
         </div>
