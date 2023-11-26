@@ -42,7 +42,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="form-label-group">
-                                    <input type="date" id="note_date" class="form-control" placeholder="Password" required="required" name="note_date" value="{{ $note->note_date->format('Y-m-d') }}">
+                                    <input type="date" id="note_date" class="form-control" placeholder="Password" required="required" name="note_date" value="{{ $note->note_date }}">
                                     <label for="note_date">Note Date</label>
                                 </div>
                             </div>

@@ -12,7 +12,7 @@ class Expense extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'expense_date' => 'date'
+        'expense_date' => 'datetime'
     ];
 
     public function User()
