@@ -23,7 +23,7 @@
 				  </li>
 				  <li class="list-group-item d-flex justify-content-between align-items-center">
 				    Total Expense
-                      <span class="badge badge-danger badge-pill">{{ format_amount($totalExpenses) }}</span>
+                      <span class="badge badge-danger badge-pill">{{ $totalExpenses }}</span>
 				  </li>
 				</ul>
         	</div>
@@ -44,7 +44,7 @@
                                 <i class="fas fa-fw fa-money-bill"></i>
                             </div>
                             <div>{{ $expense->expense_title }}</div>
-                            <div class="font-weight-bold"><span style="font-weight:900;">{{ config('setting.currency_symbol') }} </span> {{ format_amount($expense->expense_amount) }}</div>
+                            <div class="font-weight-bold"><span style="font-weight:900;">{{ config('setting.currency_symbol') }} </span> {{ $expense->expense_amount }}</div>
                         </div>
                     </div>
                 </div>
