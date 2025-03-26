@@ -32,20 +32,37 @@ class HomeController extends Controller
 
     public function summary()
     {
-        $incomes = Income::where('user_id', Auth::User()->id)->get()->toArray();
-        $expenses = Expense::where('user_id', Auth::User()->id)->get()->toArray();
-        foreach ($incomes as $key => $value) {
-            $incomes[$key]['type'] = 'income';
-        }
+        $userId = Auth::User()->id;
 
-        foreach ($expenses as $key => $value) {
-            $expenses[$key]['type'] = 'expense';
-        }
+        // Fetch incomes and expenses as collections
+        $incomes = Income::where('user_id', $userId)->orderby('income_date', 'asc')->get();
+        $expenses = Expense::where('user_id', $userId)->orderBy('expense_date', 'desc')->get();
 
-        $data['results'] = array_merge($incomes, $expenses);
-        $data['total_income'] = Income::where('user_id', Auth::User()->id)->sum('income_amount');
-        $data['total_expense'] = Expense::where('user_id', Auth::User()->id)->sum('expense_amount');
-        $data['balance'] = $data['total_income'] - $data['total_expense'];
+        // Add type to each entry
+        $incomes->each(function ($item) {
+            $item->type = 'income';
+        });
+
+        $expenses->each(function ($item) {
+            $item->type = 'expense';
+        });
+
+        // Merge collections and sort them by date
+        $results = $incomes->merge($expenses)->sortByDesc('transaction_date')->values();
+
+
+        // Total income, expense, and balance calculations
+        $totalIncome = Income::where('user_id', $userId)->sum('income_amount');
+        $totalExpense = Expense::where('user_id', $userId)->sum('expense_amount');
+        $balance = $totalIncome - $totalExpense;
+
+        // Prepare data for the view
+        $data = [
+            'results' => $results,
+            'total_income' => $totalIncome,
+            'total_expense' => $totalExpense,
+            'balance' => $balance,
+        ];
 
         return view('pages.summary', $data);
     }

@@ -44,7 +44,8 @@
                                 <i class="fas fa-fw fa-money-bill"></i>
                             </div>
                             <div>{{ $expense->expense_title }}</div>
-                            <div class="font-weight-bold"><span style="font-weight:900;">৳ </span> {{ $expense->expense_amount }}</div>
+                            <div class="font-weight-bold"><span style="font-weight:900;">€ </span> {{ $expense->expense_amount }}</div>
+                            <div> {{ $expense->expense_date }}</div>
                         </div>
                     </div>
                 </div>

@@ -49,7 +49,7 @@
                                 <i class="fas fa-fw fa-dollar-sign"></i>
                             </div>
                             <div>{{ $income->income_title }}</div>
-                            <div class="font-weight-bold"><span style="font-weight:900;">৳ </span> {{ $income->income_amount }}</div>
+                            <div class="font-weight-bold"><span style="font-weight:900;">€ </span> {{ $income->income_amount }}</div>
                         </div>
 
                     </div>
