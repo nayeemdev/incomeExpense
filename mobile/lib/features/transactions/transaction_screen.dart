@@ -19,7 +19,7 @@ const _typeNames = {'withdrawal': 'Expense', 'deposit': 'Income', 'transfer': 'T
 class TransactionScreen extends ConsumerWidget {
   const TransactionScreen({super.key, required this.groupId});
 
-  final int groupId;
+  final String groupId;
 
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
     final confirmed = await showConfirm(

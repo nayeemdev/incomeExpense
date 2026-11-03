@@ -162,7 +162,7 @@ class _GoalTile extends StatelessWidget {
 class GoalScreen extends ConsumerWidget {
   const GoalScreen({super.key, required this.goalId, this.color = 'sky'});
 
-  final int goalId;
+  final String goalId;
   final String color;
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Goal goal) async {
@@ -362,7 +362,7 @@ class _GoalForm extends ConsumerStatefulWidget {
 class _GoalFormState extends ConsumerState<_GoalForm> {
   final _name = TextEditingController();
   final _target = TextEditingController();
-  int? _accountId;
+  String? _accountId;
   DateTime? _date;
   bool _saving = false;
 

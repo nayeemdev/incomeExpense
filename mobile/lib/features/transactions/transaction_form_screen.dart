@@ -31,9 +31,9 @@ class _SplitDraft {
   final TextEditingController category;
   final TextEditingController tags;
   final TextEditingController notes;
-  int? sourceId;
-  int? destinationId;
-  int? budgetId;
+  String? sourceId;
+  String? destinationId;
+  String? budgetId;
 
   void dispose() {
     for (final controller in [amount, description, counterparty, category, tags, notes]) {
@@ -45,7 +45,7 @@ class _SplitDraft {
 class TransactionFormScreen extends ConsumerStatefulWidget {
   const TransactionFormScreen({super.key, this.groupId});
 
-  final int? groupId;
+  final String? groupId;
 
   @override
   ConsumerState<TransactionFormScreen> createState() => _TransactionFormScreenState();
@@ -589,15 +589,15 @@ class _AccountSelect extends StatelessWidget {
 
   final String label;
   final List<Account> accounts;
-  final int? value;
-  final ValueChanged<int> onChanged;
+  final String? value;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final palette = Palette.of(context);
     final selected = accounts.where((account) => account.id == value).firstOrNull;
 
-    return FormField<int>(
+    return FormField<String>(
       key: ValueKey(value),
       initialValue: selected?.id,
       validator: (id) => id == null ? 'Choose one' : null,
@@ -608,7 +608,7 @@ class _AccountSelect extends StatelessWidget {
           InkWell(
             borderRadius: BorderRadius.circular(8),
             onTap: () async {
-              final id = await showModalBottomSheet<int>(
+              final id = await showModalBottomSheet<String>(
                 context: context,
                 showDragHandle: true,
                 isScrollControlled: true,
@@ -642,7 +642,7 @@ class _AccountSheet extends StatelessWidget {
 
   final String title;
   final List<Account> accounts;
-  final int? selected;
+  final String? selected;
 
   @override
   Widget build(BuildContext context) {

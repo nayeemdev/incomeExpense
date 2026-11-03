@@ -15,9 +15,9 @@ class Pending {
   const Pending({required this.ledgerId, required this.body, this.receipt});
 
   factory Pending.fromJson(Json json) =>
-      Pending(ledgerId: json['ledger_id'] as int, body: (json['body'] as Map).cast<String, dynamic>(), receipt: json['receipt'] as String?);
+      Pending(ledgerId: '${json['ledger_id']}', body: (json['body'] as Map).cast<String, dynamic>(), receipt: json['receipt'] as String?);
 
-  final int ledgerId;
+  final String ledgerId;
   final Json body;
 
   /// A copy of the receipt photo kept in app storage until it is uploaded.
@@ -48,7 +48,7 @@ class OutboxNotifier extends AsyncNotifier<OutboxState> {
     state = AsyncData((pending: pending, lastError: error));
   }
 
-  Future<void> add(int ledgerId, Json body, {String? receiptPath}) async {
+  Future<void> add(String ledgerId, Json body, {String? receiptPath}) async {
     String? receipt;
     if (receiptPath != null) {
       final dir = Directory('${(await getApplicationSupportDirectory()).path}/outbox');

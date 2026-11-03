@@ -67,21 +67,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
       pushed('/transactions', (_) => const TransactionsScreen()),
-      pushed('/transactions/:id', (state) => TransactionScreen(groupId: int.parse(state.pathParameters['id']!))),
+      pushed('/transactions/:id', (state) => TransactionScreen(groupId: state.pathParameters['id']!)),
       GoRoute(
         parentNavigatorKey: _rootKey,
         path: '/transactions/:id/edit',
-        pageBuilder: (_, state) => _sheet(state, _EditTransaction(groupId: int.parse(state.pathParameters['id']!))),
+        pageBuilder: (_, state) => _sheet(state, _EditTransaction(groupId: state.pathParameters['id']!)),
       ),
       pushed('/accounts', (_) => const AccountsScreen()),
-      pushed(
-        '/accounts/:id',
-        (state) => AccountScreen(accountId: int.parse(state.pathParameters['id']!), initial: state.extra as Account?),
-      ),
+      pushed('/accounts/:id', (state) => AccountScreen(accountId: state.pathParameters['id']!, initial: state.extra as Account?)),
       pushed('/planning', (_) => const PlanningScreen()),
       pushed('/categories', (_) => const CategoriesScreen()),
       pushed('/notifications', (_) => const NotificationsScreen()),
-      pushed('/goals/:id', (state) => GoalScreen(goalId: int.parse(state.pathParameters['id']!), color: state.extra as String? ?? 'sky')),
+      pushed('/goals/:id', (state) => GoalScreen(goalId: state.pathParameters['id']!, color: state.extra as String? ?? 'sky')),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => _Shell(shell),
         branches: [
@@ -107,7 +104,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 class _EditTransaction extends ConsumerWidget {
   const _EditTransaction({required this.groupId});
 
-  final int groupId;
+  final String groupId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

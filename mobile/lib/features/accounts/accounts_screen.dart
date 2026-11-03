@@ -125,7 +125,7 @@ class AccountTile extends ConsumerWidget {
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key, required this.accountId, this.initial});
 
-  final int accountId;
+  final String accountId;
   final Account? initial;
 
   @override

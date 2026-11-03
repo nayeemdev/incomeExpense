@@ -9,9 +9,9 @@ class Currency {
   const Currency({required this.id, required this.code, required this.decimals});
 
   factory Currency.fromJson(Json json) =>
-      Currency(id: json['id'] as int, code: json['code'] as String, decimals: json['decimal_places'] as int? ?? 2);
+      Currency(id: json['id'] as String, code: json['code'] as String, decimals: json['decimal_places'] as int? ?? 2);
 
-  final int id;
+  final String id;
   final String code;
   final int decimals;
 }
@@ -29,13 +29,13 @@ class User {
   const User({required this.id, required this.name, required this.email, required this.twoFactor});
 
   factory User.fromJson(Json json) => User(
-    id: json['id'] as int,
+    id: json['id'] as String,
     name: json['name'] as String,
     email: json['email'] as String,
     twoFactor: json['two_factor_enabled'] as bool? ?? false,
   );
 
-  final int id;
+  final String id;
   final String name;
   final String email;
   final bool twoFactor;
@@ -52,23 +52,23 @@ class Ledger {
   });
 
   factory Ledger.fromJson(Json json) => Ledger(
-    id: json['id'] as int,
+    id: json['id'] as String,
     name: json['name'] as String,
     currency: Currency.fromJson(json['primary_currency'] as Json),
     role: json['role'] as String? ?? 'viewer',
-    defaultAccountId: json['default_account_id'] as int?,
-    defaultIncomeAccountId: json['default_income_account_id'] as int?,
+    defaultAccountId: json['default_account_id'] as String?,
+    defaultIncomeAccountId: json['default_income_account_id'] as String?,
   );
 
-  final int id;
+  final String id;
   final String name;
   final Currency currency;
   final String role;
-  final int? defaultAccountId;
-  final int? defaultIncomeAccountId;
+  final String? defaultAccountId;
+  final String? defaultIncomeAccountId;
 
   /// The account new money is paid from, or received into for income, unless the member picks another.
-  int? defaultAccountFor(String type) => type == 'deposit' ? defaultIncomeAccountId ?? defaultAccountId : defaultAccountId;
+  String? defaultAccountFor(String type) => type == 'deposit' ? defaultIncomeAccountId ?? defaultAccountId : defaultAccountId;
 
   bool get canEdit => role == 'owner' || role == 'editor';
 }
@@ -86,7 +86,7 @@ class Account {
   });
 
   factory Account.fromJson(Json json) => Account(
-    id: json['id'] as int,
+    id: json['id'] as String,
     name: json['name'] as String,
     type: json['type'] as String,
     active: json['active'] as bool? ?? true,
@@ -96,7 +96,7 @@ class Account {
     liabilityDirection: json['liability_direction'] as String?,
   );
 
-  final int id;
+  final String id;
   final String name;
   final String type;
   final bool active;
@@ -111,9 +111,10 @@ class Account {
 class AccountRef {
   const AccountRef({required this.id, required this.name, required this.type});
 
-  factory AccountRef.fromJson(Json json) => AccountRef(id: json['id'] as int, name: json['name'] as String, type: json['type'] as String);
+  factory AccountRef.fromJson(Json json) =>
+      AccountRef(id: json['id'] as String, name: json['name'] as String, type: json['type'] as String);
 
-  final int id;
+  final String id;
   final String name;
   final String type;
 }
@@ -123,9 +124,9 @@ class NamedRef {
   const NamedRef(this.id, this.name, {this.icon, this.color});
 
   factory NamedRef.fromJson(Json json) =>
-      NamedRef(json['id'] as int, json['name'] as String, icon: json['icon'] as String?, color: json['color'] as String?);
+      NamedRef(json['id'] as String, json['name'] as String, icon: json['icon'] as String?, color: json['color'] as String?);
 
-  final int id;
+  final String id;
   final String name;
   final String? icon;
   final String? color;
@@ -152,8 +153,8 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Json json) => Transaction(
-    id: json['id'] as int,
-    groupId: json['group_id'] as int,
+    id: json['id'] as String,
+    groupId: json['group_id'] as String,
     groupTitle: json['group_title'] as String?,
     type: json['type'] as String,
     date: DateTime.parse(json['date'] as String),
@@ -170,8 +171,8 @@ class Transaction {
     runningBalance: json['running_balance']?.toString(),
   );
 
-  final int id;
-  final int groupId;
+  final String id;
+  final String groupId;
   final String? groupTitle;
   final String type;
   final DateTime date;
@@ -191,10 +192,13 @@ class Transaction {
 class TransactionGroup {
   const TransactionGroup({required this.id, required this.title, required this.splits});
 
-  factory TransactionGroup.fromJson(Json json) =>
-      TransactionGroup(id: json['id'] as int, title: json['title'] as String?, splits: _list(json['transactions'], Transaction.fromJson));
+  factory TransactionGroup.fromJson(Json json) => TransactionGroup(
+    id: json['id'] as String,
+    title: json['title'] as String?,
+    splits: _list(json['transactions'], Transaction.fromJson),
+  );
 
-  final int id;
+  final String id;
   final String? title;
   final List<Transaction> splits;
 }
@@ -217,13 +221,13 @@ class Budget {
   const Budget({required this.id, required this.name, required this.limits, required this.spent});
 
   factory Budget.fromJson(Json json) => Budget(
-    id: json['id'] as int,
+    id: json['id'] as String,
     name: json['name'] as String,
     limits: _list(json['limits'], BudgetLimit.fromJson),
     spent: _list(json['spent'], Amount.fromJson),
   );
 
-  final int id;
+  final String id;
   final String name;
   final List<BudgetLimit> limits;
   final List<Amount> spent;
@@ -244,7 +248,7 @@ class Bill {
   });
 
   factory Bill.fromJson(Json json) => Bill(
-    id: json['id'] as int,
+    id: json['id'] as String,
     name: json['name'] as String,
     group: json['object_group'] as String?,
     currency: Currency.fromJson(json['currency'] as Json),
@@ -256,7 +260,7 @@ class Bill {
     paidCount: (json['payments'] as List? ?? const []).length,
   );
 
-  final int id;
+  final String id;
   final String name;
   final String? group;
   final Currency currency;
@@ -292,7 +296,7 @@ class Notice {
 class CategoryTotal {
   const CategoryTotal(this.name, this.amount, {this.id, this.icon, this.color});
 
-  final int? id;
+  final String? id;
   final String? name;
   final Amount amount;
   final String? icon;
@@ -311,7 +315,7 @@ class Summary {
       (row) => CategoryTotal(
         row['name'] as String?,
         Amount.fromJson(row),
-        id: row['id'] as int?,
+        id: row['id'] as String?,
         icon: row['icon'] as String?,
         color: row['color'] as String?,
       ),
@@ -338,16 +342,16 @@ class Goal {
   });
 
   factory Goal.fromJson(Json json) => Goal(
-    id: json['id'] as int,
+    id: json['id'] as String,
     name: json['name'] as String,
     currency: Currency.fromJson(json['currency'] as Json),
     saved: double.tryParse(json['saved_amount'].toString()) ?? 0,
     target: double.tryParse(json['target_amount']?.toString() ?? ''),
     targetDate: _date(json['target_date']),
-    accounts: _list(json['accounts'], (account) => NamedRef(account['id'] as int, account['name'] as String)),
+    accounts: _list(json['accounts'], (account) => NamedRef(account['id'] as String, account['name'] as String)),
   );
 
-  final int id;
+  final String id;
   final String name;
   final Currency currency;
   final double saved;
@@ -372,7 +376,7 @@ class Report {
   factory Report.fromJson(Json json) {
     final data = json['data'] as Json;
     CategoryTotal total(Json row, String currency) =>
-        CategoryTotal(row['name'] as String?, Amount(currency, row['total'].toString()), id: row['id'] as int?);
+        CategoryTotal(row['name'] as String?, Amount(currency, row['total'].toString()), id: row['id'] as String?);
     final currency = (json['meta'] as Json)['currency'] as String;
     return Report(
       currency: currency,
@@ -399,9 +403,9 @@ class Attachment {
   const Attachment({required this.id, required this.filename, required this.mimeType});
 
   factory Attachment.fromJson(Json json) =>
-      Attachment(id: json['id'] as int, filename: json['filename'] as String, mimeType: json['mime_type'] as String? ?? '');
+      Attachment(id: json['id'] as String, filename: json['filename'] as String, mimeType: json['mime_type'] as String? ?? '');
 
-  final int id;
+  final String id;
   final String filename;
   final String mimeType;
 
