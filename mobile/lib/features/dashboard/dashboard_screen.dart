@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../api/models.dart';
 import '../../app/theme.dart';
@@ -20,63 +21,41 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ledger = ref.watch(currentLedgerProvider);
     final summary = ref.watch(summaryProvider);
-    final recent = ref.watch(transactionsProvider((query: '', type: null, accountId: null)));
     final unread = ref.watch(unreadCountProvider).value ?? 0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(ledger.name),
-        actions: [
-          IconButton(
-            tooltip: 'Notifications',
-            onPressed: () => context.push('/notifications'),
-            icon: Badge(isLabelVisible: unread > 0, label: Text('$unread'), child: const Icon(Icons.notifications_outlined)),
-          ),
-          IconButton(tooltip: 'Settings', onPressed: () => context.push('/settings'), icon: const Icon(Icons.settings_outlined)),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          refreshLedgerData(ref);
-          ref.invalidate(unreadCountProvider);
-          await ref.read(summaryProvider.future);
-        },
-        child: AsyncView(
-          value: summary,
-          onRetry: () => ref.invalidate(summaryProvider),
-          builder: (summary) => ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator.adaptive(
+          onRefresh: () async {
+            refreshLedgerData(ref);
+            ref.invalidate(unreadCountProvider);
+            await ref.read(summaryProvider.future);
+          },
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(bottom: 110),
             children: [
-              Text(DateFormat('MMMM y').format(DateTime.now()), style: TextStyle(color: Palette.of(context).muted)),
-              const SizedBox(height: 12),
-              _NetWorthCard(summary.netWorth),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(child: _StatCard('Spent', summary.spent, Palette.of(context).expense)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _StatCard('Earned', summary.earned, Palette.of(context).income)),
+              PageHeader(
+                title: DateFormat('MMMM y').format(DateTime.now()),
+                description: '${ledger.name}: how this month is going at a glance.',
+                actions: [
+                  SquareIconButton(
+                    icon: LucideIcons.bell,
+                    tooltip: 'Notifications',
+                    badge: unread,
+                    onPressed: () => context.push('/notifications'),
+                  ),
+                  SquareIconButton(icon: LucideIcons.settings, tooltip: 'Settings', onPressed: () => context.push('/settings')),
                 ],
               ),
-              const SizedBox(height: 16),
-              SectionCard(
-                title: 'Accounts',
-                trailing: TextButton(onPressed: () => context.go('/accounts'), child: const Text('All')),
-                child: Column(children: [for (final account in summary.accounts) AccountTile(account)]),
-              ),
-              if (summary.topCategories.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                SectionCard(title: 'Top spending', child: _TopCategories(summary.topCategories)),
-              ],
-              const SizedBox(height: 16),
-              SectionCard(
-                title: 'Recent transactions',
-                trailing: TextButton(onPressed: () => context.go('/transactions'), child: const Text('All')),
-                child: Column(
-                  children: [
-                    for (final transaction in recent.value?.items.take(6) ?? const <Transaction>[]) TransactionTile(transaction),
-                    if (recent.isLoading) const Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()),
-                  ],
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: AsyncView(
+                  value: summary,
+                  onRetry: () => ref.invalidate(summaryProvider),
+                  loading: const _DashboardSkeleton(),
+                  builder: (summary) => _DashboardBody(summary),
                 ),
               ),
             ],
@@ -87,58 +66,83 @@ class DashboardScreen extends ConsumerWidget {
   }
 }
 
-class _NetWorthCard extends StatelessWidget {
-  const _NetWorthCard(this.amount);
+class _DashboardBody extends ConsumerWidget {
+  const _DashboardBody(this.summary);
 
-  final Amount amount;
+  final Summary summary;
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recent = ref.watch(transactionsProvider((query: '', type: null, accountId: null)));
+    String money(Amount amount) => formatMoney(amount.value, amount.currency);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        StatCard(label: 'Net worth', value: money(summary.netWorth), icon: LucideIcons.landmark, tone: Tone.brand),
+        const SizedBox(height: 12),
+        Row(
           children: [
-            Text('Net worth', style: TextStyle(color: Palette.of(context).muted)),
-            const SizedBox(height: 4),
-            Text(
-              formatMoney(amount.value, amount.currency),
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w700),
+            Expanded(
+              child: StatCard(
+                label: 'Spent',
+                value: money(summary.spent),
+                icon: LucideIcons.arrowUpRight,
+                tone: Tone.negative,
+                compact: true,
+              ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  const _StatCard(this.label, this.amount, this.color);
-
-  final String label;
-  final Amount amount;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: TextStyle(color: Palette.of(context).muted)),
-            const SizedBox(height: 4),
-            FittedBox(
-              child: Text(
-                formatMoney(amount.value, amount.currency),
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600, color: color),
+            const SizedBox(width: 12),
+            Expanded(
+              child: StatCard(
+                label: 'Earned',
+                value: money(summary.earned),
+                icon: LucideIcons.arrowDownLeft,
+                tone: Tone.positive,
+                compact: true,
               ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 16),
+        SectionCard(
+          title: 'Accounts',
+          action: TextButton(onPressed: () => context.go('/accounts'), child: const Text('View all')),
+          child: Column(
+            children: [
+              for (final (index, account) in summary.accounts.indexed) ...[
+                if (index > 0) const Divider(indent: 64),
+                AccountTile(account, showIcon: true),
+              ],
+            ],
+          ),
+        ),
+        if (summary.topCategories.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          SectionCard(title: 'Top spending', description: 'Where the money went this month', child: _TopCategories(summary.topCategories)),
+        ],
+        const SizedBox(height: 16),
+        SectionCard(
+          title: 'Recent transactions',
+          action: TextButton(onPressed: () => context.go('/transactions'), child: const Text('View all')),
+          child: switch (recent) {
+            AsyncValue(hasValue: true, :final value?) when value.items.isEmpty => const EmptyState(
+              icon: LucideIcons.receipt,
+              title: 'Nothing yet',
+              message: 'Tap + to record your first transaction.',
+            ),
+            AsyncValue(hasValue: true, :final value?) => Column(
+              children: [
+                for (final (index, transaction) in value.items.take(6).indexed) ...[
+                  if (index > 0) const Divider(indent: 60),
+                  TransactionTile(transaction),
+                ],
+              ],
+            ),
+            _ => const Column(children: [SkeletonRow(), SkeletonRow(), SkeletonRow()]),
+          },
+        ),
+      ],
     );
   }
 }
@@ -150,39 +154,86 @@ class _TopCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = Palette.of(context);
-    final largest = rows.map((row) => double.tryParse(row.amount.value) ?? 0).fold<double>(0, (a, b) => a > b ? a : b);
+    final text = Theme.of(context).textTheme;
+    final values = rows.map((row) => double.tryParse(row.amount.value) ?? 0).toList();
+    final largest = values.fold<double>(0, (a, b) => a > b ? a : b);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Column(
         children: [
-          for (final row in rows)
+          for (final (index, row) in rows.indexed)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
+              padding: const EdgeInsets.only(top: 10),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
                     children: [
-                      Expanded(child: Text(row.name ?? 'No category')),
-                      Text(formatMoney(row.amount.value, row.amount.currency), style: const TextStyle(fontWeight: FontWeight.w600)),
+                      Expanded(child: Text(row.name ?? 'No category', style: text.bodyMedium)),
+                      MoneyText(
+                        row.amount.value,
+                        row.amount.currency,
+                        tone: MoneyTone.none,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 6),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: largest == 0 ? 0 : (double.tryParse(row.amount.value) ?? 0) / largest,
-                      minHeight: 6,
-                      backgroundColor: palette.surface,
-                    ),
-                  ),
+                  ProgressBar(value: values[index], max: largest == 0 ? 1 : largest),
                 ],
               ),
             ),
         ],
       ),
+    );
+  }
+}
+
+class _DashboardSkeleton extends StatelessWidget {
+  const _DashboardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    Widget stat({double valueWidth = 160}) => SurfaceCard(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(children: [Skeleton(width: 70, height: 13), Spacer(), Skeleton(width: 34, height: 34, radius: 9)]),
+          const SizedBox(height: 10),
+          Skeleton(width: valueWidth, height: 26),
+        ],
+      ),
+    );
+    return Column(
+      children: [
+        stat(),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(child: stat(valueWidth: 90)),
+            const SizedBox(width: 12),
+            Expanded(child: stat(valueWidth: 90)),
+          ],
+        ),
+        const SizedBox(height: 16),
+        SurfaceCard(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Palette.of(context).border)),
+                ),
+                child: const Row(children: [Skeleton(width: 90, height: 15)]),
+              ),
+              const SkeletonRow(),
+              const SkeletonRow(),
+              const SkeletonRow(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

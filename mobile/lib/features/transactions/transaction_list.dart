@@ -1,53 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../shared/widgets.dart';
 import '../ledger/ledger_data.dart';
 import 'transaction_tile.dart';
 
+/// A scrolling list of transactions grouped by day, with `header` widgets above it.
 class TransactionList extends ConsumerWidget {
-  const TransactionList({super.key, required this.filter, this.header});
+  const TransactionList({super.key, required this.filter, this.header = const []});
 
   final TransactionFilter filter;
-  final Widget? header;
+  final List<Widget> header;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = transactionsProvider(filter);
     final feed = ref.watch(provider);
 
-    return RefreshIndicator(
+    return RefreshIndicator.adaptive(
       onRefresh: () => ref.refresh(provider.future),
-      child: AsyncView(
-        value: feed,
-        onRetry: () => ref.invalidate(provider),
-        builder: (feed) {
-          final rows = groupedByDay(feed.items);
-          return NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification.metrics.extentAfter < 400) ref.read(provider.notifier).loadMore();
-              return false;
-            },
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(bottom: 96),
-              children: [
-                ?header,
-                if (feed.items.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 48),
-                    child: MessageView(
-                      icon: Icons.receipt_long_outlined,
-                      title: 'No transactions',
-                      message: 'Nothing matches yet. Tap + to add one.',
-                    ),
-                  ),
-                ...rows,
-                if (feed.loadingMore) const Padding(padding: EdgeInsets.all(16), child: Center(child: CircularProgressIndicator())),
-              ],
-            ),
-          );
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (notification.metrics.extentAfter < 400) ref.read(provider.notifier).loadMore();
+          return false;
         },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 110),
+          children: [
+            ...header,
+            ...switch (feed) {
+              AsyncValue(hasValue: true, :final value?) when value.items.isEmpty => [
+                const EmptyState(icon: LucideIcons.receipt, title: 'No transactions', message: 'Nothing matches yet. Tap + to add one.'),
+              ],
+              AsyncValue(hasValue: true, :final value?) => [
+                ...groupedByDay(context, value.items),
+                if (value.loadingMore)
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator.adaptive()),
+                  ),
+              ],
+              AsyncValue(:final error?) => [
+                AsyncView(
+                  value: AsyncError<void>(error, StackTrace.empty),
+                  onRetry: () => ref.invalidate(provider),
+                  builder: (_) => const SizedBox(),
+                ),
+              ],
+              _ => [
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: SurfaceCard(child: Column(children: [SkeletonRow(), SkeletonRow(), SkeletonRow(), SkeletonRow(), SkeletonRow()])),
+                ),
+              ],
+            },
+          ],
+        ),
       ),
     );
   }

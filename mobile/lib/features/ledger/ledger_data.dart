@@ -7,26 +7,19 @@ import 'ledger.dart';
 
 const _all = 200;
 
-List<T> _data<T>(dynamic response, T Function(Json) parse) =>
-    (response['data'] as List).map((json) => parse(json as Json)).toList();
+List<T> _data<T>(dynamic response, T Function(Json) parse) => (response['data'] as List).map((json) => parse(json as Json)).toList();
 
 final summaryProvider = FutureProvider.autoDispose<Summary>((ref) async {
   final ledger = ref.watch(currentLedgerProvider);
   final (start, end) = Dates.thisMonth();
-  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'summary'), query: {
-    'start': isoDate(start),
-    'end': isoDate(end),
-  });
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'summary'), query: {'start': isoDate(start), 'end': isoDate(end)});
   return Summary.fromJson(response['data'] as Json);
 });
 
 /// Keyed by a comma separated list of account types, so equal requests share one cache entry.
 final accountsProvider = FutureProvider.autoDispose.family<List<Account>, String>((ref, types) async {
   final ledger = ref.watch(currentLedgerProvider);
-  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'accounts'), query: {
-    'type': types.split(','),
-    'per_page': _all,
-  });
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'accounts'), query: {'type': types.split(','), 'per_page': _all});
   return _data(response, Account.fromJson);
 });
 
@@ -54,6 +47,20 @@ final billsProvider = FutureProvider.autoDispose<List<Bill>>((ref) async {
   return _data(response, Bill.fromJson);
 });
 
+typedef FrequentPicks = ({List<Transaction> transactions, List<NamedRef> categories, List<AccountRef> counterparties});
+
+final frequentProvider = FutureProvider.autoDispose.family<FrequentPicks, String>((ref, type) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'autocomplete/frequent'), query: {'type': type});
+  final data = response['data'] as Json;
+  List<T> list<T>(String key, T Function(Json) parse) => (data[key] as List? ?? const []).map((json) => parse(json as Json)).toList();
+  return (
+    transactions: list('transactions', Transaction.fromJson),
+    categories: list('categories', NamedRef.fromJson),
+    counterparties: list('counterparties', AccountRef.fromJson),
+  );
+});
+
 typedef TransactionFilter = ({String query, String? type, int? accountId});
 
 class TransactionFeed {
@@ -67,8 +74,9 @@ class TransactionFeed {
   bool get hasMore => page < lastPage;
 }
 
-final transactionsProvider =
-    AsyncNotifierProvider.autoDispose.family<TransactionsNotifier, TransactionFeed, TransactionFilter>(TransactionsNotifier.new);
+final transactionsProvider = AsyncNotifierProvider.autoDispose.family<TransactionsNotifier, TransactionFeed, TransactionFilter>(
+  TransactionsNotifier.new,
+);
 
 class TransactionsNotifier extends AsyncNotifier<TransactionFeed> {
   TransactionsNotifier(this.filter);
@@ -87,12 +95,17 @@ class TransactionsNotifier extends AsyncNotifier<TransactionFeed> {
 
   Future<TransactionFeed> _fetch(int page, List<Transaction> previous) async {
     final ledger = ref.read(currentLedgerProvider);
-    final response = await ref.read(apiProvider).get(ledgerPath(ledger, 'transactions'), query: {
-      'page': page,
-      'query': filter.query,
-      'type': filter.type == null ? null : [filter.type],
-      'account_id': filter.accountId,
-    });
+    final response = await ref
+        .read(apiProvider)
+        .get(
+          ledgerPath(ledger, 'transactions'),
+          query: {
+            'page': page,
+            'query': filter.query,
+            'type': filter.type == null ? null : [filter.type],
+            'account_id': filter.accountId,
+          },
+        );
     final meta = response['meta'] as Json;
     return TransactionFeed([...previous, ..._data(response, Transaction.fromJson)], page, meta['last_page'] as int);
   }
@@ -112,5 +125,6 @@ void refreshLedgerData(WidgetRef ref) {
     ..invalidate(budgetsProvider)
     ..invalidate(billsProvider)
     ..invalidate(transactionsProvider)
+    ..invalidate(frequentProvider)
     ..invalidate(transactionGroupProvider);
 }

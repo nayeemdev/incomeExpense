@@ -34,13 +34,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   Future<String?> lastServer() => _storage.read(key: _serverKey);
 
-  Future<void> signIn({
-    required String server,
-    required String email,
-    required String password,
-    String? code,
-    String? recoveryCode,
-  }) async {
+  Future<void> signIn({required String server, required String email, required String password, String? code, String? recoveryCode}) async {
     final client = ApiClient(baseUrl: server);
     final dynamic response;
     try {
@@ -83,9 +77,5 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 final apiProvider = Provider<ApiClient>((ref) {
   final session = ref.watch(sessionProvider).value;
   if (session == null) throw StateError('Not signed in');
-  return ApiClient(
-    baseUrl: session.serverUrl,
-    token: session.token,
-    onUnauthorized: () => ref.read(sessionProvider.notifier).expire(),
-  );
+  return ApiClient(baseUrl: session.serverUrl, token: session.token, onUnauthorized: () => ref.read(sessionProvider.notifier).expire());
 });
