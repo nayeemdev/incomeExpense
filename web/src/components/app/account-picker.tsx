@@ -24,13 +24,13 @@ export function AccountPicker({ id, type, side, accounts, value, onChange, ...pr
   const options: ComboboxOption[] = accounts
     .filter((account) => allowed.includes(account.type) && account.active)
     .map((account) => ({
-      value: String(account.id),
+      value: account.id,
       label: account.name,
       group: labels[account.type],
       hint: account.currency?.code,
     }))
 
-  const selected = value && 'id' in value ? String(value.id) : null
+  const selected = value && 'id' in value ? value.id : null
   const typedName = value && 'name' in value ? value.name : undefined
 
   return (
@@ -40,7 +40,7 @@ export function AccountPicker({ id, type, side, accounts, value, onChange, ...pr
       options={options}
       value={selected}
       displayValue={typedName}
-      onChange={(next) => onChange(next ? { id: Number(next) } : null)}
+      onChange={(next) => onChange(next ? { id: next } : null)}
       onCreate={counterparty ? (name) => onChange({ name }) : undefined}
       createLabel={(name) => t('Use "{{name}}"', { name })}
       placeholder={

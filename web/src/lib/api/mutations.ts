@@ -5,13 +5,13 @@ import { api } from './client'
 import { ledgerKey } from './queries'
 import type { Resource, TransactionGroup, TransactionGroupInput } from './types'
 
-export function useInvalidateLedger(ledgerId: number) {
+export function useInvalidateLedger(ledgerId: string) {
   const queryClient = useQueryClient()
 
   return () => queryClient.invalidateQueries({ queryKey: ledgerKey(ledgerId) })
 }
 
-export function useSaveTransaction(ledgerId: number, groupId?: number) {
+export function useSaveTransaction(ledgerId: string, groupId?: string) {
   const invalidate = useInvalidateLedger(ledgerId)
 
   return useMutation({
@@ -27,11 +27,11 @@ export function useSaveTransaction(ledgerId: number, groupId?: number) {
 /**
  * Deletes right away and offers an undo in the toast instead of asking for confirmation first.
  */
-export function useDeleteTransaction(ledgerId: number) {
+export function useDeleteTransaction(ledgerId: string) {
   const invalidate = useInvalidateLedger(ledgerId)
 
   return useMutation({
-    mutationFn: (groupId: number) => api.delete(`/ledgers/${ledgerId}/transactions/${groupId}`).then(() => groupId),
+    mutationFn: (groupId: string) => api.delete(`/ledgers/${ledgerId}/transactions/${groupId}`).then(() => groupId),
     onSuccess: async (groupId) => {
       await invalidate()
       toast(i18n.t('Transaction deleted'), {

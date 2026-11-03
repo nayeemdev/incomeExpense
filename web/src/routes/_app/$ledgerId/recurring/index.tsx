@@ -37,7 +37,7 @@ function RecurringTransactions() {
   const { data: recurrences } = useQuery(recurrencesQuery(ledger.id))
 
   const trigger = useMutation({
-    mutationFn: (id: number) => api.post(`/ledgers/${ledger.id}/recurrences/${id}/trigger`),
+    mutationFn: (id: string) => api.post(`/ledgers/${ledger.id}/recurrences/${id}/trigger`),
     onSuccess: async () => {
       await invalidate()
       toast.success(t('Transaction created for today'))
@@ -46,7 +46,7 @@ function RecurringTransactions() {
   })
 
   const remove = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/recurrences/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/recurrences/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })

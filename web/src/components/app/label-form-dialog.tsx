@@ -28,8 +28,8 @@ type LabelFormDialogProps = {
   kind: 'categories' | 'tags'
   open: boolean
   onOpenChange: (open: boolean) => void
-  item?: { id: number; name: string; notes?: string | null; description?: string | null; icon?: string | null; color?: string | null }
-  onSaved?: (id: number) => void
+  item?: { id: string; name: string; notes?: string | null; description?: string | null; icon?: string | null; color?: string | null }
+  onSaved?: (id: string) => void
 }
 
 /**
@@ -57,7 +57,7 @@ export function LabelFormDialog({ kind, open, onOpenChange, item, onSaved }: Lab
       }
       const path = `/ledgers/${ledger.id}/${kind}`
 
-      return (item ? api.patch<Resource<{ id: number }>>(`${path}/${item.id}`, body) : api.post<Resource<{ id: number }>>(path, body)).then(
+      return (item ? api.patch<Resource<{ id: string }>>(`${path}/${item.id}`, body) : api.post<Resource<{ id: string }>>(path, body)).then(
         (response) => response.data,
       )
     },

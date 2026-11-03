@@ -5,7 +5,7 @@ export type DonutSlice = { key: string; name: string; value: number; color: stri
 /**
  * The largest categories in fixed palette order, with the rest folded into "Other" so colors stay distinguishable.
  */
-export function donutSlices(rows: Array<{ id: number | null; name: string | null; total: string }>, otherLabel: string, noneLabel: string): DonutSlice[] {
+export function donutSlices(rows: Array<{ id: string | null; name: string | null; total: string }>, otherLabel: string, noneLabel: string): DonutSlice[] {
   const sorted = [...rows].map((row) => ({ ...row, value: Number(row.total) })).filter((row) => row.value > 0).sort((a, b) => b.value - a.value)
   const slices = sorted.slice(0, SLICES).map((row, index) => ({
     key: String(row.id ?? 'none'),

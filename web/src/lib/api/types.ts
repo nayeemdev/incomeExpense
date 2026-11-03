@@ -15,7 +15,7 @@ export type Preferences = {
 }
 
 export type User = {
-  id: number
+  id: string
   name: string
   email: string
   is_admin: boolean
@@ -24,25 +24,25 @@ export type User = {
   created_at: string
 }
 
-export type Currency = { id: number; code: string; name: string; decimal_places: number }
+export type Currency = { id: string; code: string; name: string; decimal_places: number }
 
 export type LedgerRole = 'owner' | 'editor' | 'viewer'
 
 export type Ledger = {
-  id: number
+  id: string
   name: string
   primary_currency: Currency
   fiscal_year_start: string
   role: LedgerRole
-  default_account_id: number | null
-  default_income_account_id: number | null
+  default_account_id: string | null
+  default_income_account_id: string | null
   created_at: string
 }
 
-export type LedgerMember = { id: number; name: string; email: string; role: LedgerRole; joined_at: string }
+export type LedgerMember = { id: string; name: string; email: string; role: LedgerRole; joined_at: string }
 
 export type LedgerInvitation = {
-  id: number
+  id: string
   email: string
   role: LedgerRole
   ledger?: Ledger
@@ -58,7 +58,7 @@ export type LiabilityDirection = 'owed' | 'lent'
 export type InterestPeriod = 'daily' | 'monthly' | 'yearly'
 
 export type Account = {
-  id: number
+  id: string
   type: AccountType
   name: string
   object_group?: string | null
@@ -87,11 +87,11 @@ export type Account = {
 
 export type TransactionType = 'withdrawal' | 'deposit' | 'transfer' | 'opening_balance' | 'reconciliation'
 
-export type AccountRef = { id: number; name: string; type: AccountType | 'initial_balance' | 'reconciliation' }
+export type AccountRef = { id: string; name: string; type: AccountType | 'initial_balance' | 'reconciliation' }
 
 export type Transaction = {
-  id: number
-  group_id: number
+  id: string
+  group_id: string
   group_title?: string | null
   type: TransactionType
   date: string
@@ -103,9 +103,9 @@ export type Transaction = {
   foreign_currency: Currency | null
   foreign_amount: string | null
   category?: CategoryRef | null
-  budget?: { id: number; name: string } | null
-  bill?: { id: number; name: string } | null
-  tags?: Array<{ id: number; name: string }>
+  budget?: { id: string; name: string } | null
+  bill?: { id: string; name: string } | null
+  tags?: Array<{ id: string; name: string }>
   notes: string | null
   running_balance?: string
   created_at: string
@@ -113,20 +113,20 @@ export type Transaction = {
 }
 
 export type TransactionGroup = {
-  id: number
+  id: string
   title: string | null
   transactions: Transaction[]
-  created_by?: { id: number; name: string } | null
+  created_by?: { id: string; name: string } | null
   created_at: string
   updated_at: string
 }
 
-export type CategoryRef = { id: number; name: string; icon?: string | null; color?: string | null }
+export type CategoryRef = { id: string; name: string; icon?: string | null; color?: string | null }
 
 export type CategoryStyles = { icons: string[]; colors: string[] }
 
 export type Category = {
-  id: number
+  id: string
   name: string
   icon: string | null
   color: string | null
@@ -137,7 +137,7 @@ export type Category = {
 }
 
 export type Tag = {
-  id: number
+  id: string
   name: string
   description: string | null
   date: string | null
@@ -147,9 +147,9 @@ export type Tag = {
 }
 
 export type Attachment = {
-  id: number
+  id: string
   attachable_type: 'account' | 'transaction_group'
-  attachable_id: number
+  attachable_id: string
   filename: string
   title: string | null
   mime_type: string
@@ -158,7 +158,7 @@ export type Attachment = {
 }
 
 export type PersonalAccessToken = {
-  id: number
+  id: string
   name: string
   abilities: string[]
   last_used_at: string | null
@@ -174,7 +174,7 @@ export type Summary = {
   earned_total: CurrencyAmount & { complete: boolean }
   spent: CurrencyAmount[]
   earned: CurrencyAmount[]
-  top_categories: Array<{ id: number | null; name: string | null; icon: string | null; color: string | null } & CurrencyAmount>
+  top_categories: Array<{ id: string | null; name: string | null; icon: string | null; color: string | null } & CurrencyAmount>
   accounts: Account[]
 }
 
@@ -183,16 +183,16 @@ export type SplitInput = {
   date: string
   description: string
   amount: string
-  source_id?: number | null
+  source_id?: string | null
   source_name?: string | null
-  destination_id?: number | null
+  destination_id?: string | null
   destination_name?: string | null
   foreign_amount?: string | null
-  foreign_currency_id?: number | null
-  category_id?: number | null
+  foreign_currency_id?: string | null
+  category_id?: string | null
   category_name?: string | null
-  budget_id?: number | null
-  bill_id?: number | null
+  budget_id?: string | null
+  bill_id?: string | null
   tags?: string[]
   notes?: string | null
 }
@@ -203,8 +203,8 @@ export type Frequency = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'half_yea
 export type AutoBudgetType = 'reset' | 'rollover' | 'adjusted'
 
 export type BudgetLimit = {
-  id: number
-  budget_id: number
+  id: string
+  budget_id: string
   currency: Currency
   start_date: string
   end_date: string
@@ -214,7 +214,7 @@ export type BudgetLimit = {
 }
 
 export type Budget = {
-  id: number
+  id: string
   name: string
   active: boolean
   order: number
@@ -228,7 +228,7 @@ export type Budget = {
 }
 
 export type AvailableBudget = {
-  id: number
+  id: string
   currency: Pick<Currency, 'id' | 'code' | 'decimal_places'>
   start_date: string
   end_date: string
@@ -236,7 +236,7 @@ export type AvailableBudget = {
 }
 
 export type Bill = {
-  id: number
+  id: string
   name: string
   object_group: string | null
   currency: Currency
@@ -252,11 +252,11 @@ export type Bill = {
   notes: string | null
   next_expected_date?: string | null
   expected_dates?: string[]
-  payments?: Array<{ transaction_id: number; group_id: number; date: string; description: string; amount: string }>
+  payments?: Array<{ transaction_id: string; group_id: string; date: string; description: string; amount: string }>
 }
 
 export type PiggyBank = {
-  id: number
+  id: string
   name: string
   object_group: string | null
   currency: Currency
@@ -268,15 +268,15 @@ export type PiggyBank = {
   active: boolean
   order: number
   notes: string | null
-  accounts: Array<{ id: number; name: string; current_amount: string }>
-  events?: Array<{ id: number; account: { id: number; name: string }; amount: string; date: string }>
+  accounts: Array<{ id: string; name: string; current_amount: string }>
+  events?: Array<{ id: string; account: { id: string; name: string }; amount: string; date: string }>
 }
 
 export type RepetitionType = 'daily' | 'weekly' | 'monthly' | 'ndom' | 'yearly'
 export type WeekendHandling = 'keep' | 'skip' | 'before' | 'after'
 
 export type Recurrence = {
-  id: number
+  id: string
   type: 'withdrawal' | 'deposit' | 'transfer'
   title: string
   description: string | null
@@ -295,21 +295,21 @@ export type Recurrence = {
     source: AccountRef
     destination: AccountRef
     category: CategoryRef | null
-    budget: { id: number; name: string } | null
-    bill: { id: number; name: string } | null
+    budget: { id: string; name: string } | null
+    bill: { id: string; name: string } | null
     tags: string[]
     notes: string | null
   }>
   upcoming: string[]
 }
 
-export type LinkType = { id: number; name: string; outward: string; inward: string; custom: boolean }
+export type LinkType = { id: string; name: string; outward: string; inward: string; custom: boolean }
 
 export type TransactionLink = {
-  id: number
-  link_type_id: number
+  id: string
+  link_type_id: string
   label: string
-  group: { id: number; title: string | null; date: string | null }
+  group: { id: string; title: string | null; date: string | null }
   notes: string | null
 }
 
@@ -319,7 +319,7 @@ export type AppNotification = {
   title: string
   body: string
   path: string
-  ledger_id: number | null
+  ledger_id: string | null
   read_at: string | null
   created_at: string
 }
@@ -358,8 +358,8 @@ export type RuleTrigger = { type: string; value: string | null; negated: boolean
 export type RuleAction = { type: string; value: string | null }
 
 export type Rule = {
-  id: number
-  rule_group_id: number
+  id: string
+  rule_group_id: string
   title: string
   description: string | null
   trigger_on: 'store' | 'update' | 'both'
@@ -372,7 +372,7 @@ export type Rule = {
 }
 
 export type RuleGroup = {
-  id: number
+  id: string
   title: string
   description: string | null
   order: number
@@ -386,10 +386,10 @@ export type RuleOptions = {
   actions: Array<{ type: string; needs_value: boolean }>
 }
 
-export type Webhook = { id: number; title: string; url: string; events: string[]; active: boolean; created_at: string }
+export type Webhook = { id: string; title: string; url: string; events: string[]; active: boolean; created_at: string }
 
 export type WebhookDelivery = {
-  id: number
+  id: string
   event: string
   status_code: number | null
   attempts: number
@@ -401,23 +401,23 @@ export type WebhookDelivery = {
 
 export type ReportMeta = { currency: string; start: string; end: string; interval: 'day' | 'week' | 'month' | 'year'; complete: boolean }
 
-export type BreakdownRow = { id: number | null; name: string | null; total: string; buckets: Record<string, string> }
+export type BreakdownRow = { id: string | null; name: string | null; total: string; buckets: Record<string, string> }
 
 export type OverviewReport = {
-  accounts: Array<{ id: number; name: string; currency: string | null; start: string; end: string; change: string }>
+  accounts: Array<{ id: string; name: string; currency: string | null; start: string; end: string; change: string }>
   income_expense: Array<{ start: string; end: string; income: string; expense: string }>
   expense_categories: BreakdownRow[]
   income_categories: BreakdownRow[]
-  budgets: Array<{ id: number; name: string; budgeted: string; spent: string }>
+  budgets: Array<{ id: string; name: string; budgeted: string; spent: string }>
   net_worth: Array<{ date: string; balance: string }>
 }
 
-export type ExchangeRate = { id: number; from: string; to: string; date: string; rate: string; manual: boolean }
+export type ExchangeRate = { id: string; from: string; to: string; date: string; rate: string; manual: boolean }
 
 export type SearchToken = { key: string; value: string; negated: boolean }
 
 export type ImportConfig = {
-  account_id?: number
+  account_id?: string
   columns?: Record<string, number | null>
   has_header?: boolean
   date_format?: string | null
@@ -428,7 +428,7 @@ export type ImportConfig = {
 }
 
 export type ImportJob = {
-  id: number
+  id: string
   filename: string
   format: 'csv' | 'camt053'
   status: 'uploaded' | 'queued' | 'running' | 'completed' | 'failed'

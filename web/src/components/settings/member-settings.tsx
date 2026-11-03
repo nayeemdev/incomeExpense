@@ -57,13 +57,13 @@ export function MemberSettings() {
   const form = useForm({ resolver: zodResolver(inviteSchema), defaultValues: { email: '', role: 'editor' as const } })
 
   const updateRole = useMutation({
-    mutationFn: ({ id, role }: { id: number; role: LedgerRole }) => api.patch(`/ledgers/${ledger.id}/members/${id}`, { role }),
+    mutationFn: ({ id, role }: { id: string; role: LedgerRole }) => api.patch(`/ledgers/${ledger.id}/members/${id}`, { role }),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
 
   const removeMember = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/members/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/members/${id}`),
     onSuccess: async (_, id) => {
       if (id === user?.id) {
         await queryClient.invalidateQueries({ queryKey: ['ledgers'] })
@@ -86,7 +86,7 @@ export function MemberSettings() {
   })
 
   const revoke = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/invitations/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/invitations/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })

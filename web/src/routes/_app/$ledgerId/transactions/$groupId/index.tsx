@@ -30,8 +30,8 @@ function TransactionDetail() {
   const locale = useLocale()
   const ledger = useLedger()
   const canEdit = useCanEdit()
-  const groupId = Number(Route.useParams().groupId)
-  const ledgerId = String(ledger.id)
+  const groupId = Route.useParams().groupId
+  const ledgerId = ledger.id
   const { data: group } = useQuery(transactionGroupQuery(ledger.id, groupId))
   const remove = useDeleteTransaction(ledger.id)
   const quickAdd = useQuickAdd()
@@ -46,7 +46,7 @@ function TransactionDetail() {
     ['asset', 'expense', 'revenue', 'liability'].includes(account.type) ? (
       <Link
         to="/$ledgerId/accounts/$accountId"
-        params={{ ledgerId, accountId: String(account.id) }}
+        params={{ ledgerId, accountId: account.id }}
         className="font-medium hover:underline"
       >
         {account.name}
@@ -131,7 +131,7 @@ function TransactionDetail() {
                       <dd>
                         <Link
                           to="/$ledgerId/categories/$categoryId"
-                          params={{ ledgerId, categoryId: String(transaction.category.id) }}
+                          params={{ ledgerId, categoryId: transaction.category.id }}
                           className="hover:underline"
                         >
                           {transaction.category.name}
@@ -143,7 +143,7 @@ function TransactionDetail() {
                     <div>
                       <dt className="text-muted-foreground">{t('Budget')}</dt>
                       <dd>
-                        <Link to="/$ledgerId/budgets/$budgetId" params={{ ledgerId, budgetId: String(transaction.budget.id) }} search={{}} className="hover:underline">
+                        <Link to="/$ledgerId/budgets/$budgetId" params={{ ledgerId, budgetId: transaction.budget.id }} search={{}} className="hover:underline">
                           {transaction.budget.name}
                         </Link>
                       </dd>
@@ -153,7 +153,7 @@ function TransactionDetail() {
                     <div>
                       <dt className="text-muted-foreground">{t('Bill')}</dt>
                       <dd>
-                        <Link to="/$ledgerId/bills/$billId" params={{ ledgerId, billId: String(transaction.bill.id) }} className="hover:underline">
+                        <Link to="/$ledgerId/bills/$billId" params={{ ledgerId, billId: transaction.bill.id }} className="hover:underline">
                           {transaction.bill.name}
                         </Link>
                       </dd>
@@ -165,7 +165,7 @@ function TransactionDetail() {
                       <dd className="flex flex-wrap gap-1">
                         {transaction.tags.map((tag) => (
                           <Badge key={tag.id} variant="outline" asChild>
-                            <Link to="/$ledgerId/tags/$tagId" params={{ ledgerId, tagId: String(tag.id) }}>
+                            <Link to="/$ledgerId/tags/$tagId" params={{ ledgerId, tagId: tag.id }}>
                               {tag.name}
                             </Link>
                           </Badge>

@@ -8,9 +8,9 @@ export const Route = createFileRoute('/_app/')({
 
     if (ledgers.length === 0) throw redirect({ to: '/onboarding' })
 
-    const last = Number(storage.get('ledger'))
+    const last = storage.get('ledger')
     const ledger = ledgers.find((item) => item.id === last) ?? ledgers[0]
 
-    throw redirect({ to: '/$ledgerId', params: { ledgerId: String(ledger.id) } })
+    throw redirect({ to: '/$ledgerId', params: { ledgerId: ledger.id } })
   },
 })

@@ -36,7 +36,7 @@ function BudgetDetail() {
   const [today] = useState(() => new Date())
   const [editing, setEditing] = useState(false)
   const { month } = Route.useSearch()
-  const budgetId = Number(Route.useParams().budgetId)
+  const budgetId = Route.useParams().budgetId
   const { current, start, end, shift } = monthRange(month, today)
   const { data: budget } = useQuery(budgetQuery(ledger.id, budgetId, start, end))
   const { data: transactions } = useQuery(transactionsQuery(ledger.id, { budget_id: budgetId, start, end }))
@@ -44,7 +44,7 @@ function BudgetDetail() {
   const remove = useMutation({
     mutationFn: () => api.delete(`/ledgers/${ledger.id}/budgets/${budgetId}`),
     onSuccess: async () => {
-      await navigate({ to: '/$ledgerId/budgets', params: { ledgerId: String(ledger.id) } })
+      await navigate({ to: '/$ledgerId/budgets', params: { ledgerId: ledger.id } })
       await invalidate()
     },
     onError: notifyError,

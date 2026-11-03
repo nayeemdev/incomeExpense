@@ -42,7 +42,7 @@ export function TokenSettings() {
   })
 
   const revoke = useMutation({
-    mutationFn: (id: number) => api.delete(`/tokens/${id}`),
+    mutationFn: (id: string) => api.delete(`/tokens/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: tokensQuery.queryKey }),
     onError: notifyError,
   })

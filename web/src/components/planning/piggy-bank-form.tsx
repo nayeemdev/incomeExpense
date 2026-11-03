@@ -21,10 +21,10 @@ import { handleFormError } from '@/lib/forms'
 
 const schema = z.object({
   name: z.string().trim().min(1).max(255),
-  currency_id: z.number(),
+  currency_id: z.string(),
   target_amount: z.string(),
   target_date: z.string().nullable(),
-  account_ids: z.array(z.number()).min(1, 'Choose at least one account'),
+  account_ids: z.array(z.string()).min(1, 'Choose at least one account'),
   object_group: z.string(),
   notes: z.string(),
 })
@@ -84,7 +84,7 @@ export function PiggyBankForm({ piggyBank, onSaved, onCancel }: PiggyBankFormPro
           {(field) => (
             <div className="space-y-2">
               {accounts.map((account) => {
-                const checked = (field.value as number[]).includes(account.id)
+                const checked = (field.value as string[]).includes(account.id)
 
                 return (
                   <Field key={account.id} orientation="horizontal">
@@ -92,7 +92,7 @@ export function PiggyBankForm({ piggyBank, onSaved, onCancel }: PiggyBankFormPro
                       id={`piggy-account-${account.id}`}
                       checked={checked}
                       onCheckedChange={(next) =>
-                        field.onChange(next ? [...field.value, account.id] : (field.value as number[]).filter((id) => id !== account.id))
+                        field.onChange(next ? [...field.value, account.id] : (field.value as string[]).filter((id) => id !== account.id))
                       }
                     />
                     <FieldLabel htmlFor={`piggy-account-${account.id}`} className="font-normal">

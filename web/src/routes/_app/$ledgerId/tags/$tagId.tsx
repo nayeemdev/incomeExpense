@@ -12,5 +12,5 @@ function TagDetail() {
   const { tagId } = Route.useParams()
   const { page = 1 } = Route.useSearch()
 
-  return <LabelDetail kind="tags" id={Number(tagId)} page={page} onPageChange={(next) => navigate({ search: { page: next } })} />
+  return <LabelDetail kind="tags" id={tagId} page={page} onPageChange={(next) => navigate({ search: { page: next } })} />
 }

@@ -25,7 +25,7 @@ const schema = z.object({
   auto: z.string(),
   auto_budget_amount: z.string(),
   auto_budget_period: z.string(),
-  auto_budget_currency_id: z.number().nullable(),
+  auto_budget_currency_id: z.string().nullable(),
   active: z.boolean(),
 })
 

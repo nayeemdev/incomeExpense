@@ -12,5 +12,5 @@ function CategoryDetail() {
   const { categoryId } = Route.useParams()
   const { page = 1 } = Route.useSearch()
 
-  return <LabelDetail kind="categories" id={Number(categoryId)} page={page} onPageChange={(next) => navigate({ search: { page: next } })} />
+  return <LabelDetail kind="categories" id={categoryId} page={page} onPageChange={(next) => navigate({ search: { page: next } })} />
 }

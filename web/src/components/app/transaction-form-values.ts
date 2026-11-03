@@ -4,7 +4,7 @@ import { todayIso } from '@/lib/format'
 import { isCounterparty, type AccountChoice } from '@/lib/transactions'
 
 const amount = z.string().regex(/^\d+(\.\d{1,12})?$/, 'Enter an amount').refine((value) => Number(value) > 0, 'Enter an amount')
-const accountChoice = z.union([z.object({ id: z.number() }), z.object({ name: z.string().min(1) })]).nullable()
+const accountChoice = z.union([z.object({ id: z.string() }), z.object({ name: z.string().min(1) })]).nullable()
 
 export const transactionSchema = z.object({
   type: z.enum(['withdrawal', 'deposit', 'transfer']),
@@ -18,9 +18,9 @@ export const transactionSchema = z.object({
           amount,
           source: accountChoice,
           destination: accountChoice,
-          category: z.object({ id: z.number().optional(), name: z.string() }).nullable(),
-          budget_id: z.number().nullable(),
-          bill_id: z.number().nullable(),
+          category: z.object({ id: z.string().optional(), name: z.string() }).nullable(),
+          budget_id: z.string().nullable(),
+          bill_id: z.string().nullable(),
           tags: z.array(z.string()),
           notes: z.string(),
           foreign_amount: z.string(),
@@ -64,7 +64,7 @@ export function defaultOwnAccount(ledger: Pick<Ledger, 'default_account_id' | 'd
 
 export const ownSideOf = (type: EditableType) => (type === 'deposit' ? 'destination' : 'source')
 
-export function newTransactionValues(type: EditableType = 'withdrawal', accountId?: number): TransactionFormValues {
+export function newTransactionValues(type: EditableType = 'withdrawal', accountId?: string): TransactionFormValues {
   const own = accountId ? { id: accountId } : null
 
   return {

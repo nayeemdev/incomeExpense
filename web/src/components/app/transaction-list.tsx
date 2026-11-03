@@ -24,11 +24,11 @@ import { useQuickAdd } from './quick-add-context'
 
 type TransactionListProps = {
   transactions: Transaction[] | undefined
-  accountId?: number
+  accountId?: string
   showRunningBalance?: boolean
   empty?: React.ReactNode
-  selected?: Set<number>
-  onToggle?: (id: number) => void
+  selected?: Set<string>
+  onToggle?: (id: string) => void
 }
 
 const icons = {
@@ -39,7 +39,7 @@ const icons = {
   reconciliation: ScaleIcon,
 }
 
-function signedAmount(transaction: Transaction, accountId?: number) {
+function signedAmount(transaction: Transaction, accountId?: string) {
   if (accountId) return transaction.source.id === accountId ? `-${transaction.amount}` : transaction.amount
   if (transaction.type === 'withdrawal') return `-${transaction.amount}`
 
@@ -97,10 +97,10 @@ function TransactionRow({
   onToggle,
 }: {
   transaction: Transaction
-  accountId?: number
+  accountId?: string
   showRunningBalance?: boolean
   selected?: boolean
-  onToggle?: (id: number) => void
+  onToggle?: (id: string) => void
 }) {
   const { t } = useTranslation()
   const quickAdd = useQuickAdd()
@@ -108,8 +108,8 @@ function TransactionRow({
   const canEdit = useCanEdit()
   const remove = useDeleteTransaction(ledger.id)
   const Icon = icons[transaction.type]
-  const ledgerId = String(ledger.id)
-  const groupId = String(transaction.group_id)
+  const ledgerId = ledger.id
+  const groupId = transaction.group_id
   const editable = ['withdrawal', 'deposit', 'transfer'].includes(transaction.type)
   const amount = signedAmount(transaction, accountId)
 

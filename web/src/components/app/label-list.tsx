@@ -24,7 +24,7 @@ export function LabelList({ kind }: { kind: 'categories' | 'tags' }) {
   const debounced = useDebouncedValue(search)
   const query = kind === 'tags' ? tagsQuery(ledger.id, debounced) : categoriesQuery(ledger.id, debounced)
   const { data } = useQuery(query as ReturnType<typeof categoriesQuery>)
-  const ledgerId = String(ledger.id)
+  const ledgerId = ledger.id
   const isTags = kind === 'tags'
 
   return (
@@ -75,7 +75,7 @@ export function LabelList({ kind }: { kind: 'categories' | 'tags' }) {
             <li key={item.id}>
               <Link
                 to={isTags ? '/$ledgerId/tags/$tagId' : '/$ledgerId/categories/$categoryId'}
-                params={isTags ? { ledgerId, tagId: String(item.id) } : { ledgerId, categoryId: String(item.id) }}
+                params={isTags ? { ledgerId, tagId: item.id } : { ledgerId, categoryId: item.id }}
                 className="hover:bg-muted/50 flex items-center justify-between gap-3 surface-card px-4 py-3 transition-shadow hover:shadow-card-hover"
               >
                 <span className="flex min-w-0 items-center gap-3">

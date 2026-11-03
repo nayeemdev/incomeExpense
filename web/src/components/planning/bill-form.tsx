@@ -23,7 +23,7 @@ import { frequencyLabels } from '@/lib/labels'
 
 const schema = z.object({
   name: z.string().trim().min(1).max(255),
-  currency_id: z.number(),
+  currency_id: z.string(),
   amount_min: z.string().min(1, 'Enter an amount'),
   amount_max: z.string().min(1, 'Enter an amount'),
   date: z.string().min(1),

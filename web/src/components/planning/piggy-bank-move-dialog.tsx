@@ -24,7 +24,7 @@ export function PiggyBankMoveDialog({ piggyBank, direction, onClose }: MoveDialo
       currency={piggyBank.currency.code}
       onSave={async (amount) => {
         await api.post(`/ledgers/${ledger.id}/piggy-banks/${piggyBank.id}/move`, {
-          account_id: Number(accountId),
+          account_id: accountId,
           amount: direction === 'remove' ? `-${amount}` : amount,
         })
         await invalidate()
@@ -36,7 +36,7 @@ export function PiggyBankMoveDialog({ piggyBank, direction, onClose }: MoveDialo
           <SelectField
             value={accountId}
             onChange={setAccountId}
-            options={Object.fromEntries(piggyBank.accounts.map((account) => [String(account.id), account.name]))}
+            options={Object.fromEntries(piggyBank.accounts.map((account) => [account.id, account.name]))}
           />
         </Field>
       )}

@@ -23,7 +23,7 @@ import { SelectField } from './select-field'
 
 const schema = z.object({
   name: z.string().trim().min(1).max(255),
-  currency_id: z.number().nullable(),
+  currency_id: z.string().nullable(),
   asset_role: z.string(),
   liability_type: z.string(),
   liability_direction: z.string(),

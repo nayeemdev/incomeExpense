@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 type DescriptionInputProps = {
   id?: string
-  ledgerId: number
+  ledgerId: string
   value: string
   onChange: (value: string) => void
   onPick: (transaction: Transaction) => void

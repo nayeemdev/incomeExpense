@@ -16,7 +16,7 @@ import type { Rule, RuleAction, RuleGroup, RuleTrigger } from '@/lib/api/types'
 import { notifyError } from '@/lib/forms'
 import { actionLabels, triggerLabels } from '@/lib/labels'
 
-type RuleEditorProps = { groups: RuleGroup[]; groupId: number; rule?: Rule; onDone: () => void }
+type RuleEditorProps = { groups: RuleGroup[]; groupId: string; rule?: Rule; onDone: () => void }
 
 export function RuleEditor({ groups, groupId, rule, onDone }: RuleEditorProps) {
   const { t } = useTranslation()
@@ -42,7 +42,7 @@ export function RuleEditor({ groups, groupId, rule, onDone }: RuleEditorProps) {
 
   const save = useMutation({
     mutationFn: () => {
-      const body = { ...draft, rule_group_id: Number(draft.rule_group_id) }
+      const body = { ...draft, rule_group_id: draft.rule_group_id }
 
       return rule ? api.put(`/ledgers/${ledger.id}/rules/${rule.id}`, body) : api.post(`/ledgers/${ledger.id}/rules`, body)
     },
@@ -80,7 +80,7 @@ export function RuleEditor({ groups, groupId, rule, onDone }: RuleEditorProps) {
             <SelectField
               value={draft.rule_group_id}
               onChange={(value) => setDraft({ ...draft, rule_group_id: value })}
-              options={Object.fromEntries(groups.map((group) => [String(group.id), group.title]))}
+              options={Object.fromEntries(groups.map((group) => [group.id, group.title]))}
             />
           </Field>
           <Field>

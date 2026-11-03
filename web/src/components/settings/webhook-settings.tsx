@@ -44,13 +44,13 @@ export function WebhookSettings() {
   })
 
   const update = useMutation({
-    mutationFn: ({ id, active }: { id: number; active: boolean }) => api.patch(`/ledgers/${ledger.id}/webhooks/${id}`, { active }),
+    mutationFn: ({ id, active }: { id: string; active: boolean }) => api.patch(`/ledgers/${ledger.id}/webhooks/${id}`, { active }),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
 
   const remove = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/webhooks/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/webhooks/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
@@ -190,7 +190,7 @@ function DeliveriesDialog({ webhook, onClose }: { webhook: Webhook; onClose: () 
   const { data: deliveries = [] } = useQuery(webhookDeliveriesQuery(ledger.id, webhook.id))
 
   const redeliver = useMutation({
-    mutationFn: (id: number) => api.post(`/ledgers/${ledger.id}/webhooks/${webhook.id}/deliveries/${id}/redeliver`),
+    mutationFn: (id: string) => api.post(`/ledgers/${ledger.id}/webhooks/${webhook.id}/deliveries/${id}/redeliver`),
     onSuccess: async () => {
       await invalidate()
       toast.success(t('Sent again'))

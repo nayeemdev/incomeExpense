@@ -27,7 +27,7 @@ import { notifyError } from '@/lib/forms'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_app/$ledgerId/import/')({
-  validateSearch: z.object({ job: z.number().int().optional().catch(undefined) }),
+  validateSearch: z.object({ job: z.string().optional().catch(undefined) }),
   component: ImportPage,
 })
 
@@ -40,7 +40,7 @@ function ImportPage() {
   const { job: jobId } = Route.useSearch()
   const { data: overview } = useQuery({
     queryKey: [...ledgerKey(ledger.id), 'imports'],
-    queryFn: () => api.get<{ data: ImportJob[]; profiles: Array<{ id: number; name: string; config: ImportConfig }> }>(`/ledgers/${ledger.id}/imports`),
+    queryFn: () => api.get<{ data: ImportJob[]; profiles: Array<{ id: string; name: string; config: ImportConfig }> }>(`/ledgers/${ledger.id}/imports`),
   })
   const { data: job } = useQuery({
     queryKey: [...ledgerKey(ledger.id), 'imports', jobId],
@@ -166,13 +166,13 @@ function TemplateCard() {
   )
 }
 
-function HistoryCard({ jobs, onOpen }: { jobs: ImportJob[]; onOpen: (id: number) => void }) {
+function HistoryCard({ jobs, onOpen }: { jobs: ImportJob[]; onOpen: (id: string) => void }) {
   const { t } = useTranslation()
   const locale = useLocale()
   const ledger = useLedger()
   const invalidate = useInvalidateLedger(ledger.id)
   const remove = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/imports/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/imports/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
@@ -217,7 +217,7 @@ function ImportStatus({ job }: { job: ImportJob }) {
   return <Badge variant={job.status === 'failed' ? 'destructive' : job.status === 'completed' ? 'secondary' : 'outline'}>{labels[job.status]}</Badge>
 }
 
-function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: number; name: string; config: ImportConfig }> }) {
+function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: string; name: string; config: ImportConfig }> }) {
   const { t } = useTranslation()
   const ledger = useLedger()
   const invalidate = useInvalidateLedger(ledger.id)
@@ -291,10 +291,10 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
                   <RequiredMark />
                 </FieldLabel>
                 <Combobox
-                  options={accounts.map((account) => ({ value: String(account.id), label: account.name, hint: account.currency?.code }))}
-                  value={config.account_id ? String(config.account_id) : null}
+                  options={accounts.map((account) => ({ value: account.id, label: account.name, hint: account.currency?.code }))}
+                  value={config.account_id ? config.account_id : null}
                   onChange={(value) => {
-                    setConfig({ ...config, account_id: value ? Number(value) : undefined })
+                    setConfig({ ...config, account_id: value ?? undefined })
                     setPreview(null)
                   }}
                   placeholder={t('Choose an account')}
@@ -306,9 +306,9 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
                   <SelectField
                     value=""
                     placeholder={t('Use a saved mapping')}
-                    options={Object.fromEntries(profiles.map((profile) => [String(profile.id), profile.name]))}
+                    options={Object.fromEntries(profiles.map((profile) => [profile.id, profile.name]))}
                     onChange={(id) => {
-                      const profile = profiles.find((item) => String(item.id) === id)
+                      const profile = profiles.find((item) => item.id === id)
                       if (profile) setConfig({ ...config, ...profile.config, skip_duplicates: true })
                       setPreview(null)
                     }}
@@ -494,7 +494,7 @@ function ImportResult({ job }: { job: ImportJob }) {
       {!busy && job.config?.account_id && (
         <CardFooter>
           <Button asChild>
-            <Link to="/$ledgerId/accounts/$accountId" params={{ ledgerId: String(ledger.id), accountId: String(job.config.account_id) }}>
+            <Link to="/$ledgerId/accounts/$accountId" params={{ ledgerId: ledger.id, accountId: job.config.account_id }}>
               {t('View the account')}
             </Link>
           </Button>

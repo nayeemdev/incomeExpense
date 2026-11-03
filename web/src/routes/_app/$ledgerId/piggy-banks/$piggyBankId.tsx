@@ -33,13 +33,13 @@ function PiggyBankDetail() {
   const invalidate = useInvalidateLedger(ledger.id)
   const [editing, setEditing] = useState(false)
   const [direction, setDirection] = useState<'add' | 'remove' | null>(null)
-  const piggyBankId = Number(Route.useParams().piggyBankId)
+  const piggyBankId = Route.useParams().piggyBankId
   const { data: piggyBank } = useQuery(piggyBankQuery(ledger.id, piggyBankId))
 
   const remove = useMutation({
     mutationFn: () => api.delete(`/ledgers/${ledger.id}/piggy-banks/${piggyBankId}`),
     onSuccess: async () => {
-      await navigate({ to: '/$ledgerId/piggy-banks', params: { ledgerId: String(ledger.id) } })
+      await navigate({ to: '/$ledgerId/piggy-banks', params: { ledgerId: ledger.id } })
       await invalidate()
     },
     onError: notifyError,

@@ -63,7 +63,7 @@ function PiggyBanks() {
               <CardTitle>
                 <Link
                   to="/$ledgerId/piggy-banks/$piggyBankId"
-                  params={{ ledgerId: String(ledger.id), piggyBankId: String(piggyBank.id) }}
+                  params={{ ledgerId: ledger.id, piggyBankId: piggyBank.id }}
                   className="after:absolute after:inset-0"
                 >
                   {piggyBank.name}
