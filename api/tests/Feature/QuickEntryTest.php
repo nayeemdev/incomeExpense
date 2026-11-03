@@ -58,6 +58,25 @@ it('uses the member default account', function () {
         ->assertJsonPath('data.transactions.0.source.id', $preferred->id);
 });
 
+it('uses separate default accounts for expenses and income', function () {
+    $ledger = actingAsMember();
+    $card = Account::factory()->for($ledger)->create(['order' => 0]);
+    $checking = Account::factory()->for($ledger)->create(['order' => 5]);
+
+    $this->patchJson("/api/v1/ledgers/{$ledger->id}/membership", ['default_account_id' => $card->id, 'default_income_account_id' => $checking->id])
+        ->assertJsonPath('data.default_account_id', $card->id)
+        ->assertJsonPath('data.default_income_account_id', $checking->id);
+
+    $this->postJson("/api/v1/ledgers/{$ledger->id}/quick-entry", ['amount' => '9', 'description' => 'Lunch', 'type' => 'withdrawal'])
+        ->assertJsonPath('data.transactions.0.source.id', $card->id);
+    $this->postJson("/api/v1/ledgers/{$ledger->id}/quick-entry", ['amount' => '900', 'description' => 'Refund', 'type' => 'deposit', 'counterparty' => 'Shop'])
+        ->assertJsonPath('data.transactions.0.destination.id', $checking->id);
+
+    $this->patchJson("/api/v1/ledgers/{$ledger->id}/membership", ['default_income_account_id' => null])
+        ->assertJsonPath('data.default_account_id', $card->id)
+        ->assertJsonPath('data.default_income_account_id', null);
+});
+
 it('records income', function () {
     $ledger = actingAsMember();
     $checking = Account::factory()->for($ledger)->create();

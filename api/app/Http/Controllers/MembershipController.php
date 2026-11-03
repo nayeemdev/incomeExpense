@@ -13,11 +13,11 @@ class MembershipController extends Controller
 {
     public function update(Request $request, Ledger $ledger, #[CurrentUser] User $user): LedgerResource
     {
+        $ownAccount = ['sometimes', 'nullable', Rule::exists('accounts', 'id')->where('ledger_id', $ledger->id)->where('type', 'asset')->whereNull('deleted_at')];
+
         $validated = $request->validate([
-            'default_account_id' => [
-                'nullable',
-                Rule::exists('accounts', 'id')->where('ledger_id', $ledger->id)->where('type', 'asset')->whereNull('deleted_at'),
-            ],
+            'default_account_id' => $ownAccount,
+            'default_income_account_id' => $ownAccount,
         ]);
 
         $ledger->members()->updateExistingPivot($user->id, $validated);

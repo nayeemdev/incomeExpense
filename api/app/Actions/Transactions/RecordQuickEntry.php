@@ -68,7 +68,10 @@ class RecordQuickEntry
     {
         $accounts = $ledger->accounts()->where('type', AccountType::Asset)->where('active', true);
 
-        $defaultId = $ledger->membershipOf($user)?->default_account_id;
+        $membership = $ledger->membershipOf($user);
+        $defaultId = $deposit
+            ? $membership->default_income_account_id ?? $membership?->default_account_id
+            : $membership?->default_account_id;
 
         $candidates = array_filter([
             $accountId,

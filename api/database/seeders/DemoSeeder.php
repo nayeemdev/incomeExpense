@@ -111,7 +111,10 @@ class DemoSeeder extends Seeder
             $this->accounts[$key] = $account;
         }
 
-        $this->ledger->members()->updateExistingPivot($this->owner->id, ['default_account_id' => $this->accounts['card']->id]);
+        $this->ledger->members()->updateExistingPivot($this->owner->id, [
+            'default_account_id' => $this->accounts['card']->id,
+            'default_income_account_id' => $this->accounts['checking']->id,
+        ]);
 
         if ($euro !== null && $euro !== $primary) {
             for ($month = 12; $month >= 0; $month--) {

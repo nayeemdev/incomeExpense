@@ -25,6 +25,7 @@ class LedgerResource extends JsonResource
             'fiscal_year_start' => $this->fiscal_year_start,
             'role' => $membership?->role,
             'default_account_id' => $membership?->default_account_id,
+            'default_income_account_id' => $membership?->default_income_account_id,
             'created_at' => $this->created_at,
         ];
     }
