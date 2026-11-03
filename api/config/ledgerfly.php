@@ -6,6 +6,11 @@ return [
 
     'invitation_expiry_days' => (int) env('INVITATION_EXPIRY_DAYS', 7),
 
+    'pagination' => [
+        'per_page' => 50,
+        'max_per_page' => 200,
+    ],
+
     'default_preferences' => [
         'locale' => env('APP_LOCALE', 'en'),
         'timezone' => env('DEFAULT_TIMEZONE', 'UTC'),
