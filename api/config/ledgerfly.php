@@ -42,6 +42,7 @@ return [
             'piggy_bank_reached' => ['database', 'webpush'],
             'rule_matched' => ['database'],
             'webhook_failing' => ['database', 'mail'],
+            'import_finished' => ['database'],
             'weekly_summary' => ['mail'],
             'new_login' => ['mail'],
             'token_created' => ['mail'],
