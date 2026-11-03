@@ -21,6 +21,8 @@ dependencies:
   home_widget: ^0.10.0
   image_picker: ^1.2.4
   path_provider: ^2.1.6
+  flutter_local_notifications: ^22.3.3
+  workmanager: ^0.10.10
 
 dev_dependencies:
   flutter_test:

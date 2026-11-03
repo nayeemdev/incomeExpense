@@ -36,6 +36,10 @@ LedgerFly can send alerts to [ntfy](https://ntfy.sh), a free open source notific
 
 Choose which alerts go to ntfy under Notifications on the web. With Hide amounts and details on (the default), alerts only say what happened, since anyone who knows a topic name can read it on a public server. A self-hosted ntfy server needs `upstream-base-url: "https://ntfy.sh"` for instant alerts on iPhone.
 
+## Alerts without ntfy
+
+Turn on Settings, Alerts on this phone, to have the app check your inbox in the background and show new alerts as phone notifications. Nothing extra is needed on the server. Android checks about every 15 minutes; iOS decides when to run background checks, so alerts can arrive later there, and the check never runs in the simulator. Alerts that arrive during your quiet hours are shown once the quiet hours end. For instant alerts, use ntfy.
+
 ## Running locally
 
 Requirements: Flutter (stable), Xcode for iOS, Android Studio for Android.

@@ -11,6 +11,7 @@ import '../auth/lock.dart';
 import '../auth/session.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
+import '../notifications/background_alerts.dart';
 import '../notifications/ntfy_settings.dart';
 
 const _themeLabels = {ThemeMode.system: 'System', ThemeMode.light: 'Light', ThemeMode.dark: 'Dark'};
@@ -40,6 +41,7 @@ class SettingsScreen extends ConsumerWidget {
     final lock = ref.watch(lockEnabledProvider).value ?? false;
     final theme = ref.watch(themeModeProvider).value ?? ThemeMode.system;
     final ntfy = ref.watch(ntfySettingsProvider);
+    final backgroundAlerts = ref.watch(backgroundAlertsProvider).value ?? false;
     final chevron = Icon(LucideIcons.chevronRight, size: 18, color: palette.subtle);
     final initials = (user?.name ?? '?')
         .trim()
@@ -140,6 +142,21 @@ class SettingsScreen extends ConsumerWidget {
           const _Heading('Alerts'),
           _Group(
             children: [
+              ListRow(
+                leading: const CategoryIcon(glyph: LucideIcons.bellRing, color: 'rose', size: 40),
+                title: 'Alerts on this phone',
+                subtitle: 'Checks in the background',
+                trailing: Switch.adaptive(
+                  value: backgroundAlerts,
+                  activeTrackColor: palette.primary,
+                  onChanged: (value) async {
+                    final changed = await ref.read(backgroundAlertsProvider.notifier).set(value);
+                    if (!changed && context.mounted) {
+                      showToast(context, 'Notifications are turned off for LedgerFly. Allow them in your phone settings.');
+                    }
+                  },
+                ),
+              ),
               ListRow(
                 leading: const CategoryIcon(glyph: LucideIcons.smartphone, color: 'orange', size: 40),
                 title: 'Phone alerts with ntfy',

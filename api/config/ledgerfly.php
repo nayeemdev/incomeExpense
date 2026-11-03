@@ -159,7 +159,7 @@ return [
     ],
 
     'demo' => [
-        'email' => env('DEMO_EMAIL', 'demo@ledgerfly.test'),
+        'email' => env('DEMO_EMAIL', 'nathan@ledgerfly.test'),
         'currency' => env('DEMO_CURRENCY', 'BDT'),
         // Demo amounts are written in dollar terms; this multiplies them to fit the demo currency.
         'scale' => env('DEMO_SCALE', '100'),
