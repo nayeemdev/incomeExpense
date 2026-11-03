@@ -28,23 +28,24 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property ?LiabilityDirection $liability_direction
  * @property ?InterestPeriod $interest_period
  * @property string $virtual_balance
+ * @property ?string $low_balance_threshold
  * @property ?string $balance
  * @property-read ?Currency $currency
  */
 #[Fillable([
     'object_group_id', 'type', 'name', 'currency_id', 'asset_role', 'liability_type', 'liability_direction',
     'interest', 'interest_period', 'credit_card_payment_day', 'iban', 'bic', 'account_number',
-    'virtual_balance', 'active', 'include_net_worth', 'order', 'notes',
+    'virtual_balance', 'low_balance_threshold', 'active', 'include_net_worth', 'order', 'notes',
 ])]
 class Account extends Model
 {
     use BelongsToLedger;
     use HasAttachments;
+
     /** @use HasFactory<AccountFactory> */
     use HasFactory;
 
     use HasObjectGroup;
-
     use SoftDeletes;
 
     /**

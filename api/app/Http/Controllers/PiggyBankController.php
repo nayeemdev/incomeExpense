@@ -8,8 +8,10 @@ use App\Http\Resources\PiggyBankResource;
 use App\Models\Account;
 use App\Models\Ledger;
 use App\Models\PiggyBank;
+use App\Notifications\PiggyBankReachedNotification;
 use App\Rules\Amount;
 use App\Support\Money;
+use App\Support\NotifyOnce;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -115,7 +117,22 @@ class PiggyBankController extends Controller
             ]);
         });
 
+        $this->notifyIfReached($piggyBank);
+
         return new PiggyBankResource($this->load($piggyBank));
+    }
+
+    private function notifyIfReached(PiggyBank $piggyBank): void
+    {
+        if ($piggyBank->target_amount === null) {
+            return;
+        }
+
+        $saved = (string) DB::table('account_piggy_bank')->where('piggy_bank_id', $piggyBank->id)->sum('current_amount');
+
+        if (Money::of($saved) >= Money::of($piggyBank->target_amount)) {
+            NotifyOnce::send($piggyBank->ledger->members()->get(), "piggy_bank_reached:{$piggyBank->id}", new PiggyBankReachedNotification($piggyBank));
+        }
     }
 
     private function ensureCanAdd(PiggyBank $piggyBank, Account $account, string $amount): void
