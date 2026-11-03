@@ -48,7 +48,7 @@ function Bills() {
     <>
       <PageHeader
         title={t('Bills')}
-        description={new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current)}
+        description={t('Regular payments like rent and subscriptions, with what is due and what is paid. Showing {{month}}.', { month: new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current) })}
         actions={
           <>
             <MonthSwitcher isCurrent={!month} onChange={(offset) => navigate({ search: offset === null ? {} : { month: shift(offset) } })} />

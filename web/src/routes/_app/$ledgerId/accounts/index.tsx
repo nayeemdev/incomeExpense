@@ -15,7 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
 import { accountsQuery } from '@/lib/api/queries'
-import { accountTypeLabels, accountTypeSingular, assetRoleLabels, liabilityTypeLabels } from '@/lib/labels'
+import { accountTypeDescriptions, accountTypeLabels, accountTypeSingular, assetRoleLabels, liabilityTypeLabels } from '@/lib/labels'
 
 export const Route = createFileRoute('/_app/$ledgerId/accounts/')({
   validateSearch: z.object({
@@ -45,6 +45,7 @@ function Accounts() {
     <>
       <PageHeader
         title={accountTypeLabels()[type]}
+        description={accountTypeDescriptions()[type]}
         actions={
           canEdit && (
             <Button onClick={() => setSearch({ create: true })}>

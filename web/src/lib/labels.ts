@@ -17,6 +17,13 @@ export const accountTypeSingular = (): Record<AccountType, string> => ({
   liability: t('Liability'),
 })
 
+export const accountTypeDescriptions = (): Record<AccountType, string> => ({
+  asset: t('Bank accounts, cards and cash you hold. Their balances add up to your net worth.'),
+  expense: t('Shops, services and people you pay. Each is created the first time you pay them.'),
+  revenue: t('Employers, clients and people who pay you. Each is created the first time they pay you.'),
+  liability: t('Loans and debts in both directions: money you owe, like a car loan, and money owed to you, like a loan to a friend. Record borrowing and paying back as transactions to see what is left.'),
+})
+
 export const assetRoleLabels = (): Record<AssetRole, string> => ({
   default: t('Checking'),
   shared: t('Shared'),
