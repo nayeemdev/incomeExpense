@@ -1,14 +1,19 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Auth\TokenController;
+use App\Http\Controllers\AutocompleteController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LedgerInvitationController;
 use App\Http\Controllers\LedgerMemberController;
+use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\PersonalAccessTokenController;
+use App\Http\Controllers\QuickEntryController;
+use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -18,6 +23,18 @@ Route::post('auth/tokens', [TokenController::class, 'store'])->middleware('throt
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('auth/tokens/current', [TokenController::class, 'destroy']);
+
+    Route::middleware('ability:*,quick-entry')->group(function () {
+        Route::get('ledgers', [LedgerController::class, 'index']);
+
+        Route::prefix('ledgers/{ledger}')->middleware('can:view,ledger')->group(function () {
+            Route::get('summary', SummaryController::class);
+            Route::get('accounts', [AccountController::class, 'index']);
+            Route::get('categories', [CategoryController::class, 'index']);
+            Route::get('autocomplete/transactions', [AutocompleteController::class, 'transactions']);
+            Route::post('quick-entry', QuickEntryController::class)->middleware('can:edit,ledger');
+        });
+    });
 
     Route::middleware('abilities:*')->group(function () {
         Route::get('user', [UserController::class, 'show']);
@@ -32,25 +49,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('invitations/{token}', [InvitationController::class, 'show']);
         Route::post('invitations/{token}/accept', [InvitationController::class, 'accept']);
 
-        Route::get('ledgers', [LedgerController::class, 'index']);
         Route::post('ledgers', [LedgerController::class, 'store']);
 
         Route::prefix('ledgers/{ledger}')->middleware('can:view,ledger')->scopeBindings()->group(function () {
             Route::get('/', [LedgerController::class, 'show']);
+            Route::patch('membership', [MembershipController::class, 'update']);
             Route::get('members', [LedgerMemberController::class, 'index']);
             Route::delete('members/{member}', [LedgerMemberController::class, 'destroy']);
 
-            Route::apiResource('accounts', AccountController::class)->only(['index', 'show']);
-            Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+            Route::get('accounts/{account}', [AccountController::class, 'show']);
+            Route::get('categories/{category}', [CategoryController::class, 'show']);
             Route::apiResource('tags', TagController::class)->only(['index', 'show']);
-            Route::apiResource('transactions', TransactionController::class)->only(['index', 'show'])->parameters(['transactions' => 'transactionGroup']);
+            Route::apiResource('transactions', TransactionController::class)->only(['index', 'show'])
+                ->parameters(['transactions' => 'transactionGroup']);
+            Route::get('attachments', [AttachmentController::class, 'index']);
+            Route::get('attachments/{attachment}/download', [AttachmentController::class, 'download']);
 
             Route::middleware('can:edit,ledger')->group(function () {
                 Route::apiResource('accounts', AccountController::class)->only(['store', 'update', 'destroy']);
                 Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
                 Route::apiResource('tags', TagController::class)->only(['store', 'update', 'destroy']);
-                Route::apiResource('transactions', TransactionController::class)->only(['store', 'update', 'destroy'])->parameters(['transactions' => 'transactionGroup']);
+                Route::apiResource('transactions', TransactionController::class)->only(['store', 'update', 'destroy'])
+                    ->parameters(['transactions' => 'transactionGroup']);
                 Route::post('transactions/{group}/restore', [TransactionController::class, 'restore']);
+                Route::post('attachments', [AttachmentController::class, 'store']);
+                Route::delete('attachments/{attachment}', [AttachmentController::class, 'destroy']);
             });
 
             Route::middleware('can:manage,ledger')->group(function () {

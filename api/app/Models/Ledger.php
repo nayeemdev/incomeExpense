@@ -17,8 +17,8 @@ class Ledger extends Model
     /** @use HasFactory<LedgerFactory> */
     use HasFactory;
 
-    /** @var array<int, LedgerRole|null> */
-    private array $roleCache = [];
+    /** @var array<int, LedgerMember|null> */
+    private array $membershipCache = [];
 
     /**
      * @return BelongsTo<Currency, $this>
@@ -35,7 +35,7 @@ class Ledger extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(LedgerMember::class)
-            ->withPivot('role')
+            ->withPivot('role', 'default_account_id')
             ->withTimestamps();
     }
 
@@ -87,19 +87,32 @@ class Ledger extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function roleOf(User $user): ?LedgerRole
+    /**
+     * @return HasMany<Attachment, $this>
+     */
+    public function attachments(): HasMany
     {
-        if (! array_key_exists($user->id, $this->roleCache)) {
-            $role = $this->members()->whereKey($user->id)->value('role');
-            $this->roleCache[$user->id] = is_string($role) ? LedgerRole::from($role) : null;
+        return $this->hasMany(Attachment::class);
+    }
+
+    public function membershipOf(User $user): ?LedgerMember
+    {
+        if (! array_key_exists($user->id, $this->membershipCache)) {
+            $pivot = $this->members()->whereKey($user->id)->first()?->getRelation('pivot');
+            $this->membershipCache[$user->id] = $pivot instanceof LedgerMember ? $pivot : null;
         }
 
-        return $this->roleCache[$user->id];
+        return $this->membershipCache[$user->id];
+    }
+
+    public function roleOf(User $user): ?LedgerRole
+    {
+        return $this->membershipOf($user)?->role;
     }
 
     public function addMember(User $user, LedgerRole $role): void
     {
         $this->members()->syncWithoutDetaching([$user->id => ['role' => $role->value]]);
-        unset($this->roleCache[$user->id]);
+        unset($this->membershipCache[$user->id]);
     }
 }
