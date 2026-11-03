@@ -19,19 +19,20 @@
 -->
 <section class="page-hero">
   <div class="wrap">
-    <span class="eyebrow">Mobile apps</span>
+    <div class="page-hero-box" data-reveal>
+    <span class="tag">Mobile apps</span>
     <h1>LedgerFly for Android and iPhone</h1>
     <p class="lead">Native apps for your own LedgerFly server. Sign in with your server address, email and password, and your ledger is with you everywhere.</p>
-    <div class="stores">
-      {{playStoreButton}}
-      <a class="btn btn-secondary" href="#ios">iOS: build it yourself</a>
+    <div class="actions">
+      {{storeBadges}}
+    </div>
     </div>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <div class="phones">
+    <div class="phones" data-reveal>
       <figure>
         <div class="phone"><img src="/images/m-dashboard-light.webp" width="600" height="1304" alt="Home screen with total balance, monthly expense and income, and accounts" fetchpriority="high"></div>
         <figcaption>Your month at a glance</figcaption>
@@ -48,39 +49,39 @@
   </div>
 </section>
 
-<section class="section section-alt">
+<section class="section section-panel">
   <div class="wrap">
-    <div class="section-head">
+    <div class="head" data-reveal>
       <h2>What the apps do</h2>
     </div>
-    <div class="grid">
-      <article class="card">
-        <div class="tile" style="--tint:#0ea5e9"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8M12 8v8"/></svg></div>
+    <div class="cards">
+      <article class="card" data-reveal>
+        <div class="tile" style="--c:#0ea5e9"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8M12 8v8"/></svg></div>
         <h3>Quick add</h3>
         <p>An amount keypad, category icons, accounts and payees one tap away, and recent transactions to repeat in one tap.</p>
       </article>
-      <article class="card">
-        <div class="tile" style="--tint:#ec4899"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
+      <article class="card" data-reveal>
+        <div class="tile" style="--c:#ec4899"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></div>
         <h3>Receipts</h3>
         <p>Attach a photo from the camera or library while adding a transaction or later from its page.</p>
       </article>
-      <article class="card">
-        <div class="tile" style="--tint:#64748b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 13a10 10 0 0 1 5.24-2.76M2 2l20 20"/></svg></div>
+      <article class="card" data-reveal>
+        <div class="tile" style="--c:#64748b"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h.01M8.5 16.43a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 13a10 10 0 0 1 5.24-2.76M2 2l20 20"/></svg></div>
         <h3>Works offline</h3>
         <p>No signal? New transactions wait on the phone, receipts included, and sync on their own when you are back online.</p>
       </article>
-      <article class="card">
-        <div class="tile" style="--tint:#10b981"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>
+      <article class="card" data-reveal>
+        <div class="tile" style="--c:#10b981"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg></div>
         <h3>Widgets</h3>
-        <p>Home screen widgets show this month's spending, budget left and the next bill, with a + button for quick add.</p>
+        <p>Home and lock screen widgets show this month's spending, budget left and the next bill, with a + button for quick add.</p>
       </article>
-      <article class="card">
-        <div class="tile" style="--tint:#f97316"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
+      <article class="card" data-reveal>
+        <div class="tile" style="--c:#f97316"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
         <h3>Alerts</h3>
         <p>Instant alerts through the free ntfy app, or a background check that shows new alerts as phone notifications.</p>
       </article>
-      <article class="card">
-        <div class="tile" style="--tint:#6366f1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></div>
+      <article class="card" data-reveal>
+        <div class="tile" style="--c:#6366f1"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg></div>
         <h3>Face ID lock and dark mode</h3>
         <p>Lock the app with Face ID or fingerprint, and pick light, dark or follow the system.</p>
       </article>

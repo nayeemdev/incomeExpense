@@ -25,14 +25,17 @@
 -->
 <section class="page-hero">
   <div class="wrap">
-    <span class="eyebrow">Self-hosting guide</span>
+    <div class="page-hero-box" data-reveal>
+    <span class="tag">Self-hosting guide</span>
     <h1>Install LedgerFly on your own server</h1>
     <p class="lead">From a fresh Linux server to a running LedgerFly with HTTPS, backups and updates. Plan for about fifteen minutes.</p>
+    </div>
   </div>
 </section>
 
 <div class="wrap doc">
   <nav class="toc" aria-label="On this page">
+    <a href="#ai-agent">Install with an AI agent</a>
     <a href="#requirements">Requirements</a>
     <a href="#install-docker">1. Install Docker</a>
     <a href="#download">2. Download LedgerFly</a>
@@ -47,6 +50,38 @@
   </nav>
 
   <article class="prose">
+    <h2 id="ai-agent">Install with an AI agent</h2>
+    <p>The quickest route: open a coding agent that can use the terminal on your server, such as Claude Code or Codex, and paste the prompt below. Replace the domain and time zone first. The agent follows this guide step by step and tells you when it is done.</p>
+    <div class="code"><pre class="prompt">Set up LedgerFly, a self-hosted personal finance app, on this Linux server.
+Follow the official guide at {{url}}/self-hosting/
+and the README at {{repo}}.
+
+My details:
+- Domain: money.example.com (its DNS A record already points at this server)
+- Time zone: Asia/Dhaka
+
+Please:
+1. Check the server first: the OS, free memory and disk space, and that
+   ports 80 and 443 are free. Stop and tell me if anything blocks the install.
+2. Install Docker Engine with the Compose plugin if it is missing.
+3. Clone the repository into ~/ledgerfly.
+4. Create .env and api/.env from the example files. Generate strong random
+   values for DB_PASSWORD, DB_ROOT_PASSWORD and APP_KEY (base64:...).
+   Set APP_PORT=127.0.0.1:8000, APP_URL=https://my-domain, APP_ENV=production,
+   APP_DEBUG=false and DEFAULT_TIMEZONE. Never print passwords or keys.
+5. Run docker compose up -d --build, then
+   docker compose exec api php artisan db:seed --force,
+   and wait until every container is running.
+6. Install Caddy and reverse proxy my domain to 127.0.0.1:8000 with HTTPS.
+7. Add a nightly backup of the database and the storage volume as the
+   guide describes.
+8. Check that https://my-domain loads, then summarise what you did and where
+   the settings files are.
+
+Ask me before deleting anything or changing firewall rules.</pre></div>
+    <p class="note">When it is done, open your address and create the first account: it becomes the admin. Read through the commands the agent wants to run before you approve them, as you would with any script you run on a server.</p>
+    <p>Prefer to do it yourself? The rest of this guide walks through every step by hand.</p>
+
     <h2 id="requirements">Requirements</h2>
     <ul>
       <li><strong>A Linux server</strong> you can reach over SSH. Ubuntu 24.04 or Debian 12 on a VPS with 2 GB of RAM is plenty for a household.</li>
