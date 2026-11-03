@@ -53,12 +53,15 @@ return [
         'max_per_page' => 200,
     ],
 
+    'dashboard_widgets' => ['trend', 'recent', 'accounts', 'bills', 'top_spending'],
+
     'default_preferences' => [
         'locale' => env('APP_LOCALE', 'en'),
         'timezone' => env('DEFAULT_TIMEZONE', 'UTC'),
         'theme' => 'system',
         'first_day_of_week' => 1,
         'view_range' => 'month',
+        'dashboard_hidden' => [],
     ],
 
 ];

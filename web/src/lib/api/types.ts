@@ -11,6 +11,7 @@ export type Preferences = {
   theme: 'system' | 'light' | 'dark'
   first_day_of_week: number
   view_range: 'week' | 'month' | 'quarter' | 'year'
+  dashboard_hidden: string[]
 }
 
 export type User = {
@@ -161,6 +162,9 @@ export type CurrencyAmount = { currency: string; amount: string }
 
 export type Summary = {
   net_worth: CurrencyAmount[]
+  net_worth_total: CurrencyAmount & { complete: boolean }
+  spent_total: CurrencyAmount & { complete: boolean }
+  earned_total: CurrencyAmount & { complete: boolean }
   spent: CurrencyAmount[]
   earned: CurrencyAmount[]
   top_categories: Array<{ id: number | null; name: string | null } & CurrencyAmount>
@@ -365,3 +369,20 @@ export type WebhookDelivery = {
   failed_at: string | null
   created_at: string
 }
+
+export type ReportMeta = { currency: string; start: string; end: string; interval: 'day' | 'week' | 'month' | 'year'; complete: boolean }
+
+export type BreakdownRow = { id: number | null; name: string | null; total: string; buckets: Record<string, string> }
+
+export type OverviewReport = {
+  accounts: Array<{ id: number; name: string; currency: string | null; start: string; end: string; change: string }>
+  income_expense: Array<{ start: string; end: string; income: string; expense: string }>
+  expense_categories: BreakdownRow[]
+  income_categories: BreakdownRow[]
+  budgets: Array<{ id: number; name: string; budgeted: string; spent: string }>
+  net_worth: Array<{ date: string; balance: string }>
+}
+
+export type ExchangeRate = { id: number; from: string; to: string; date: string; rate: string; manual: boolean }
+
+export type SearchToken = { key: string; value: string; negated: boolean }

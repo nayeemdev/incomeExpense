@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { PageHeader } from '@/components/app/page-header'
+import { ExchangeRateSettings } from '@/components/settings/exchange-rate-settings'
 import { LedgerSettings } from '@/components/settings/ledger-settings'
 import { MemberSettings } from '@/components/settings/member-settings'
 import { NotificationSettings } from '@/components/settings/notification-settings'
@@ -12,7 +13,7 @@ import { TokenSettings } from '@/components/settings/token-settings'
 import { WebhookSettings } from '@/components/settings/webhook-settings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const tabs = ['ledger', 'members', 'profile', 'security', 'notifications', 'preferences', 'tokens', 'webhooks'] as const
+const tabs = ['ledger', 'members', 'profile', 'security', 'notifications', 'preferences', 'exchange-rates', 'tokens', 'webhooks'] as const
 
 export const Route = createFileRoute('/_app/$ledgerId/settings')({
   validateSearch: z.object({ tab: z.enum(tabs).optional().catch(undefined) }),
@@ -30,6 +31,7 @@ function Settings() {
     security: t('Security'),
     notifications: t('Notifications'),
     preferences: t('Preferences'),
+    'exchange-rates': t('Exchange rates'),
     tokens: t('Tokens'),
     webhooks: t('Webhooks'),
   }
@@ -52,6 +54,7 @@ function Settings() {
           <TabsContent value="security"><SecuritySettings /></TabsContent>
           <TabsContent value="preferences"><PreferenceSettings /></TabsContent>
           <TabsContent value="notifications"><NotificationSettings /></TabsContent>
+          <TabsContent value="exchange-rates"><ExchangeRateSettings /></TabsContent>
           <TabsContent value="tokens"><TokenSettings /></TabsContent>
           <TabsContent value="webhooks"><WebhookSettings /></TabsContent>
         </div>

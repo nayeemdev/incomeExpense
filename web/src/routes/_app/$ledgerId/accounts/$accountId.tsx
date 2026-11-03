@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { AccountForm } from '@/components/app/account-form'
+import { BalanceChart } from '@/components/charts/balance-chart'
 import { Attachments } from '@/components/app/attachments'
 import { ConfirmDialog } from '@/components/app/confirm-dialog'
 import { DatePicker } from '@/components/app/date-picker'
@@ -23,7 +24,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
 import { useInvalidateLedger } from '@/lib/api/mutations'
-import { accountQuery, transactionsQuery } from '@/lib/api/queries'
+import { accountQuery, balanceHistoryQuery, transactionsQuery } from '@/lib/api/queries'
+import { rangePresets } from '@/lib/period'
 import { todayIso } from '@/lib/format'
 import { notifyError } from '@/lib/forms'
 import { accountTypeSingular, assetRoleLabels, liabilityDirectionLabels, liabilityTypeLabels } from '@/lib/labels'
@@ -151,6 +153,8 @@ function AccountDetail() {
         </div>
       )}
 
+      {own && <AccountBalanceCard accountId={account.id} currency={currency} />}
+
       {account.notes && <p className="text-muted-foreground mb-6 text-sm whitespace-pre-line">{account.notes}</p>}
 
       <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
@@ -202,5 +206,25 @@ function AccountDetail() {
         </SheetContent>
       </Sheet>
     </>
+  )
+}
+
+function AccountBalanceCard({ accountId, currency }: { accountId: number; currency: string }) {
+  const { t } = useTranslation()
+  const ledger = useLedger()
+  const [range] = useState(() => rangePresets(new Date()).last_12_months)
+  const { data } = useQuery(balanceHistoryQuery(ledger.id, accountId, { ...range, interval: 'week' }))
+
+  if (!data || data.data.points.length < 2) return null
+
+  return (
+    <Card className="mb-6">
+      <CardHeader>
+        <CardDescription>{t('Balance over the last 12 months')}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <BalanceChart points={data.data.points} currency={data.meta.currency === currency ? currency : data.meta.currency} label={t('Balance')} />
+      </CardContent>
+    </Card>
   )
 }

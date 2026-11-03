@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import {
   ArrowLeftRightIcon,
+  ChartColumnIcon,
   BookOpenIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
@@ -66,6 +67,7 @@ export function AppSidebar() {
   const navigation = [
     { to: '/$ledgerId', label: t('Dashboard'), icon: LayoutDashboardIcon, exact: true },
     { to: '/$ledgerId/transactions', label: t('Transactions'), icon: ArrowLeftRightIcon },
+    { to: '/$ledgerId/reports', label: t('Reports'), icon: ChartColumnIcon },
   ] as const
 
   const accounts = [
@@ -89,7 +91,7 @@ export function AppSidebar() {
   ] as const
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="print:hidden">
       <SidebarHeader>
         <LedgerSwitcher />
       </SidebarHeader>

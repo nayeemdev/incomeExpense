@@ -4,6 +4,7 @@ import {
   ArrowDownLeftIcon,
   ArrowLeftRightIcon,
   ArrowUpRightIcon,
+  ChartColumnIcon,
   FolderIcon,
   LayoutDashboardIcon,
   PieChartIcon,
@@ -94,6 +95,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               {typeLabels[type]}
             </CommandItem>
           ))}
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/reports', params: { ledgerId } }))}>
+            <ChartColumnIcon />
+            {t('Reports')}
+          </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/budgets', params: { ledgerId } }))}>
             <PieChartIcon />
             {t('Budgets')}
