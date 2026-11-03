@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\RuleEngine\ActionType;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 #[Fillable(['type', 'value', 'order'])]
 class RuleAction extends Model
 {
+    use HasUlids;
+
     public $timestamps = false;
 
     /**

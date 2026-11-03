@@ -23,7 +23,7 @@ class AttachmentController extends Controller
     {
         $filters = $request->validate([
             'attachable_type' => ['required', Rule::in(array_keys(Relation::morphMap()))],
-            'attachable_id' => ['required', 'integer'],
+            'attachable_id' => ['required', 'ulid'],
         ]);
 
         return AttachmentResource::collection(
@@ -40,13 +40,13 @@ class AttachmentController extends Controller
                 'mimes:'.implode(',', config()->array('ledgerfly.attachments.mimes')),
             ],
             'attachable_type' => ['required', Rule::in(['account', 'transaction_group'])],
-            'attachable_id' => ['required', 'integer'],
+            'attachable_id' => ['required', 'ulid'],
             'title' => ['nullable', 'string', 'max:255'],
         ]);
 
         $attachable = $validated['attachable_type'] === 'account'
-            ? $ledger->accounts()->findOrFail((int) $validated['attachable_id'])
-            : $ledger->transactionGroups()->findOrFail((int) $validated['attachable_id']);
+            ? $ledger->accounts()->findOrFail((string) $validated['attachable_id'])
+            : $ledger->transactionGroups()->findOrFail((string) $validated['attachable_id']);
 
         $file = $request->file('file');
         abort_unless($file instanceof UploadedFile, 422);

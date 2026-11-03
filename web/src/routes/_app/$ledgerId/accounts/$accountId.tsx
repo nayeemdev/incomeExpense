@@ -45,7 +45,7 @@ function AccountDetail() {
   const [editing, setEditing] = useState(false)
   const [reconciling, setReconciling] = useState(false)
   const [reconcileDate, setReconcileDate] = useState(todayIso())
-  const accountId = Number(Route.useParams().accountId)
+  const accountId = Route.useParams().accountId
   const { page = 1 } = Route.useSearch()
   const { data: account } = useQuery(accountQuery(ledger.id, accountId))
   const { data: transactions } = useQuery(transactionsQuery(ledger.id, { account_id: accountId, page }))
@@ -53,7 +53,7 @@ function AccountDetail() {
   const remove = useMutation({
     mutationFn: () => api.delete(`/ledgers/${ledger.id}/accounts/${accountId}`),
     onSuccess: async () => {
-      await navigate({ to: '/$ledgerId/accounts', params: { ledgerId: String(ledger.id) }, search: { type: account?.type ?? 'asset' } })
+      await navigate({ to: '/$ledgerId/accounts', params: { ledgerId: ledger.id }, search: { type: account?.type ?? 'asset' } })
       await invalidate()
     },
     onError: notifyError,
@@ -202,7 +202,7 @@ function AccountDetail() {
   )
 }
 
-function AccountBalanceCard({ accountId, currency }: { accountId: number; currency: string }) {
+function AccountBalanceCard({ accountId, currency }: { accountId: string; currency: string }) {
   const { t } = useTranslation()
   const ledger = useLedger()
   const [range] = useState(() => rangePresets(new Date()).last_12_months)

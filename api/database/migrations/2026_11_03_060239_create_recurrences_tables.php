@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('recurrences', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->string('type', 20);
             $table->string('title');
             $table->text('description')->nullable();
@@ -26,8 +26,8 @@ return new class extends Migration
         });
 
         Schema::create('recurrence_repetitions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('recurrence_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('recurrence_id')->constrained()->cascadeOnDelete();
             $table->string('type', 20);
             $table->string('moment', 20);
             $table->unsignedSmallInteger('skip')->default(0);
@@ -35,24 +35,24 @@ return new class extends Migration
         });
 
         Schema::create('recurrence_transactions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('recurrence_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('recurrence_id')->constrained()->cascadeOnDelete();
             $table->string('description');
             $table->decimal('amount', 32, 12);
-            $table->foreignId('foreign_currency_id')->nullable()->constrained('currencies');
+            $table->foreignUlid('foreign_currency_id')->nullable()->constrained('currencies');
             $table->decimal('foreign_amount', 32, 12)->nullable();
-            $table->foreignId('source_account_id')->constrained('accounts')->cascadeOnDelete();
-            $table->foreignId('destination_account_id')->constrained('accounts')->cascadeOnDelete();
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('budget_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('bill_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUlid('source_account_id')->constrained('accounts')->cascadeOnDelete();
+            $table->foreignUlid('destination_account_id')->constrained('accounts')->cascadeOnDelete();
+            $table->foreignUlid('category_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUlid('budget_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUlid('bill_id')->nullable()->constrained()->nullOnDelete();
             $table->json('tags')->nullable();
             $table->text('notes')->nullable();
             $table->unsignedSmallInteger('order')->default(0);
         });
 
         Schema::table('transaction_groups', function (Blueprint $table) {
-            $table->foreignId('recurrence_id')->nullable()->after('created_by')->constrained()->nullOnDelete();
+            $table->foreignUlid('recurrence_id')->nullable()->after('created_by')->constrained()->nullOnDelete();
             $table->date('recurrence_date')->nullable()->after('recurrence_id');
 
             $table->unique(['recurrence_id', 'recurrence_date']);

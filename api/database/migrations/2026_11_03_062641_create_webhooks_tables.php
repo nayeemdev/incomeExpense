@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('webhooks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('url', 2048);
             $table->json('events');
@@ -20,8 +20,8 @@ return new class extends Migration
         });
 
         Schema::create('webhook_deliveries', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('webhook_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('webhook_id')->constrained()->cascadeOnDelete();
             $table->string('event', 50);
             $table->json('payload');
             $table->unsignedSmallInteger('status_code')->nullable();

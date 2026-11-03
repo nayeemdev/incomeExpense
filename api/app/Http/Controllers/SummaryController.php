@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 
 class SummaryController extends Controller
 {
-    /** @var Collection<int, Currency> */
+    /** @var Collection<string, Currency> */
     private Collection $currencies;
 
     public function __construct(private CurrencyConverter $converter) {}
@@ -94,7 +94,7 @@ class SummaryController extends Controller
     }
 
     /**
-     * @return list<array{id: ?int, name: ?string, icon: ?string, color: ?string, currency: string, amount: string}>
+     * @return list<array{id: ?string, name: ?string, icon: ?string, color: ?string, currency: string, amount: string}>
      */
     private function topCategories(Ledger $ledger, string $start, string $end): array
     {
@@ -113,7 +113,7 @@ class SummaryController extends Controller
         $result = [];
 
         foreach ($rows as $row) {
-            /** @var object{category_id: ?int, name: ?string, icon: ?string, color: ?string, currency_id: int, total: string} $row */
+            /** @var object{category_id: ?string, name: ?string, icon: ?string, color: ?string, currency_id: string, total: string} $row */
             $result[] = [
                 'id' => $row->category_id,
                 'name' => $row->name,
@@ -135,7 +135,7 @@ class SummaryController extends Controller
         $result = [];
 
         foreach ($query->toBase()->get() as $row) {
-            /** @var object{currency_id: int, total: string} $row */
+            /** @var object{currency_id: string, total: string} $row */
             $result[] = $this->amount($row->currency_id, $row->total);
         }
 
@@ -175,7 +175,7 @@ class SummaryController extends Controller
     /**
      * @return array{currency: string, amount: string}
      */
-    private function amount(int $currencyId, string $total): array
+    private function amount(string $currencyId, string $total): array
     {
         $currency = $this->currencies->get($currencyId) ?? Currency::query()->findOrFail($currencyId);
 

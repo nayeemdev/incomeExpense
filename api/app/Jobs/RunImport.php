@@ -28,7 +28,7 @@ class RunImport implements ShouldQueue
     {
         $job = $this->import;
         $config = $job->config ?? [];
-        $account = Account::query()->with('currency', 'ledger')->findOrFail((int) ($config['account_id'] ?? 0));
+        $account = Account::query()->with('currency', 'ledger')->findOrFail((string) ($config['account_id'] ?? ''));
         $job->update(['status' => 'running']);
 
         $stats = ['created' => 0, 'duplicates' => 0, 'failed' => 0, 'failures' => []];

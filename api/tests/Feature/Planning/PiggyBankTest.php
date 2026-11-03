@@ -41,7 +41,7 @@ it('prevents saving more than the target, the account has, or taking out more th
         'name' => 'Bike', 'currency_id' => $ledger->primary_currency_id, 'account_ids' => [$savings->id],
     ])->json('data.id');
 
-    $move = fn (int $piggy, string $amount) => $this->postJson("/api/v1/ledgers/{$ledger->id}/piggy-banks/{$piggy}/move", ['account_id' => $savings->id, 'amount' => $amount]);
+    $move = fn (string $piggy, string $amount) => $this->postJson("/api/v1/ledgers/{$ledger->id}/piggy-banks/{$piggy}/move", ['account_id' => $savings->id, 'amount' => $amount]);
 
     $move($id, '90')->assertJsonValidationErrors('amount');
     $move($id, '-1')->assertJsonValidationErrors('amount');

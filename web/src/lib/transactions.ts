@@ -1,7 +1,7 @@
 import i18n from '@/i18n'
 import type { Account, AccountRef, TransactionType } from './api/types'
 
-export type AccountChoice = { id: number } | { name: string } | null
+export type AccountChoice = { id: string } | { name: string } | null
 
 export function allowedAccountTypes(type: TransactionType, side: 'source' | 'destination'): Account['type'][] {
   if (type === 'transfer') return ['asset']

@@ -61,7 +61,7 @@ class WebhookController extends Controller
         ])]);
     }
 
-    public function redeliver(Ledger $ledger, Webhook $webhook, int $delivery): Response
+    public function redeliver(Ledger $ledger, Webhook $webhook, string $delivery): Response
     {
         $original = $webhook->deliveries()->findOrFail($delivery);
         DeliverWebhook::dispatch($webhook->deliveries()->create(['event' => $original->event, 'payload' => $original->payload]));

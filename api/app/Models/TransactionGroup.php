@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToLedger;
 use App\Models\Concerns\HasAttachments;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable(['title', 'created_by', 'recurrence_id', 'recurrence_date'])]
 class TransactionGroup extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
     use HasAttachments;
     use SoftDeletes;
 

@@ -9,11 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('piggy_banks', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('object_group_id')->nullable()->constrained()->nullOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('object_group_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->foreignUlid('currency_id')->constrained('currencies');
             $table->decimal('target_amount', 32, 12)->nullable();
             $table->date('start_date')->nullable();
             $table->date('target_date')->nullable();
@@ -26,17 +26,17 @@ return new class extends Migration
         });
 
         Schema::create('account_piggy_bank', function (Blueprint $table) {
-            $table->foreignId('piggy_bank_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('account_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('piggy_bank_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('account_id')->constrained()->cascadeOnDelete();
             $table->decimal('current_amount', 32, 12)->default(0);
 
             $table->primary(['piggy_bank_id', 'account_id']);
         });
 
         Schema::create('piggy_bank_events', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('piggy_bank_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('account_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('piggy_bank_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('account_id')->constrained()->cascadeOnDelete();
             $table->decimal('amount', 32, 12);
             $table->date('date');
             $table->timestamps();

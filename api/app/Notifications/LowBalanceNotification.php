@@ -14,7 +14,7 @@ class LowBalanceNotification extends LedgerNotification
         return 'low_balance';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->account->ledger_id;
     }

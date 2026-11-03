@@ -53,7 +53,7 @@ function Incomplete({ meta }: { meta?: ReportMeta }) {
       <AlertDescription>
         <span>
           {t('Some amounts are in currencies without an exchange rate and are left out.')}{' '}
-          <Link to="/$ledgerId/settings" params={{ ledgerId: String(ledger.id) }} search={{ tab: 'exchange-rates' }} className="underline">
+          <Link to="/$ledgerId/settings" params={{ ledgerId: ledger.id }} search={{ tab: 'exchange-rates' }} className="underline">
             {t('Add exchange rates')}
           </Link>
         </span>
@@ -228,7 +228,7 @@ function CategoryList({ title, rows, currency }: { title: string; rows: Breakdow
   const { t } = useTranslation()
   const ledger = useLedger()
   const { data: categories } = useQuery(categoriesQuery(ledger.id))
-  const styles = new Map((categories?.data ?? []).map((category) => [String(category.id), category]))
+  const styles = new Map((categories?.data ?? []).map((category) => [category.id, category]))
   const slices = donutSlices(rows, t('Other'), t('Uncategorised'))
   const [selected, setSelected] = useState<string | null>(null)
   const total = slices.reduce((sum, slice) => sum + slice.value, 0)

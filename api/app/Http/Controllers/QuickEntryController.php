@@ -15,7 +15,7 @@ class QuickEntryController extends Controller
 {
     public function __invoke(QuickEntryRequest $request, Ledger $ledger, #[CurrentUser] User $user, RecordQuickEntry $record): JsonResponse
     {
-        /** @var array{amount: string, description: string, type?: ?string, account_id?: ?int, counterparty?: ?string, category?: ?string, date?: ?string, notes?: ?string} $input */
+        /** @var array{amount: string, description: string, type?: ?string, account_id?: ?string, counterparty?: ?string, category?: ?string, date?: ?string, notes?: ?string} $input */
         $input = $request->validated();
 
         $group = $record->handle($ledger, $user, $input)->load([

@@ -20,7 +20,7 @@ import { handleFormError, notifyError } from '@/lib/forms'
 
 const schema = z.object({
   name: z.string().trim().min(1).max(255),
-  primary_currency_id: z.number(),
+  primary_currency_id: z.string(),
   fiscal_year_start: z.string().regex(/^\d{2}-\d{2}$/, 'Use MM-DD'),
 })
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToLedger;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['link_type_id', 'outward_group_id', 'inward_group_id', 'notes'])]
 class TransactionLink extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
 
     /**
      * @return BelongsTo<LinkType, $this>

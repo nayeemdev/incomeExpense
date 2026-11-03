@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -10,7 +11,7 @@ use Illuminate\Support\Carbon;
 /**
  * Rates without a ledger are fetched for everyone; a ledger's own rates take precedence.
  *
- * @property ?int $ledger_id
+ * @property ?string $ledger_id
  * @property Carbon $date
  * @property string $rate
  * @property-read Currency $from
@@ -19,6 +20,8 @@ use Illuminate\Support\Carbon;
 #[Fillable(['ledger_id', 'from_currency_id', 'to_currency_id', 'date', 'rate'])]
 class ExchangeRate extends Model
 {
+    use HasUlids;
+
     /**
      * @return array<string, string>
      */

@@ -29,7 +29,7 @@ export const Route = createFileRoute('/_app/onboarding')({
 
 const ledgerSchema = z.object({
   name: z.string().min(1).max(255),
-  primary_currency_id: z.number({ error: 'Choose a currency' }),
+  primary_currency_id: z.string({ error: 'Choose a currency' }),
 })
 
 const accountsSchema = z.object({
@@ -68,7 +68,7 @@ function LedgerStep({ onCreated }: { onCreated: (ledger: Ledger) => void }) {
   const create = useMutation({
     mutationFn: (values: z.output<typeof ledgerSchema>) => api.post<Resource<Ledger>>('/ledgers', values),
     onSuccess: async ({ data }) => {
-      storage.set('ledger', String(data.id))
+      storage.set('ledger', data.id)
       await queryClient.invalidateQueries({ queryKey: ledgersQuery.queryKey })
       onCreated(data)
     },
@@ -132,7 +132,7 @@ function AccountsStep({ ledger }: { ledger: Ledger }) {
         })
       }
     },
-    onSuccess: () => navigate({ to: '/$ledgerId', params: { ledgerId: String(ledger.id) } }),
+    onSuccess: () => navigate({ to: '/$ledgerId', params: { ledgerId: ledger.id } }),
     onError: (error) => handleFormError(error, form.setError),
   })
 
@@ -198,7 +198,7 @@ function AccountsStep({ ledger }: { ledger: Ledger }) {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => navigate({ to: '/$ledgerId', params: { ledgerId: String(ledger.id) } })}
+            onClick={() => navigate({ to: '/$ledgerId', params: { ledgerId: ledger.id } })}
           >
             {t('Skip for now')}
           </Button>

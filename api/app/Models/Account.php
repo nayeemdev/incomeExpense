@@ -15,6 +15,7 @@ use Database\Factories\AccountFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,7 +40,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 ])]
 class Account extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
     use HasAttachments;
 
     /** @use HasFactory<AccountFactory> */

@@ -17,7 +17,7 @@ import { PageHeader } from './page-header'
 import { Pagination } from './pagination'
 import { TransactionList } from './transaction-list'
 
-type LabelDetailProps = { kind: 'categories' | 'tags'; id: number; page: number; onPageChange: (page: number) => void }
+type LabelDetailProps = { kind: 'categories' | 'tags'; id: string; page: number; onPageChange: (page: number) => void }
 
 export function LabelDetail({ kind, id, page, onPageChange }: LabelDetailProps) {
   const { t } = useTranslation()
@@ -38,7 +38,7 @@ export function LabelDetail({ kind, id, page, onPageChange }: LabelDetailProps) 
   const remove = useMutation({
     mutationFn: () => api.delete(`/ledgers/${ledger.id}/${kind}/${id}`),
     onSuccess: async () => {
-      await navigate({ to: isTags ? '/$ledgerId/tags' : '/$ledgerId/categories', params: { ledgerId: String(ledger.id) } })
+      await navigate({ to: isTags ? '/$ledgerId/tags' : '/$ledgerId/categories', params: { ledgerId: ledger.id } })
       await invalidate()
     },
     onError: notifyError,

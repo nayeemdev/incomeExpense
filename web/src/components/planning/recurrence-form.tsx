@@ -25,7 +25,7 @@ import { repetitionLabels, transactionTypeLabels, weekendLabels } from '@/lib/la
 import { ordinals, weekdayNames } from '@/lib/recurrence'
 import type { AccountChoice } from '@/lib/transactions'
 
-const accountChoice = z.union([z.object({ id: z.number() }), z.object({ name: z.string().min(1) })]).nullable()
+const accountChoice = z.union([z.object({ id: z.string() }), z.object({ name: z.string().min(1) })]).nullable()
 
 const schema = z
   .object({
@@ -35,8 +35,8 @@ const schema = z
     description: z.string().trim().min(1).max(255),
     source: accountChoice,
     destination: accountChoice,
-    category: z.object({ id: z.number().optional(), name: z.string() }).nullable(),
-    budget_id: z.number().nullable(),
+    category: z.object({ id: z.string().optional(), name: z.string() }).nullable(),
+    budget_id: z.string().nullable(),
     first_date: z.string().min(1),
     repetition_type: z.enum(['daily', 'weekly', 'monthly', 'ndom', 'yearly']),
     weekday: z.string(),
@@ -60,7 +60,7 @@ type Values = z.infer<typeof schema>
 function toValues(recurrence?: Recurrence): Values {
   const split = recurrence?.transactions[0]
   const repetition = recurrence?.repetition
-  const ref = (account?: { id: number; name: string; type: string }): AccountChoice =>
+  const ref = (account?: { id: string; name: string; type: string }): AccountChoice =>
     !account ? null : account.type === 'expense' || account.type === 'revenue' ? { name: account.name } : { id: account.id }
   const [nth, weekday] = repetition?.type === 'ndom' ? repetition.moment.split(',') : ['1', '1']
   const today = new Date()
@@ -198,10 +198,10 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
               {(field) => (
                 <Combobox
                   id={field.id}
-                  options={categories.map((category) => ({ value: String(category.id), label: category.name }))}
-                  value={field.value?.id ? String(field.value.id) : null}
+                  options={categories.map((category) => ({ value: category.id, label: category.name }))}
+                  value={field.value?.id ? field.value.id : null}
                   displayValue={field.value?.name}
-                  onChange={(next, option) => field.onChange(next && option ? { id: Number(option.value), name: option.label } : null)}
+                  onChange={(next, option) => field.onChange(next && option ? { id: option.value, name: option.label } : null)}
                   onCreate={(name) => field.onChange({ name })}
                   placeholder={t('No category')}
                 />
@@ -212,9 +212,9 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
                 {(field) => (
                   <Combobox
                     id={field.id}
-                    options={budgets.map((budget) => ({ value: String(budget.id), label: budget.name }))}
-                    value={field.value ? String(field.value) : null}
-                    onChange={(next) => field.onChange(next ? Number(next) : null)}
+                    options={budgets.map((budget) => ({ value: budget.id, label: budget.name }))}
+                    value={field.value ?? null}
+                    onChange={(next) => field.onChange(next ?? null)}
                     placeholder={t('No budget')}
                   />
                 )}

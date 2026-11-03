@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
 import type { TransactionType } from '@/lib/api/types'
 
-export type QuickAddDefaults = { type?: TransactionType; accountId?: number; groupId?: number; split?: boolean }
+export type QuickAddDefaults = { type?: TransactionType; accountId?: string; groupId?: string; split?: boolean }
 
 export const QuickAddContext = createContext<(defaults?: QuickAddDefaults) => void>(() => {})
 

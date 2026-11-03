@@ -3,16 +3,17 @@
 namespace App\Models;
 
 use App\Enums\LedgerRole;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property LedgerRole $role
- * @property ?int $default_account_id
- * @property ?int $default_income_account_id
+ * @property ?string $default_account_id
+ * @property ?string $default_income_account_id
  */
 class LedgerMember extends Pivot
 {
-    public $incrementing = true;
+    use HasUlids;
 
     protected $table = 'ledger_user';
 

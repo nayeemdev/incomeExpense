@@ -13,7 +13,7 @@ class PiggyBankReachedNotification extends LedgerNotification
         return 'piggy_bank_reached';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->piggyBank->ledger_id;
     }

@@ -106,7 +106,7 @@ function Bills() {
                   <div className="min-w-0 flex-1">
                     <Link
                       to="/$ledgerId/bills/$billId"
-                      params={{ ledgerId: String(ledger.id), billId: String(bill.id) }}
+                      params={{ ledgerId: ledger.id, billId: bill.id }}
                       className="font-medium after:absolute after:inset-0"
                     >
                       {bill.name}

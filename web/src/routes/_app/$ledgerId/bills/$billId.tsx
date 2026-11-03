@@ -36,7 +36,7 @@ function BillDetail() {
   const invalidate = useInvalidateLedger(ledger.id)
   const [editing, setEditing] = useState(false)
   const [page, setPage] = useState(1)
-  const billId = Number(Route.useParams().billId)
+  const billId = Route.useParams().billId
   const { data: bill } = useQuery({
     queryKey: [...ledgerKey(ledger.id), 'bills', 'detail', billId],
     queryFn: () => api.get<Resource<Bill>>(`/ledgers/${ledger.id}/bills/${billId}`).then((r) => r.data),
@@ -46,7 +46,7 @@ function BillDetail() {
   const remove = useMutation({
     mutationFn: () => api.delete(`/ledgers/${ledger.id}/bills/${billId}`),
     onSuccess: async () => {
-      await navigate({ to: '/$ledgerId/bills', params: { ledgerId: String(ledger.id) } })
+      await navigate({ to: '/$ledgerId/bills', params: { ledgerId: ledger.id } })
       await invalidate()
     },
     onError: notifyError,

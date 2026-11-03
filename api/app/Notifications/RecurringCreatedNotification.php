@@ -14,7 +14,7 @@ class RecurringCreatedNotification extends LedgerNotification
         return 'recurring_created';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->recurrence->ledger_id;
     }

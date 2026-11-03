@@ -5,8 +5,8 @@ import { Combobox } from './combobox'
 
 type CurrencySelectProps = {
   id?: string
-  value: number | null | undefined
-  onChange: (value: number | null) => void
+  value: string | null | undefined
+  onChange: (value: string | null) => void
   'aria-invalid'?: boolean
 }
 
@@ -19,12 +19,12 @@ export function CurrencySelect({ id, value, onChange, ...props }: CurrencySelect
       id={id}
       aria-invalid={props['aria-invalid']}
       options={currencies.map((currency) => ({
-        value: String(currency.id),
+        value: currency.id,
         label: `${currency.code} · ${currency.name}`,
         keywords: [currency.code, currency.name],
       }))}
-      value={value ? String(value) : null}
-      onChange={(next) => onChange(next ? Number(next) : null)}
+      value={value ?? null}
+      onChange={(next) => onChange(next ?? null)}
       placeholder={t('Choose a currency')}
       searchPlaceholder={t('Search currencies…')}
     />

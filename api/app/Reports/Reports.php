@@ -24,7 +24,7 @@ class Reports
 {
     private bool $complete = true;
 
-    /** @var Collection<int, Currency> */
+    /** @var Collection<string, Currency> */
     private Collection $currencies;
 
     public function __construct(private CurrencyConverter $converter)
@@ -40,7 +40,7 @@ class Reports
     /**
      * Income and expenses per bucket.
      *
-     * @param  list<int>  $accountIds
+     * @param  list<string>  $accountIds
      * @return list<array{start: string, end: string, income: string, expense: string}>
      */
     public function incomeExpense(Ledger $ledger, Period $period, string $interval, array $accountIds = []): array
@@ -81,8 +81,8 @@ class Reports
      * Totals per category, tag, budget or counterparty account, for withdrawals or deposits.
      *
      * @param  'category'|'tag'|'budget'|'counterparty'  $groupBy
-     * @param  list<int>  $accountIds
-     * @return list<array{id: ?int, name: ?string, total: string, buckets: array<string, string>}>
+     * @param  list<string>  $accountIds
+     * @return list<array{id: ?string, name: ?string, total: string, buckets: array<string, string>}>
      */
     public function breakdown(Ledger $ledger, Period $period, string $interval, string $groupBy, TransactionType $type, array $accountIds = []): array
     {
@@ -109,7 +109,7 @@ class Reports
         $groups = [];
 
         foreach ($rows as $row) {
-            /** @var object{date: string, currency_id: int, group_id: ?int, group_name: ?string, total: string} $row */
+            /** @var object{date: string, currency_id: string, group_id: ?string, group_name: ?string, total: string} $row */
             $bucket = collect($buckets)->first(fn (Period $bucket) => $row->date >= $bucket->start->toDateString() && $row->date <= $bucket->end->toDateString());
 
             if ($bucket === null) {
@@ -137,7 +137,7 @@ class Reports
     /**
      * Balance at the end of each bucket for the given own accounts (all own accounts in net worth by default).
      *
-     * @param  list<int>  $accountIds
+     * @param  list<string>  $accountIds
      * @return list<array{date: string, balance: string}>
      */
     public function balanceSeries(Ledger $ledger, Period $period, string $interval, array $accountIds = []): array
@@ -146,7 +146,7 @@ class Reports
             ->whereIn('type', [AccountType::Asset, AccountType::Liability])
             ->when($accountIds !== [], fn (Builder $query) => $query->whereKey($accountIds), fn (Builder $query) => $query->where('include_net_worth', true))
             ->pluck('id')
-            ->map(fn ($id) => (int) $id)
+            ->map(fn ($id) => (string) $id)
             ->values()
             ->all();
 
@@ -167,7 +167,7 @@ class Reports
 
         foreach ($period->buckets($interval) as $bucket) {
             foreach ($daily as $row) {
-                /** @var object{date: string, currency_id: int, total: string} $row */
+                /** @var object{date: string, currency_id: string, total: string} $row */
                 if ($row->date >= $bucket->start->toDateString() && $row->date <= $bucket->end->toDateString()) {
                     $running[$row->currency_id] = Money::sum($running[$row->currency_id] ?? '0', $row->total);
                 }
@@ -176,7 +176,7 @@ class Reports
             $total = '0';
 
             foreach ($running as $currencyId => $amount) {
-                $total = Money::sum($total, $this->toPrimary($ledger, $amount, $currencyId, $bucket->end));
+                $total = Money::sum($total, $this->toPrimary($ledger, $amount, (string) $currencyId, $bucket->end));
             }
 
             $series[] = ['date' => $bucket->end->toDateString(), 'balance' => $this->round($ledger, $total)];
@@ -188,8 +188,8 @@ class Reports
     /**
      * Start and end balance of each own account over the period, in the account currency.
      *
-     * @param  list<int>  $accountIds
-     * @return list<array{id: int, name: string, currency: ?string, start: string, end: string, change: string}>
+     * @param  list<string>  $accountIds
+     * @return list<array{id: string, name: string, currency: ?string, start: string, end: string, change: string}>
      */
     public function accountChanges(Ledger $ledger, Period $period, array $accountIds = []): array
     {
@@ -226,7 +226,7 @@ class Reports
     /**
      * Budgeted amounts and spending per budget over the period.
      *
-     * @return list<array{id: int, name: string, budgeted: string, spent: string}>
+     * @return list<array{id: string, name: string, budgeted: string, spent: string}>
      */
     public function budgets(Ledger $ledger, Period $period): array
     {
@@ -255,7 +255,7 @@ class Reports
     }
 
     /**
-     * @param  list<int>  $accountIds
+     * @param  list<string>  $accountIds
      * @return Builder<Transaction>
      */
     private function transactions(Ledger $ledger, Period $period, array $accountIds): Builder
@@ -269,13 +269,13 @@ class Reports
     }
 
     /**
-     * @param  list<int>  $accountIds
+     * @param  list<string>  $accountIds
      * @param  list<string>  $extra
-     * @return Collection<int, object{date: string, currency_id: int, total: string, type: string}>
+     * @return Collection<int, object{date: string, currency_id: string, total: string, type: string}>
      */
     private function dailyTotals(Ledger $ledger, Period $period, array $accountIds, array $extra): Collection
     {
-        /** @var Collection<int, object{date: string, currency_id: int, total: string, type: string}> */
+        /** @var Collection<int, object{date: string, currency_id: string, total: string, type: string}> */
         return $this->transactions($ledger, $period, $accountIds)
             ->groupBy('transactions.date', 'transactions.currency_id', ...$extra)
             ->select('transactions.date', 'transactions.currency_id', ...$extra)
@@ -285,7 +285,7 @@ class Reports
     }
 
     /**
-     * @param  array<int, int>  $accountIds
+     * @param  array<int, string>  $accountIds
      * @return array<int, string> currency id => total
      */
     private function postingTotals(array $accountIds, ?CarbonImmutable $from, CarbonImmutable $to): array
@@ -305,7 +305,7 @@ class Reports
     }
 
     /**
-     * @param  array<int, int>  $accountIds
+     * @param  array<int, string>  $accountIds
      * @return array<int, string> account id => balance
      */
     private function balancesByAccount(array $accountIds, CarbonImmutable $at): array
@@ -323,7 +323,7 @@ class Reports
             ->all();
     }
 
-    private function toPrimary(Ledger $ledger, string $amount, int $currencyId, CarbonImmutable $date): string
+    private function toPrimary(Ledger $ledger, string $amount, string $currencyId, CarbonImmutable $date): string
     {
         $converted = $this->converter->convert($amount, $currencyId, $ledger->primary_currency_id, $date, $ledger->id);
 

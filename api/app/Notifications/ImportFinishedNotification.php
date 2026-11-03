@@ -13,7 +13,7 @@ class ImportFinishedNotification extends LedgerNotification
         return 'import_finished';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->job->ledger_id;
     }

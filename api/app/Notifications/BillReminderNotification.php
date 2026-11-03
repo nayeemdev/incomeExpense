@@ -15,7 +15,7 @@ class BillReminderNotification extends LedgerNotification
         return $this->overdue ? 'bill_overdue' : 'bill_due';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->bill->ledger_id;
     }

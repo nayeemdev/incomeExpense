@@ -18,7 +18,7 @@ function formatSize(bytes: number) {
   return `${(bytes / 1024 ** index).toFixed(index ? 1 : 0)} ${units[index]}`
 }
 
-type AttachmentsProps = { type: Attachment['attachable_type']; id: number }
+type AttachmentsProps = { type: Attachment['attachable_type']; id: string }
 
 export function Attachments({ type, id }: AttachmentsProps) {
   const { t } = useTranslation()
@@ -34,7 +34,7 @@ export function Attachments({ type, id }: AttachmentsProps) {
         const body = new FormData()
         body.append('file', file)
         body.append('attachable_type', type)
-        body.append('attachable_id', String(id))
+        body.append('attachable_id', id)
         await api.post(`/ledgers/${ledger.id}/attachments`, body)
       }
     },
@@ -46,7 +46,7 @@ export function Attachments({ type, id }: AttachmentsProps) {
   })
 
   const remove = useMutation({
-    mutationFn: (attachmentId: number) => api.delete(`/ledgers/${ledger.id}/attachments/${attachmentId}`),
+    mutationFn: (attachmentId: string) => api.delete(`/ledgers/${ledger.id}/attachments/${attachmentId}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })

@@ -11,7 +11,7 @@ import '../../shared/widgets.dart';
 import '../auth/session.dart';
 import '../ledger/ledger.dart';
 
-final receiptsProvider = FutureProvider.autoDispose.family<List<Attachment>, int>((ref, groupId) async {
+final receiptsProvider = FutureProvider.autoDispose.family<List<Attachment>, String>((ref, groupId) async {
   final ledger = ref.watch(currentLedgerProvider);
   final response = await ref
       .watch(apiProvider)
@@ -19,12 +19,12 @@ final receiptsProvider = FutureProvider.autoDispose.family<List<Attachment>, int
   return (response['data'] as List).map((json) => Attachment.fromJson(json as Json)).toList();
 });
 
-final receiptImageProvider = FutureProvider.autoDispose.family<Uint8List, int>((ref, attachmentId) async {
+final receiptImageProvider = FutureProvider.autoDispose.family<Uint8List, String>((ref, attachmentId) async {
   final ledger = ref.watch(currentLedgerProvider);
   return Uint8List.fromList(await ref.watch(apiProvider).bytes(ledgerPath(ledger, 'attachments/$attachmentId/download')));
 });
 
-Future<void> uploadReceipt(WidgetRef ref, int groupId, String filePath) async {
+Future<void> uploadReceipt(WidgetRef ref, String groupId, String filePath) async {
   final ledger = ref.read(currentLedgerProvider);
   await ref
       .read(apiProvider)
@@ -67,7 +67,7 @@ Future<XFile?> pickReceipt(BuildContext context) async {
 class ReceiptsSection extends ConsumerWidget {
   const ReceiptsSection({super.key, required this.groupId});
 
-  final int groupId;
+  final String groupId;
 
   Future<void> _add(BuildContext context, WidgetRef ref) async {
     final photo = await pickReceipt(context);

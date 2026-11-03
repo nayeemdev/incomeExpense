@@ -14,7 +14,7 @@ import { Combobox } from './combobox'
 import { ConfirmDialog } from './confirm-dialog'
 import { SelectField } from './select-field'
 
-type BulkActionsProps = { selected: number[]; onDone: () => void }
+type BulkActionsProps = { selected: string[]; onDone: () => void }
 
 export function BulkActions({ selected, onDone }: BulkActionsProps) {
   const { t } = useTranslation()

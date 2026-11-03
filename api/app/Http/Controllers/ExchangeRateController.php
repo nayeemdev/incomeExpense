@@ -17,15 +17,15 @@ class ExchangeRateController extends Controller
     public function index(Request $request, Ledger $ledger): JsonResponse
     {
         $filters = $request->validate([
-            'from_currency_id' => ['nullable', 'integer'],
-            'to_currency_id' => ['nullable', 'integer'],
+            'from_currency_id' => ['nullable', 'ulid'],
+            'to_currency_id' => ['nullable', 'ulid'],
         ]);
 
         $rates = ExchangeRate::query()
             ->with('from', 'to')
             ->where(fn ($query) => $query->whereNull('ledger_id')->orWhere('ledger_id', $ledger->id))
-            ->when($filters['from_currency_id'] ?? null, fn ($query, int $id) => $query->where('from_currency_id', $id))
-            ->when($filters['to_currency_id'] ?? null, fn ($query, int $id) => $query->where('to_currency_id', $id))
+            ->when($filters['from_currency_id'] ?? null, fn ($query, string $id) => $query->where('from_currency_id', $id))
+            ->when($filters['to_currency_id'] ?? null, fn ($query, string $id) => $query->where('to_currency_id', $id))
             ->when(! isset($filters['from_currency_id']), fn ($query) => $query->where(fn ($query) => $query
                 ->where('from_currency_id', $ledger->primary_currency_id)
                 ->orWhere('ledger_id', $ledger->id)))
@@ -53,7 +53,7 @@ class ExchangeRateController extends Controller
         return response()->json(['data' => $this->present($rate->load('from', 'to'))], Response::HTTP_CREATED);
     }
 
-    public function destroy(Ledger $ledger, int $exchangeRate): Response
+    public function destroy(Ledger $ledger, string $exchangeRate): Response
     {
         ExchangeRate::query()->where('ledger_id', $ledger->id)->findOrFail($exchangeRate)->delete();
 

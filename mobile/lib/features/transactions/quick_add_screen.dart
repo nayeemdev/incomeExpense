@@ -40,11 +40,11 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
   late String _type = widget.type;
   String _amount = '';
   NamedRef? _category;
-  int? _fromId;
-  int? _toId;
+  String? _fromId;
+  String? _toId;
   String _payee = '';
   DateTime _date = Dates.today();
-  int? _budgetId;
+  String? _budgetId;
   String _tags = '';
   String _notes = '';
   String? _receipt;
@@ -91,9 +91,9 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     super.dispose();
   }
 
-  int? get _ownAccountId => _type == 'deposit' ? _toId : _fromId;
+  String? get _ownAccountId => _type == 'deposit' ? _toId : _fromId;
 
-  void _setOwnAccount(int id) => setState(() {
+  void _setOwnAccount(String id) => setState(() {
     _pickedAccount = true;
     _type == 'deposit' ? _toId = id : _fromId = id;
   });
@@ -150,7 +150,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
       final response = widget.group != null
           ? await api.put(ledgerPath(ledger, 'transactions/${widget.group!.id}'), body)
           : await api.post(ledgerPath(ledger, 'transactions'), body);
-      if (_receipt != null) await uploadReceipt(ref, (response['data'] as Json)['id'] as int, _receipt!);
+      if (_receipt != null) await uploadReceipt(ref, (response['data'] as Json)['id'] as String, _receipt!);
       HapticFeedback.mediumImpact();
       refreshLedgerData(ref.invalidate);
       if (mounted) {
@@ -187,7 +187,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
       'deposit' => palette.positive,
       _ => palette.primary,
     };
-    Account? find(int? id) => accounts.where((account) => account.id == id).firstOrNull;
+    Account? find(String? id) => accounts.where((account) => account.id == id).firstOrNull;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -347,7 +347,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                       label: 'More',
                       set: _budgetId != null || _tags.isNotEmpty || _notes.isNotEmpty,
                       onTap: () async {
-                        final result = await showAppSheet<({int? budget, String tags, String notes})>(
+                        final result = await showAppSheet<({String? budget, String tags, String notes})>(
                           context,
                           title: 'Details',
                           builder: (_) => _DetailsSheet(type: _type, budget: _budgetId, tags: _tags, notes: _notes),
@@ -450,8 +450,8 @@ class _Chip extends StatelessWidget {
 }
 
 /// A sheet of your own accounts with balances. Returns the chosen account id.
-Future<int?> pickAccount(BuildContext context, List<Account> accounts, {int? selected, String title = 'Choose account'}) {
-  return showAppSheet<int>(
+Future<String?> pickAccount(BuildContext context, List<Account> accounts, {String? selected, String title = 'Choose account'}) {
+  return showAppSheet<String>(
     context,
     title: title,
     builder: (context) {
@@ -567,7 +567,7 @@ class _DetailsSheet extends ConsumerStatefulWidget {
   const _DetailsSheet({required this.type, required this.budget, required this.tags, required this.notes});
 
   final String type;
-  final int? budget;
+  final String? budget;
   final String tags;
   final String notes;
 
@@ -576,7 +576,7 @@ class _DetailsSheet extends ConsumerStatefulWidget {
 }
 
 class _DetailsSheetState extends ConsumerState<_DetailsSheet> {
-  late int? _budget = widget.budget;
+  late String? _budget = widget.budget;
   late final _tags = TextEditingController(text: widget.tags);
   late final _notes = TextEditingController(text: widget.notes);
 

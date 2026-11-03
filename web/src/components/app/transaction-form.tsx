@@ -247,12 +247,12 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
       <QuickPicks
         label={t('Frequent payees')}
         items={(frequent?.counterparties ?? []).slice(0, 5).map((account) => ({
-          key: String(account.id),
+          key: account.id,
           label: account.name,
           active: !!counterparty && ('name' in counterparty ? counterparty.name === account.name : counterparty.id === account.id),
         }))}
         onPick={(key) => {
-          const account = frequent?.counterparties.find((item) => String(item.id) === key)
+          const account = frequent?.counterparties.find((item) => item.id === key)
           if (account) form.setValue(`splits.${index}.${side}`, accountRef(account), { shouldValidate: true })
         }}
       />
@@ -294,12 +294,12 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
         <QuickPicks
           label={t('Frequent transactions')}
           items={(frequent?.transactions ?? []).map((transaction) => ({
-            key: String(transaction.id),
+            key: transaction.id,
             label: transaction.description,
             hint: <Money amount={transaction.amount} currency={transaction.currency.code} tone="none" />,
           }))}
           onPick={(key) => {
-            const transaction = frequent?.transactions.find((item) => String(item.id) === key)
+            const transaction = frequent?.transactions.find((item) => item.id === key)
             if (transaction) applyAll(transaction)
           }}
         />
@@ -359,10 +359,10 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
               {(field) => (
                 <Combobox
                   id={field.id}
-                  options={categories.map((category) => ({ value: String(category.id), label: category.name }))}
-                  value={field.value?.id ? String(field.value.id) : null}
+                  options={categories.map((category) => ({ value: category.id, label: category.name }))}
+                  value={field.value?.id ? field.value.id : null}
                   displayValue={field.value?.name}
-                  onChange={(next, option) => field.onChange(next && option ? { id: Number(option.value), name: option.label } : null)}
+                  onChange={(next, option) => field.onChange(next && option ? { id: option.value, name: option.label } : null)}
                   onCreate={(name) => field.onChange({ name })}
                   placeholder={t('No category')}
                   searchPlaceholder={t('Search or create…')}
@@ -373,12 +373,12 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
               <QuickPicks
                 label={t('Frequent categories')}
                 items={(frequent?.categories ?? []).slice(0, 5).map((category) => ({
-                  key: String(category.id),
+                  key: category.id,
                   label: category.name,
                   active: split.category?.id === category.id,
                 }))}
                 onPick={(key) => {
-                  const category = frequent?.categories.find((item) => String(item.id) === key)
+                  const category = frequent?.categories.find((item) => item.id === key)
                   if (category) form.setValue(`splits.${index}.category`, split.category?.id === category.id ? null : category)
                 }}
               />
@@ -398,9 +398,9 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
               {(field) => (
                 <Combobox
                   id={field.id}
-                  options={budgets.map((budget) => ({ value: String(budget.id), label: budget.name }))}
-                  value={field.value ? String(field.value) : null}
-                  onChange={(next) => field.onChange(next ? Number(next) : null)}
+                  options={budgets.map((budget) => ({ value: budget.id, label: budget.name }))}
+                  value={field.value ?? null}
+                  onChange={(next) => field.onChange(next ?? null)}
                   placeholder={t('No budget')}
                 />
               )}
@@ -411,9 +411,9 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
               {(field) => (
                 <Combobox
                   id={field.id}
-                  options={bills.map((bill) => ({ value: String(bill.id), label: bill.name }))}
-                  value={field.value ? String(field.value) : null}
-                  onChange={(next) => field.onChange(next ? Number(next) : null)}
+                  options={bills.map((bill) => ({ value: bill.id, label: bill.name }))}
+                  value={field.value ?? null}
+                  onChange={(next) => field.onChange(next ?? null)}
                   placeholder={t('Not a bill')}
                 />
               )}

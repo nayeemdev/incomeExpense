@@ -8,8 +8,8 @@ export const Route = createFileRoute('/_app/quick-add')({
 
     if (ledgers.length === 0) throw redirect({ to: '/onboarding' })
 
-    const ledger = ledgers.find((item) => item.id === Number(storage.get('ledger'))) ?? ledgers[0]
+    const ledger = ledgers.find((item) => item.id === storage.get('ledger')) ?? ledgers[0]
 
-    throw redirect({ to: '/$ledgerId', params: { ledgerId: String(ledger.id) }, search: { add: true } })
+    throw redirect({ to: '/$ledgerId', params: { ledgerId: ledger.id }, search: { add: true } })
   },
 })

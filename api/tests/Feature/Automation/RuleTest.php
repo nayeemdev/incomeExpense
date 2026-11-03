@@ -4,12 +4,12 @@ use App\Models\Account;
 use App\Models\Ledger;
 use App\Models\Transaction;
 
-function ruleGroup(Ledger $ledger): int
+function ruleGroup(Ledger $ledger): string
 {
     return test()->postJson("/api/v1/ledgers/{$ledger->id}/rule-groups", ['title' => 'Default'])->assertCreated()->json('data.id');
 }
 
-function spendOn(Ledger $ledger, Account $from, string $description, string $amount = '10', string $date = '2026-03-01'): int
+function spendOn(Ledger $ledger, Account $from, string $description, string $amount = '10', string $date = '2026-03-01'): string
 {
     return test()->postJson("/api/v1/ledgers/{$ledger->id}/transactions", ['transactions' => [[
         'type' => 'withdrawal', 'date' => $date, 'description' => $description, 'amount' => $amount,

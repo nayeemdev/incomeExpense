@@ -25,7 +25,7 @@ export function QuickAddDialog({ open, onOpenChange, defaults }: QuickAddDialogP
   const ledger = useLedger()
   const editing = defaults.groupId !== undefined
   const save = useSaveTransaction(ledger.id, defaults.groupId)
-  const { data: group } = useQuery({ ...transactionGroupQuery(ledger.id, defaults.groupId ?? 0), enabled: open && editing })
+  const { data: group } = useQuery({ ...transactionGroupQuery(ledger.id, defaults.groupId ?? ''), enabled: open && editing })
   const type = defaults.type === 'deposit' || defaults.type === 'transfer' ? defaults.type : 'withdrawal'
   const accountId = defaults.accountId ?? defaultOwnAccount(ledger, type)
 

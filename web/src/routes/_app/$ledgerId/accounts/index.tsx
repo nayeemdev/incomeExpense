@@ -47,12 +47,12 @@ function Accounts() {
   const own = type === 'asset' || type === 'liability'
   const roles = assetRoleLabels()
   const liabilityTypes = liabilityTypeLabels()
-  const ledgerId = String(ledger.id)
+  const ledgerId = ledger.id
   const invalidateLedger = useInvalidateLedger(ledger.id)
   const pickDefaults = type === 'asset' && canEdit
 
   const setDefault = useMutation({
-    mutationFn: (patch: { default_account_id?: number | null; default_income_account_id?: number | null }) =>
+    mutationFn: (patch: { default_account_id?: string | null; default_income_account_id?: string | null }) =>
       api.patch(`/ledgers/${ledger.id}/membership`, patch),
     onSuccess: async () => {
       await invalidateLedger()
@@ -127,7 +127,7 @@ function Accounts() {
                   <TableCell className="font-medium">
                     <Link
                       to="/$ledgerId/accounts/$accountId"
-                      params={{ ledgerId, accountId: String(account.id) }}
+                      params={{ ledgerId, accountId: account.id }}
                       className="after:absolute after:inset-0"
                     >
                       {account.name}
@@ -198,7 +198,7 @@ function Accounts() {
               type={type}
               onCancel={() => setSearch({ create: undefined })}
               onSaved={(account) =>
-                navigate({ to: '/$ledgerId/accounts/$accountId', params: { ledgerId, accountId: String(account.id) } })
+                navigate({ to: '/$ledgerId/accounts/$accountId', params: { ledgerId, accountId: account.id } })
               }
             />
       </FormDialog>

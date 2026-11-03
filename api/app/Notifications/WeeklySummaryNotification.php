@@ -20,7 +20,7 @@ class WeeklySummaryNotification extends LedgerNotification
         return 'weekly_summary';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->ledger->id;
     }

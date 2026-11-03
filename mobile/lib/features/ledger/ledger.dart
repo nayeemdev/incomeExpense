@@ -17,12 +17,12 @@ class LedgerNotifier extends AsyncNotifier<Ledger?> {
   Future<Ledger?> build() async {
     final ledgers = await ref.watch(ledgersProvider.future);
     if (ledgers.isEmpty) return null;
-    final saved = int.tryParse(await ref.read(storageProvider).read(key: _ledgerKey) ?? '');
+    final saved = await ref.read(storageProvider).read(key: _ledgerKey);
     return ledgers.firstWhere((ledger) => ledger.id == saved, orElse: () => ledgers.first);
   }
 
   Future<void> select(Ledger ledger) async {
-    await ref.read(storageProvider).write(key: _ledgerKey, value: '${ledger.id}');
+    await ref.read(storageProvider).write(key: _ledgerKey, value: ledger.id);
     state = AsyncData(ledger);
   }
 }

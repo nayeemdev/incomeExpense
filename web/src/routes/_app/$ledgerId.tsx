@@ -20,7 +20,7 @@ import { storage } from '@/lib/storage'
 export const Route = createFileRoute('/_app/$ledgerId')({
   loader: async ({ context, params }) => {
     try {
-      await context.queryClient.ensureQueryData(ledgerQuery(Number(params.ledgerId)))
+      await context.queryClient.ensureQueryData(ledgerQuery(params.ledgerId))
     } catch (error) {
       if (error instanceof ApiError && (error.status === 403 || error.status === 404)) throw notFound()
 
@@ -42,7 +42,7 @@ function LedgerLayout() {
     if (canEdit) setQuickAdd({ open: true, defaults })
   }, [canEdit])
 
-  useEffect(() => storage.set('ledger', String(ledger.id)), [ledger.id])
+  useEffect(() => storage.set('ledger', ledger.id), [ledger.id])
   useHotkey('k', useCallback(() => setPaletteOpen((open) => !open), []), { meta: true })
   useHotkey('n', useCallback(() => openQuickAdd(), [openQuickAdd]))
 

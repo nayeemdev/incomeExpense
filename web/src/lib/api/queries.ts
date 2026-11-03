@@ -41,11 +41,11 @@ import type {
 } from './types'
 
 export type TransactionFilters = {
-  account_id?: number
-  budget_id?: number
-  bill_id?: number
-  category_id?: number
-  tag_id?: number
+  account_id?: string
+  budget_id?: string
+  bill_id?: string
+  category_id?: string
+  tag_id?: string
   type?: TransactionType[]
   start?: string
   end?: string
@@ -54,7 +54,7 @@ export type TransactionFilters = {
   page?: number
 }
 
-export const ledgerKey = (ledgerId: number) => ['ledgers', ledgerId] as const
+export const ledgerKey = (ledgerId: string) => ['ledgers', ledgerId] as const
 
 export const userQuery = queryOptions({
   queryKey: ['user'],
@@ -80,13 +80,13 @@ export const ledgersQuery = queryOptions({
   queryFn: () => api.get<Resource<Ledger[]>>('/ledgers').then((r) => r.data),
 })
 
-export const ledgerQuery = (ledgerId: number) =>
+export const ledgerQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'detail'],
     queryFn: () => api.get<Resource<Ledger>>(`/ledgers/${ledgerId}`).then((r) => r.data),
   })
 
-export const accountsQuery = (ledgerId: number, params: { type?: AccountType[]; active?: boolean; search?: string } = {}) =>
+export const accountsQuery = (ledgerId: string, params: { type?: AccountType[]; active?: boolean; search?: string } = {}) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'accounts', params],
     queryFn: () =>
@@ -97,47 +97,47 @@ export const accountsQuery = (ledgerId: number, params: { type?: AccountType[]; 
       }),
   })
 
-export const accountQuery = (ledgerId: number, accountId: number) =>
+export const accountQuery = (ledgerId: string, accountId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'accounts', 'detail', accountId],
     queryFn: () => api.get<Resource<Account>>(`/ledgers/${ledgerId}/accounts/${accountId}`).then((r) => r.data),
   })
 
-export const transactionsQuery = (ledgerId: number, filters: TransactionFilters) =>
+export const transactionsQuery = (ledgerId: string, filters: TransactionFilters) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'transactions', filters],
     queryFn: () => api.get<Paginated<Transaction>>(`/ledgers/${ledgerId}/transactions`, filters),
     placeholderData: keepPreviousData,
   })
 
-export const transactionGroupQuery = (ledgerId: number, groupId: number) =>
+export const transactionGroupQuery = (ledgerId: string, groupId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'transactions', 'group', groupId],
     queryFn: () => api.get<Resource<TransactionGroup>>(`/ledgers/${ledgerId}/transactions/${groupId}`).then((r) => r.data),
   })
 
-export const categoriesQuery = (ledgerId: number, search = '') =>
+export const categoriesQuery = (ledgerId: string, search = '') =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'categories', search],
     queryFn: () => api.get<Paginated<Category>>(`/ledgers/${ledgerId}/categories`, { search, per_page: 200 }),
     placeholderData: keepPreviousData,
   })
 
-export const tagsQuery = (ledgerId: number, search = '') =>
+export const tagsQuery = (ledgerId: string, search = '') =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'tags', search],
     queryFn: () => api.get<Paginated<Tag>>(`/ledgers/${ledgerId}/tags`, { search, per_page: 200 }),
     placeholderData: keepPreviousData,
   })
 
-export const summaryQuery = (ledgerId: number, start: string, end: string) =>
+export const summaryQuery = (ledgerId: string, start: string, end: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'summary', start, end],
     queryFn: () => api.get<Resource<Summary>>(`/ledgers/${ledgerId}/summary`, { start, end }).then((r) => r.data),
     placeholderData: keepPreviousData,
   })
 
-export const suggestionsQuery = (ledgerId: number, search: string) =>
+export const suggestionsQuery = (ledgerId: string, search: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'suggestions', search],
     queryFn: () =>
@@ -146,7 +146,7 @@ export const suggestionsQuery = (ledgerId: number, search: string) =>
     staleTime: 30_000,
   })
 
-export const attachmentsQuery = (ledgerId: number, type: Attachment['attachable_type'], id: number) =>
+export const attachmentsQuery = (ledgerId: string, type: Attachment['attachable_type'], id: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'attachments', type, id],
     queryFn: () =>
@@ -155,13 +155,13 @@ export const attachmentsQuery = (ledgerId: number, type: Attachment['attachable_
         .then((r) => r.data),
   })
 
-export const membersQuery = (ledgerId: number) =>
+export const membersQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'members'],
     queryFn: () => api.get<Resource<LedgerMember[]>>(`/ledgers/${ledgerId}/members`).then((r) => r.data),
   })
 
-export const invitationsQuery = (ledgerId: number) =>
+export const invitationsQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'invitations'],
     queryFn: () => api.get<Resource<LedgerInvitation[]>>(`/ledgers/${ledgerId}/invitations`).then((r) => r.data),
@@ -172,73 +172,73 @@ export const tokensQuery = queryOptions({
   queryFn: () => api.get<Resource<PersonalAccessToken[]>>('/tokens').then((r) => r.data),
 })
 
-export const budgetsQuery = (ledgerId: number, start: string, end: string) =>
+export const budgetsQuery = (ledgerId: string, start: string, end: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'budgets', start, end],
     queryFn: () => api.get<Resource<Budget[]>>(`/ledgers/${ledgerId}/budgets`, { start, end }).then((r) => r.data),
     placeholderData: keepPreviousData,
   })
 
-export const budgetQuery = (ledgerId: number, budgetId: number, start: string, end: string) =>
+export const budgetQuery = (ledgerId: string, budgetId: string, start: string, end: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'budgets', 'detail', budgetId, start, end],
     queryFn: () => api.get<Resource<Budget>>(`/ledgers/${ledgerId}/budgets/${budgetId}`, { start, end }).then((r) => r.data),
   })
 
-export const activeBudgetsQuery = (ledgerId: number) =>
+export const activeBudgetsQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'budgets', 'active'],
     queryFn: () => api.get<Resource<Budget[]>>(`/ledgers/${ledgerId}/budgets`, { active: 1 }).then((r) => r.data),
   })
 
-export const availableBudgetsQuery = (ledgerId: number, start: string, end: string) =>
+export const availableBudgetsQuery = (ledgerId: string, start: string, end: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'available-budgets', start, end],
     queryFn: () => api.get<Resource<AvailableBudget[]>>(`/ledgers/${ledgerId}/available-budgets`, { start, end }).then((r) => r.data),
   })
 
-export const billsQuery = (ledgerId: number, start?: string, end?: string) =>
+export const billsQuery = (ledgerId: string, start?: string, end?: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'bills', start, end],
     queryFn: () => api.get<Resource<Bill[]>>(`/ledgers/${ledgerId}/bills`, { start, end }).then((r) => r.data),
     placeholderData: keepPreviousData,
   })
 
-export const piggyBanksQuery = (ledgerId: number) =>
+export const piggyBanksQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'piggy-banks'],
     queryFn: () => api.get<Resource<PiggyBank[]>>(`/ledgers/${ledgerId}/piggy-banks`).then((r) => r.data),
   })
 
-export const piggyBankQuery = (ledgerId: number, piggyBankId: number) =>
+export const piggyBankQuery = (ledgerId: string, piggyBankId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'piggy-banks', 'detail', piggyBankId],
     queryFn: () => api.get<Resource<PiggyBank>>(`/ledgers/${ledgerId}/piggy-banks/${piggyBankId}`).then((r) => r.data),
   })
 
-export const recurrencesQuery = (ledgerId: number) =>
+export const recurrencesQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'recurrences'],
     queryFn: () => api.get<Resource<Recurrence[]>>(`/ledgers/${ledgerId}/recurrences`).then((r) => r.data),
   })
 
-export const linkTypesQuery = (ledgerId: number) =>
+export const linkTypesQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'link-types'],
     queryFn: () => api.get<Resource<LinkType[]>>(`/ledgers/${ledgerId}/link-types`).then((r) => r.data),
     staleTime: Infinity,
   })
 
-export const transactionLinksQuery = (ledgerId: number, groupId: number) =>
+export const transactionLinksQuery = (ledgerId: string, groupId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'transactions', 'links', groupId],
     queryFn: () => api.get<Resource<TransactionLink[]>>(`/ledgers/${ledgerId}/transactions/${groupId}/links`).then((r) => r.data),
   })
 
-export const objectGroupsQuery = (ledgerId: number) =>
+export const objectGroupsQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'object-groups'],
-    queryFn: () => api.get<Resource<Array<{ id: number; title: string; order: number }>>>(`/ledgers/${ledgerId}/object-groups`).then((r) => r.data),
+    queryFn: () => api.get<Resource<Array<{ id: string; title: string; order: number }>>>(`/ledgers/${ledgerId}/object-groups`).then((r) => r.data),
   })
 
 export const notificationsQuery = queryOptions({
@@ -253,7 +253,7 @@ export const notificationSettingsQuery = queryOptions({
   queryFn: () => api.get<Resource<NotificationSettings>>('/notification-settings').then((r) => r.data),
 })
 
-export const ruleGroupsQuery = (ledgerId: number) =>
+export const ruleGroupsQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'rule-groups'],
     queryFn: () => api.get<Resource<RuleGroup[]>>(`/ledgers/${ledgerId}/rule-groups`).then((r) => r.data),
@@ -276,24 +276,24 @@ export const categoryStylesQuery = queryOptions({
   staleTime: Infinity,
 })
 
-export const webhooksQuery = (ledgerId: number) =>
+export const webhooksQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'webhooks'],
     queryFn: () => api.get<Resource<Webhook[]>>(`/ledgers/${ledgerId}/webhooks`).then((r) => r.data),
   })
 
-export const webhookDeliveriesQuery = (ledgerId: number, webhookId: number) =>
+export const webhookDeliveriesQuery = (ledgerId: string, webhookId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'webhooks', webhookId, 'deliveries'],
     queryFn: () => api.get<Resource<WebhookDelivery[]>>(`/ledgers/${ledgerId}/webhooks/${webhookId}/deliveries`).then((r) => r.data),
   })
 
-export const frequentQuery = (ledgerId: number, type: TransactionType) =>
+export const frequentQuery = (ledgerId: string, type: TransactionType) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'frequent', type],
     queryFn: () =>
       api
-        .get<Resource<{ transactions: Transaction[]; categories: Array<{ id: number; name: string }>; counterparties: AccountRef[] }>>(
+        .get<Resource<{ transactions: Transaction[]; categories: Array<{ id: string; name: string }>; counterparties: AccountRef[] }>>(
           `/ledgers/${ledgerId}/autocomplete/frequent`,
           { type },
         )
@@ -303,14 +303,14 @@ export const frequentQuery = (ledgerId: number, type: TransactionType) =>
 
 export type ReportParams = { start: string; end: string; interval?: string; accounts?: number[] }
 
-export const overviewReportQuery = (ledgerId: number, params: ReportParams) =>
+export const overviewReportQuery = (ledgerId: string, params: ReportParams) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'reports', 'overview', params],
     queryFn: () => api.get<{ data: OverviewReport; meta: ReportMeta }>(`/ledgers/${ledgerId}/reports/overview`, params),
     placeholderData: keepPreviousData,
   })
 
-export const breakdownReportQuery = (ledgerId: number, groupBy: string, type: string, params: ReportParams) =>
+export const breakdownReportQuery = (ledgerId: string, groupBy: string, type: string, params: ReportParams) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'reports', 'by', groupBy, type, params],
     queryFn: () =>
@@ -321,7 +321,7 @@ export const breakdownReportQuery = (ledgerId: number, groupBy: string, type: st
     placeholderData: keepPreviousData,
   })
 
-export const balanceHistoryQuery = (ledgerId: number, accountId: number, params: ReportParams) =>
+export const balanceHistoryQuery = (ledgerId: string, accountId: string, params: ReportParams) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'reports', 'balance', accountId, params],
     queryFn: () =>
@@ -331,14 +331,14 @@ export const balanceHistoryQuery = (ledgerId: number, accountId: number, params:
       ),
   })
 
-export const exchangeRatesQuery = (ledgerId: number) =>
+export const exchangeRatesQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'exchange-rates'],
     queryFn: () => api.get<Resource<ExchangeRate[]>>(`/ledgers/${ledgerId}/exchange-rates`).then((r) => r.data),
   })
 
-export const savedSearchesQuery = (ledgerId: number) =>
+export const savedSearchesQuery = (ledgerId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'saved-searches'],
-    queryFn: () => api.get<Resource<Array<{ id: number; name: string; query: string }>>>(`/ledgers/${ledgerId}/saved-searches`).then((r) => r.data),
+    queryFn: () => api.get<Resource<Array<{ id: string; name: string; query: string }>>>(`/ledgers/${ledgerId}/saved-searches`).then((r) => r.data),
   })

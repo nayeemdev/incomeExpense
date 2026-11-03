@@ -18,7 +18,7 @@ import { notifyError } from '@/lib/forms'
 import { Money } from './money'
 import { SelectField } from './select-field'
 
-export function TransactionLinks({ groupId }: { groupId: number }) {
+export function TransactionLinks({ groupId }: { groupId: string }) {
   const { t } = useTranslation()
   const locale = useLocale()
   const ledger = useLedger()
@@ -38,10 +38,10 @@ export function TransactionLinks({ groupId }: { groupId: number }) {
   const options = Object.fromEntries(types.flatMap((type) => [[`${type.id}:outward`, type.outward], ...(type.outward !== type.inward ? [[`${type.id}:inward`, type.inward]] : [])]))
 
   const add = useMutation({
-    mutationFn: (otherId: number) => {
+    mutationFn: (otherId: string) => {
       const [typeId, direction] = (choice || Object.keys(options)[0]).split(':')
 
-      return api.post(`/ledgers/${ledger.id}/transactions/${groupId}/links`, { link_type_id: Number(typeId), group_id: otherId, direction })
+      return api.post(`/ledgers/${ledger.id}/transactions/${groupId}/links`, { link_type_id: typeId, group_id: otherId, direction })
     },
     onSuccess: async () => {
       setAdding(false)
@@ -52,7 +52,7 @@ export function TransactionLinks({ groupId }: { groupId: number }) {
   })
 
   const remove = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/links/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/links/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
@@ -83,7 +83,7 @@ export function TransactionLinks({ groupId }: { groupId: number }) {
                 <span className="text-muted-foreground">{link.label}</span>
                 <Link
                   to="/$ledgerId/transactions/$groupId"
-                  params={{ ledgerId: String(ledger.id), groupId: String(link.group.id) }}
+                  params={{ ledgerId: ledger.id, groupId: link.group.id }}
                   className="min-w-0 flex-1 truncate font-medium hover:underline"
                 >
                   {link.group.title}

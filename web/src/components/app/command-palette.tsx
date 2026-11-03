@@ -41,7 +41,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const ledger = useLedger()
   const canEdit = useCanEdit()
   const quickAdd = useQuickAdd()
-  const ledgerId = String(ledger.id)
+  const ledgerId = ledger.id
   const typeLabels = accountTypeLabels()
   const { data: accounts = [] } = useQuery({ ...accountsQuery(ledger.id), enabled: open, select: (page) => page.data })
   const { data: categories = [] } = useQuery({ ...categoriesQuery(ledger.id), enabled: open, select: (page) => page.data })
@@ -149,7 +149,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     run(() =>
                       navigate({
                         to: '/$ledgerId/accounts/$accountId',
-                        params: { ledgerId, accountId: String(account.id) },
+                        params: { ledgerId, accountId: account.id },
                       }),
                     )
                   }
@@ -172,7 +172,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                   run(() =>
                     navigate({
                       to: '/$ledgerId/categories/$categoryId',
-                      params: { ledgerId, categoryId: String(category.id) },
+                      params: { ledgerId, categoryId: category.id },
                     }),
                   )
                 }
@@ -190,7 +190,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 key={tag.id}
                 value={`tag ${tag.name} ${tag.id}`}
                 onSelect={() =>
-                  run(() => navigate({ to: '/$ledgerId/tags/$tagId', params: { ledgerId, tagId: String(tag.id) } }))
+                  run(() => navigate({ to: '/$ledgerId/tags/$tagId', params: { ledgerId, tagId: tag.id } }))
                 }
               >
                 <TagIcon />

@@ -21,7 +21,7 @@ class CreateAutoBudgetLimit
         $period = $budget->auto_budget_period;
         $currencyId = $budget->getAttribute('auto_budget_currency_id');
 
-        if ($budget->auto_budget_type === null || $period === null || $budget->auto_budget_amount === null || ! is_int($currencyId)) {
+        if ($budget->auto_budget_type === null || $period === null || $budget->auto_budget_amount === null || ! is_string($currencyId)) {
             return;
         }
 

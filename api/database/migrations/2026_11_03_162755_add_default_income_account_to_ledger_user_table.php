@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('ledger_user', function (Blueprint $table) {
-            $table->foreignId('default_income_account_id')->nullable()->after('default_account_id')->constrained('accounts')->nullOnDelete();
+            $table->foreignUlid('default_income_account_id')->nullable()->after('default_account_id')->constrained('accounts')->nullOnDelete();
         });
     }
 

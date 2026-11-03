@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\LedgerRole;
 use Database\Factories\LedgerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,9 +19,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Ledger extends Model
 {
     /** @use HasFactory<LedgerFactory> */
-    use HasFactory;
+    use HasFactory, HasUlids;
 
-    /** @var array<int, LedgerMember|null> */
+    /** @var array<string, LedgerMember|null> */
     private array $membershipCache = [];
 
     /**

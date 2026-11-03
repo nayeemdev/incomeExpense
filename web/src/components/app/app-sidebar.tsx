@@ -62,7 +62,7 @@ import { storage } from '@/lib/storage'
 export function AppSidebar() {
   const { t } = useTranslation()
   const ledger = useLedger()
-  const ledgerId = String(ledger.id)
+  const ledgerId = ledger.id
   const accountTypes = accountTypeLabels()
 
   const navigation = [
@@ -220,8 +220,8 @@ function LedgerSwitcher() {
               <DropdownMenuItem
                 key={item.id}
                 onSelect={() => {
-                  storage.set('ledger', String(item.id))
-                  void navigate({ to: '/$ledgerId', params: { ledgerId: String(item.id) } })
+                  storage.set('ledger', item.id)
+                  void navigate({ to: '/$ledgerId', params: { ledgerId: item.id } })
                 }}
               >
                 <BookOpenIcon />

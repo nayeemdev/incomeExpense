@@ -7,6 +7,7 @@ use App\Enums\RepeatFrequency;
 use App\Models\Concerns\BelongsToLedger;
 use Database\Factories\BudgetFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name', 'active', 'order', 'notes', 'auto_budget_type', 'auto_budget_currency_id', 'auto_budget_amount', 'auto_budget_period'])]
 class Budget extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
 
     /** @use HasFactory<BudgetFactory> */
     use HasFactory;

@@ -5,7 +5,7 @@ use App\Models\Budget;
 use App\Models\Ledger;
 use Illuminate\Support\Facades\Date;
 
-function spend(Ledger $ledger, Account $from, string $amount, string $date, ?int $budgetId): void
+function spend(Ledger $ledger, Account $from, string $amount, string $date, ?string $budgetId): void
 {
     test()->postJson("/api/v1/ledgers/{$ledger->id}/transactions", ['transactions' => [[
         'type' => 'withdrawal', 'date' => $date, 'description' => 'Spend', 'amount' => $amount,

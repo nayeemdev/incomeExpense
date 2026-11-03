@@ -7,6 +7,7 @@ use App\Notifications\NewLoginNotification;
 use App\Support\NotifyOnce;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class NotifyNewLogin
 {
@@ -23,7 +24,7 @@ class NotifyNewLogin
         $key = 'login:'.sha1($ip.'|'.$agent);
 
         if ($user->created_at?->greaterThan(now()->subMinutes(10))) {
-            DB::table('sent_notifications')->insertOrIgnore(['user_id' => $user->id, 'key' => $key, 'created_at' => now()]);
+            DB::table('sent_notifications')->insertOrIgnore(['id' => strtolower((string) Str::ulid()), 'user_id' => $user->id, 'key' => $key, 'created_at' => now()]);
 
             return;
         }

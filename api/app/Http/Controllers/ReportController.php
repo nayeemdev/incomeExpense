@@ -60,7 +60,7 @@ class ReportController extends Controller
     }
 
     /**
-     * @return array{Period, string, list<int>}
+     * @return array{Period, string, list<string>}
      */
     private function input(Request $request, Ledger $ledger): array
     {
@@ -69,7 +69,7 @@ class ReportController extends Controller
             'end' => ['required', 'date', 'after_or_equal:start'],
             'interval' => ['nullable', Rule::in(['day', 'week', 'month', 'year'])],
             'accounts' => ['nullable', 'array'],
-            'accounts.*' => ['integer'],
+            'accounts.*' => ['ulid'],
         ]);
         $period = new Period(CarbonImmutable::parse($validated['start']), CarbonImmutable::parse($validated['end']));
         $accounts = isset($validated['accounts'])

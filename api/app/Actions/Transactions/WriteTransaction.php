@@ -15,8 +15,8 @@ class WriteTransaction
      * Writes one split and its two balancing postings. Each posting is stored in the
      * currency of its account, so an account balance is always a plain sum.
      *
-     * @param  array{type: TransactionType, date: string, description: string, amount: string, foreign_amount?: ?string, foreign_currency_id?: ?int, category_id?: ?int, budget_id?: ?int, bill_id?: ?int, notes?: ?string}  $attributes
-     * @param  list<int>  $tagIds
+     * @param  array{type: TransactionType, date: string, description: string, amount: string, foreign_amount?: ?string, foreign_currency_id?: ?int, category_id?: ?string, budget_id?: ?string, bill_id?: ?string, notes?: ?string}  $attributes
+     * @param  list<string>  $tagIds
      */
     public function handle(
         TransactionGroup $group,
@@ -82,7 +82,7 @@ class WriteTransaction
         }
     }
 
-    private function currencyFor(TransactionType $type, Account $source, Account $destination, TransactionGroup $group): int
+    private function currencyFor(TransactionType $type, Account $source, Account $destination, TransactionGroup $group): string
     {
         $primary = $type === TransactionType::Deposit ? $destination : $source;
         $other = $primary->is($source) ? $destination : $source;
@@ -91,7 +91,7 @@ class WriteTransaction
     }
 
     /**
-     * @return array{account_id: int, currency_id: int, amount: string}
+     * @return array{account_id: string, currency_id: string, amount: string}
      */
     private function posting(Transaction $transaction, Account $account, string $amount, string $errorKey): array
     {

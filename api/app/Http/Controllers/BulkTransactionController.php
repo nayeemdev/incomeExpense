@@ -32,7 +32,7 @@ class BulkTransactionController extends Controller
     {
         $validated = $request->validate([
             'transaction_ids' => ['required', 'array', 'min:1', 'max:'.config()->integer('ledgerfly.pagination.max_per_page')],
-            'transaction_ids.*' => ['integer'],
+            'transaction_ids.*' => ['ulid'],
             'action' => ['required', Rule::in(array_map(fn (ActionType $action) => $action->value, self::ACTIONS))],
             'value' => ['nullable', 'string', 'max:255'],
         ]);

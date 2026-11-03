@@ -29,7 +29,7 @@ function AcceptInvitation() {
     mutationFn: () => api.post<Resource<Ledger>>(`/invitations/${token}/accept`).then((r) => r.data),
     onSuccess: async (ledger) => {
       await queryClient.invalidateQueries({ queryKey: ['ledgers'] })
-      await navigate({ to: '/$ledgerId', params: { ledgerId: String(ledger.id) } })
+      await navigate({ to: '/$ledgerId', params: { ledgerId: ledger.id } })
     },
     onError: notifyError,
   })

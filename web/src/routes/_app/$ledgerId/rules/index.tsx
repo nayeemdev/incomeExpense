@@ -46,7 +46,7 @@ function Rules() {
   const canEdit = useCanEdit()
   const invalidate = useInvalidateLedger(ledger.id)
   const { data: groups } = useQuery(ruleGroupsQuery(ledger.id))
-  const [editing, setEditing] = useState<{ groupId: number; rule?: Rule } | null>(null)
+  const [editing, setEditing] = useState<{ groupId: string; rule?: Rule } | null>(null)
   const [testing, setTesting] = useState<Rule | null>(null)
   const [newGroup, setNewGroup] = useState<string | null>(null)
 
@@ -61,13 +61,13 @@ function Rules() {
   })
 
   const updateGroup = useMutation({
-    mutationFn: ({ id, ...patch }: { id: number; active?: boolean }) => api.patch(`/ledgers/${ledger.id}/rule-groups/${id}`, patch),
+    mutationFn: ({ id, ...patch }: { id: string; active?: boolean }) => api.patch(`/ledgers/${ledger.id}/rule-groups/${id}`, patch),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
 
   const deleteGroup = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/rule-groups/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/rule-groups/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })
@@ -79,7 +79,7 @@ function Rules() {
   })
 
   const deleteRule = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/rules/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/rules/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })

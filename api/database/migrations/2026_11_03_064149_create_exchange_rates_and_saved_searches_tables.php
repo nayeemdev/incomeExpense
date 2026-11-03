@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('from_currency_id')->constrained('currencies')->cascadeOnDelete();
-            $table->foreignId('to_currency_id')->constrained('currencies')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignUlid('from_currency_id')->constrained('currencies')->cascadeOnDelete();
+            $table->foreignUlid('to_currency_id')->constrained('currencies')->cascadeOnDelete();
             $table->date('date');
             $table->decimal('rate', 32, 12);
             $table->timestamps();
@@ -22,9 +22,9 @@ return new class extends Migration
         });
 
         Schema::create('saved_searches', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('query', 1000);
             $table->timestamps();

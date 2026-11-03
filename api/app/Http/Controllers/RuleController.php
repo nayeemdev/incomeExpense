@@ -128,7 +128,7 @@ class RuleController extends Controller
         $required = $rule ? 'sometimes' : 'required';
 
         return validator($request->all(), [
-            'rule_group_id' => [$required, 'integer', ValidationRule::exists('rule_groups', 'id')->where('ledger_id', $ledger->id)],
+            'rule_group_id' => [$required, 'ulid', ValidationRule::exists('rule_groups', 'id')->where('ledger_id', $ledger->id)],
             'title' => [$required, 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:65000'],
             'trigger_on' => ['sometimes', ValidationRule::in(['store', 'update', 'both'])],

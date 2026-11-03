@@ -9,11 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('accounts', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->string('type', 20);
             $table->string('name');
-            $table->foreignId('currency_id')->nullable()->constrained('currencies');
+            $table->foreignUlid('currency_id')->nullable()->constrained('currencies');
             $table->string('asset_role', 20)->nullable();
             $table->string('liability_type', 20)->nullable();
             $table->string('liability_direction', 10)->nullable();
@@ -35,7 +35,7 @@ return new class extends Migration
         });
 
         Schema::table('ledger_user', function (Blueprint $table) {
-            $table->foreignId('default_account_id')->nullable()->after('role')->constrained('accounts')->nullOnDelete();
+            $table->foreignUlid('default_account_id')->nullable()->after('role')->constrained('accounts')->nullOnDelete();
         });
     }
 

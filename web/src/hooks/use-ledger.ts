@@ -6,7 +6,7 @@ import { ledgerQuery } from '@/lib/api/queries'
 export function useLedgerId() {
   const { ledgerId } = useParams({ from: '/_app/$ledgerId' })
 
-  return Number(ledgerId)
+  return ledgerId
 }
 
 export function useLedger() {

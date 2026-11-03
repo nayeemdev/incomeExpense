@@ -24,7 +24,7 @@ final accountsProvider = FutureProvider.autoDispose.family<List<Account>, String
   return _data(response, Account.fromJson);
 });
 
-final accountProvider = FutureProvider.autoDispose.family<Account, int>((ref, id) async {
+final accountProvider = FutureProvider.autoDispose.family<Account, String>((ref, id) async {
   final ledger = ref.watch(currentLedgerProvider);
   final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'accounts/$id'));
   return Account.fromJson(response['data'] as Json);
@@ -62,7 +62,7 @@ final frequentProvider = FutureProvider.autoDispose.family<FrequentPicks, String
   );
 });
 
-typedef TransactionFilter = ({String query, String? type, int? accountId});
+typedef TransactionFilter = ({String query, String? type, String? accountId});
 
 class TransactionFeed {
   const TransactionFeed(this.items, this.page, this.lastPage, {this.loadingMore = false});
@@ -112,7 +112,7 @@ class TransactionsNotifier extends AsyncNotifier<TransactionFeed> {
   }
 }
 
-final transactionGroupProvider = FutureProvider.autoDispose.family<TransactionGroup, int>((ref, id) async {
+final transactionGroupProvider = FutureProvider.autoDispose.family<TransactionGroup, String>((ref, id) async {
   final ledger = ref.watch(currentLedgerProvider);
   final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'transactions/$id'));
   return TransactionGroup.fromJson(response['data'] as Json);
@@ -167,7 +167,7 @@ final categoryStylesProvider = FutureProvider<({List<String> icons, List<String>
 });
 
 /// Category style by id, so report rows that only carry an id can still show their icon.
-final categoryStyleById = Provider.autoDispose<Map<int, NamedRef>>((ref) {
+final categoryStyleById = Provider.autoDispose<Map<String, NamedRef>>((ref) {
   final categories = ref.watch(categoriesProvider).value ?? const <NamedRef>[];
   return {for (final category in categories) category.id: category};
 });

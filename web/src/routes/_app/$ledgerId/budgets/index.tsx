@@ -145,7 +145,7 @@ function Budgets() {
                   <div className="flex min-w-0 items-center gap-2">
                     <Link
                       to="/$ledgerId/budgets/$budgetId"
-                      params={{ ledgerId: String(ledger.id), budgetId: String(budget.id) }}
+                      params={{ ledgerId: ledger.id, budgetId: budget.id }}
                       search={month ? { month } : {}}
                       className="truncate font-medium hover:underline"
                     >

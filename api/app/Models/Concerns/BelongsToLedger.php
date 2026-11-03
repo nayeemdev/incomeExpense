@@ -6,7 +6,7 @@ use App\Models\Ledger;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * @property int $ledger_id
+ * @property string $ledger_id
  * @property-read Ledger $ledger
  */
 trait BelongsToLedger

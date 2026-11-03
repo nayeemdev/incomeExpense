@@ -24,7 +24,7 @@ export function ExchangeRateSettings() {
   const canEdit = useCanEdit()
   const invalidate = useInvalidateLedger(ledger.id)
   const { data: rates = [] } = useQuery(exchangeRatesQuery(ledger.id))
-  const [draft, setDraft] = useState<{ from: number | null; to: number | null; date: string; rate: string }>({
+  const [draft, setDraft] = useState<{ from: string | null; to: string | null; date: string; rate: string }>({
     from: null,
     to: ledger.primary_currency.id,
     date: todayIso(),
@@ -51,7 +51,7 @@ export function ExchangeRateSettings() {
   })
 
   const remove = useMutation({
-    mutationFn: (id: number) => api.delete(`/ledgers/${ledger.id}/exchange-rates/${id}`),
+    mutationFn: (id: string) => api.delete(`/ledgers/${ledger.id}/exchange-rates/${id}`),
     onSuccess: () => invalidate(),
     onError: notifyError,
   })

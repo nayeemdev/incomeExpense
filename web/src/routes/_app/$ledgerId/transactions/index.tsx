@@ -49,10 +49,10 @@ function Transactions() {
   )
   const filtered = !!(filters.query || filters.type || filters.start || filters.end)
   const invalidate = useInvalidateLedger(ledger.id)
-  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [selected, setSelected] = useState<Set<string>>(new Set())
   const [draft, setDraft] = useState(filters.query ?? '')
   const { data: saved = [] } = useQuery(savedSearchesQuery(ledger.id))
-  const toggle = (id: number) =>
+  const toggle = (id: string) =>
     setSelected((current) => {
       const next = new Set(current)
       if (next.has(id)) next.delete(id)

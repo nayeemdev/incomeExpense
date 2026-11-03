@@ -8,6 +8,7 @@ use App\Models\Concerns\HasObjectGroup;
 use Carbon\CarbonImmutable;
 use Database\Factories\BillFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 ])]
 class Bill extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
 
     /** @use HasFactory<BillFactory> */
     use HasFactory;

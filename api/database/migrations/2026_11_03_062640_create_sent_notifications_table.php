@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sent_notifications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->string('key');
             $table->timestamp('created_at');
 

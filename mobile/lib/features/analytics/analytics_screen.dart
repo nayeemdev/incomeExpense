@@ -212,7 +212,7 @@ class _CategoryBreakdown extends StatefulWidget {
   const _CategoryBreakdown({required this.categories, required this.styles, required this.currency, required this.total});
 
   final List<CategoryTotal> categories;
-  final Map<int, NamedRef> styles;
+  final Map<String, NamedRef> styles;
   final String currency;
   final double total;
 

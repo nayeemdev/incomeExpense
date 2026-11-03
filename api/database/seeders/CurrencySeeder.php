@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CurrencySeeder extends Seeder
 {
@@ -15,6 +16,7 @@ class CurrencySeeder extends Seeder
 
         DB::table('currencies')->upsert(
             array_map(fn (array $currency) => [
+                'id' => strtolower((string) Str::ulid()),
                 'code' => $currency[0],
                 'name' => $currency[1],
                 'decimal_places' => $currency[2],

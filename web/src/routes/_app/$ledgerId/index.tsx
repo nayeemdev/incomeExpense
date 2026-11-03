@@ -93,7 +93,7 @@ function Dashboard() {
   }, [add, quickAdd, navigate])
   const [today] = useState(() => new Date())
   const { current, start, end, shift } = monthRange(month, today)
-  const ledgerId = String(ledger.id)
+  const ledgerId = ledger.id
   const currency = ledger.primary_currency.code
 
   const { data: summary } = useQuery(summaryQuery(ledger.id, start, end))
@@ -203,7 +203,7 @@ function Dashboard() {
                 <Link
                   key={account.id}
                   to="/$ledgerId/accounts/$accountId"
-                  params={{ ledgerId, accountId: String(account.id) }}
+                  params={{ ledgerId, accountId: account.id }}
                   className="hover:bg-muted/50 -mx-2 flex items-center justify-between gap-3 rounded-md px-2 py-1.5"
                 >
                   <span className="min-w-0">

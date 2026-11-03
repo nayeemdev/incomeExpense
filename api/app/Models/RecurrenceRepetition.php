@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\RepetitionType;
 use App\Enums\WeekendHandling;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -16,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
 #[Fillable(['type', 'moment', 'skip', 'weekend'])]
 class RecurrenceRepetition extends Model
 {
+    use HasUlids;
+
     public $timestamps = false;
 
     /**

@@ -9,17 +9,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ledgers', function (Blueprint $table) {
-            $table->id();
+            $table->ulid('id')->primary();
             $table->string('name');
-            $table->foreignId('primary_currency_id')->constrained('currencies');
+            $table->foreignUlid('primary_currency_id')->constrained('currencies');
             $table->char('fiscal_year_start', 5)->default('01-01');
             $table->timestamps();
         });
 
         Schema::create('ledger_user', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->constrained()->cascadeOnDelete();
             $table->string('role', 20);
             $table->timestamps();
 
@@ -27,9 +27,9 @@ return new class extends Migration
         });
 
         Schema::create('ledger_invitations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('invited_by')->constrained('users')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('invited_by')->constrained('users')->cascadeOnDelete();
             $table->string('email');
             $table->string('role', 20);
             $table->char('token', 64)->unique();
