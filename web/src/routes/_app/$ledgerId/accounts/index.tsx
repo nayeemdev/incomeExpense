@@ -1,20 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, SearchIcon } from 'lucide-react'
+import { ArrowDownLeftIcon, ArrowUpRightIcon, MoreHorizontalIcon, PlusIcon, SearchIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { z } from 'zod'
 import { AccountForm } from '@/components/app/account-form'
 import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
+import { api } from '@/lib/api/client'
+import { useInvalidateLedger } from '@/lib/api/mutations'
 import { accountsQuery } from '@/lib/api/queries'
+import { notifyError } from '@/lib/forms'
 import { accountTypeDescriptions, accountTypeLabels, accountTypeSingular, assetRoleLabels, liabilityTypeLabels } from '@/lib/labels'
 
 export const Route = createFileRoute('/_app/$ledgerId/accounts/')({
@@ -37,6 +48,18 @@ function Accounts() {
   const roles = assetRoleLabels()
   const liabilityTypes = liabilityTypeLabels()
   const ledgerId = String(ledger.id)
+  const invalidateLedger = useInvalidateLedger(ledger.id)
+  const pickDefaults = type === 'asset' && canEdit
+
+  const setDefault = useMutation({
+    mutationFn: (patch: { default_account_id?: number | null; default_income_account_id?: number | null }) =>
+      api.patch(`/ledgers/${ledger.id}/membership`, patch),
+    onSuccess: async () => {
+      await invalidateLedger()
+      toast.success(t('Default account updated'))
+    },
+    onError: notifyError,
+  })
 
   const setSearch = (patch: { search?: string; create?: boolean }) =>
     navigate({ search: (previous) => ({ ...previous, ...patch }), replace: true })
@@ -95,6 +118,7 @@ function Accounts() {
                 <TableHead>{t('Name')}</TableHead>
                 {own && <TableHead className="hidden sm:table-cell">{t('Kind')}</TableHead>}
                 {own && <TableHead className="text-right">{t('Balance')}</TableHead>}
+                {pickDefaults && <TableHead className="w-10"><span className="sr-only">{t('Actions')}</span></TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -113,6 +137,18 @@ function Accounts() {
                         {t('Inactive')}
                       </Badge>
                     )}
+                    {type === 'asset' && account.id === ledger.default_account_id && (
+                      <Badge variant="secondary" className="ml-2">
+                        <ArrowUpRightIcon />
+                        {t('Expenses')}
+                      </Badge>
+                    )}
+                    {type === 'asset' && account.id === (ledger.default_income_account_id ?? ledger.default_account_id) && (
+                      <Badge variant="secondary" className="ml-2">
+                        <ArrowDownLeftIcon />
+                        {t('Income')}
+                      </Badge>
+                    )}
                   </TableCell>
                   {own && (
                     <TableCell className="text-muted-foreground hidden sm:table-cell">
@@ -122,6 +158,32 @@ function Accounts() {
                   {own && (
                     <TableCell className="text-right font-medium">
                       <Money amount={account.balance} currency={account.currency?.code ?? ledger.primary_currency.code} />
+                    </TableCell>
+                  )}
+                  {pickDefaults && (
+                    <TableCell className="relative z-10 w-10 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" aria-label={t('Options for {{account}}', { account: account.name })}>
+                            <MoreHorizontalIcon />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="min-w-56">
+                          <DropdownMenuLabel>{t('Pick this account first when adding')}</DropdownMenuLabel>
+                          <DropdownMenuCheckboxItem
+                            checked={account.id === ledger.default_account_id}
+                            onCheckedChange={(checked) => setDefault.mutate({ default_account_id: checked ? account.id : null })}
+                          >
+                            {t('Expenses')}
+                          </DropdownMenuCheckboxItem>
+                          <DropdownMenuCheckboxItem
+                            checked={account.id === ledger.default_income_account_id}
+                            onCheckedChange={(checked) => setDefault.mutate({ default_income_account_id: checked ? account.id : null })}
+                          >
+                            {t('Income')}
+                          </DropdownMenuCheckboxItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   )}
                 </TableRow>
