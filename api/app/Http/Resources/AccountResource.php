@@ -34,6 +34,7 @@ class AccountResource extends JsonResource
             'bic' => $this->bic,
             'account_number' => $this->account_number,
             'virtual_balance' => $own ? Money::round($this->virtual_balance, $decimals) : null,
+            'low_balance_threshold' => $own && is_string($this->low_balance_threshold) ? Money::round($this->low_balance_threshold, $decimals) : null,
             'balance' => $own && $this->balance !== null ? Money::round($this->balance, $decimals) : null,
             'opening_balance' => $this->when($this->resource->offsetExists('opening_balance'), fn () => $this->resource->getAttribute('opening_balance')),
             'opening_balance_date' => $this->when($this->resource->offsetExists('opening_balance_date'), fn () => $this->resource->getAttribute('opening_balance_date')),

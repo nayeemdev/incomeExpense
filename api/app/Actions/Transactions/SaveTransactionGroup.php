@@ -3,9 +3,11 @@
 namespace App\Actions\Transactions;
 
 use App\Enums\TransactionType;
+use App\Events\TransactionGroupSaved;
 use App\Models\Ledger;
 use App\Models\TransactionGroup;
 use App\Models\User;
+use App\RuleEngine\RuleEngine;
 use Illuminate\Support\Facades\DB;
 
 class SaveTransactionGroup
@@ -13,15 +15,18 @@ class SaveTransactionGroup
     public function __construct(
         private WriteTransaction $writer,
         private ResolveSplitReferences $references,
+        private RuleEngine $rules,
     ) {}
 
     /**
      * @param  array{title?: ?string, transactions: list<array<string, mixed>>}  $data
      * @param  array<string, mixed>  $groupAttributes
      */
-    public function handle(Ledger $ledger, ?User $user, array $data, ?TransactionGroup $group = null, array $groupAttributes = []): TransactionGroup
+    public function handle(Ledger $ledger, ?User $user, array $data, ?TransactionGroup $group = null, array $groupAttributes = [], bool $applyRules = true): TransactionGroup
     {
-        return DB::transaction(function () use ($ledger, $user, $data, $group, $groupAttributes) {
+        $created = $group === null;
+
+        $group = DB::transaction(function () use ($ledger, $user, $data, $group, $groupAttributes) {
             if ($group === null) {
                 $group = $ledger->transactionGroups()->create([
                     ...$groupAttributes,
@@ -61,5 +66,13 @@ class SaveTransactionGroup
 
             return $group;
         });
+
+        if ($applyRules) {
+            $this->rules->applyToGroup($group, $created);
+        }
+
+        TransactionGroupSaved::dispatch($group, $created);
+
+        return $group;
     }
 }

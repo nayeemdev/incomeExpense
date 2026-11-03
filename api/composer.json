@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.3",
         "dedoc/scramble": "^0.13.52",
+        "laravel-notification-channels/webpush": "^13.0",
         "laravel/fortify": "^1.41",
         "laravel/framework": "^13.17",
         "laravel/sanctum": "^4.0",

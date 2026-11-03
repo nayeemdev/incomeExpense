@@ -65,6 +65,7 @@ class AccountRequest extends FormRequest
             'bic' => ['nullable', 'string', 'max:11'],
             'account_number' => ['nullable', 'string', 'max:255'],
             'virtual_balance' => $own ? ['nullable', Amount::signed()] : ['prohibited'],
+            'low_balance_threshold' => $own ? ['nullable', Amount::signed()] : ['prohibited'],
             'active' => ['sometimes', 'boolean'],
             'include_net_worth' => ['sometimes', 'boolean'],
             'order' => ['sometimes', 'integer', 'min:0'],
