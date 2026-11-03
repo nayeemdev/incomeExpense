@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\Auth\AuthConfigController;
 use App\Http\Controllers\Auth\TokenController;
 use App\Http\Controllers\AutocompleteController;
 use App\Http\Controllers\AvailableBudgetController;
@@ -38,6 +39,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('auth/config', AuthConfigController::class);
 Route::post('auth/tokens', [TokenController::class, 'store'])->middleware('throttle:login');
 
 Route::middleware('auth:sanctum')->group(function () {

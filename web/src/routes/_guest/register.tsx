@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -10,10 +10,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { FieldGroup } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { api } from '@/lib/api/client'
-import { userQuery } from '@/lib/api/queries'
+import { authConfigQuery, userQuery } from '@/lib/api/queries'
 import { handleFormError } from '@/lib/forms'
 
 export const Route = createFileRoute('/_guest/register')({
+  validateSearch: z.object({ redirect: z.string().optional() }),
   component: Register,
 })
 
@@ -33,6 +34,9 @@ function Register() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const { redirect } = Route.useSearch()
+  const { data: config } = useQuery(authConfigQuery)
+  const invited = !!redirect?.startsWith('/invitations/')
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: { name: '', email: '', password: '', password_confirmation: '' },
@@ -42,10 +46,26 @@ function Register() {
     mutationFn: (values: z.infer<typeof schema>) => api.post('/auth/register', values),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: userQuery.queryKey })
-      await navigate({ to: '/onboarding' })
+      await navigate({ to: redirect ?? '/onboarding' })
     },
     onError: (error) => handleFormError(error, form.setError),
   })
+
+  if (config && !config.registration_open && !invited) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl">{t('Sign-up is closed')}</CardTitle>
+          <CardDescription>{t('This LedgerFly is private. Ask its owner to invite you, then open the link in the invitation email.')}</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/login">{t('Back to sign in')}</Link>
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
 
   return (
     <Card>
@@ -56,16 +76,16 @@ function Register() {
       <form onSubmit={form.handleSubmit((values) => register.mutate(values))}>
         <CardContent>
           <FieldGroup>
-            <FormField control={form.control} name="name" label={t('Name')}>
+            <FormField control={form.control} name="name" required label={t('Name')}>
               {(field) => <Input autoComplete="name" autoFocus {...field} />}
             </FormField>
-            <FormField control={form.control} name="email" label={t('Email')}>
+            <FormField control={form.control} name="email" required label={t('Email')}>
               {(field) => <Input type="email" autoComplete="email" {...field} />}
             </FormField>
-            <FormField control={form.control} name="password" label={t('Password')}>
+            <FormField control={form.control} name="password" required label={t('Password')}>
               {(field) => <Input type="password" autoComplete="new-password" {...field} />}
             </FormField>
-            <FormField control={form.control} name="password_confirmation" label={t('Confirm password')}>
+            <FormField control={form.control} name="password_confirmation" required label={t('Confirm password')}>
               {(field) => <Input type="password" autoComplete="new-password" {...field} />}
             </FormField>
           </FieldGroup>
@@ -76,7 +96,7 @@ function Register() {
           </Button>
           <p className="text-muted-foreground text-sm">
             {t('Already have an account?')}{' '}
-            <Link to="/login" className="text-foreground underline-offset-4 hover:underline">
+            <Link to="/login" search={{ redirect }} className="text-foreground underline-offset-4 hover:underline">
               {t('Sign in')}
             </Link>
           </p>

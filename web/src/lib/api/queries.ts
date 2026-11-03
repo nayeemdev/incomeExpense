@@ -57,8 +57,14 @@ export const ledgerKey = (ledgerId: number) => ['ledgers', ledgerId] as const
 export const userQuery = queryOptions({
   queryKey: ['user'],
   queryFn: () => api.get<Resource<User>>('/user').then((r) => r.data),
-  staleTime: Infinity,
+  staleTime: 60_000,
+  refetchOnWindowFocus: true,
   retry: false,
+})
+
+export const authConfigQuery = queryOptions({
+  queryKey: ['auth-config'],
+  queryFn: () => api.get<Resource<{ registration_open: boolean }>>('/auth/config').then((r) => r.data),
 })
 
 export const currenciesQuery = queryOptions({
