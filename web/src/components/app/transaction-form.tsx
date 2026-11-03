@@ -74,10 +74,11 @@ type TransactionFormProps = {
   onSubmit: (input: TransactionGroupInput) => Promise<unknown>
   submitLabel: string
   allowSplits?: boolean
+  quickPicks?: boolean
   onCancel?: () => void
 }
 
-export function TransactionForm({ defaultValues, onSubmit, submitLabel, allowSplits = true, onCancel }: TransactionFormProps) {
+export function TransactionForm({ defaultValues, onSubmit, submitLabel, allowSplits = true, quickPicks = true, onCancel }: TransactionFormProps) {
   const { t } = useTranslation()
   const ledger = useLedger()
   const labels = transactionTypeLabels()
@@ -155,7 +156,7 @@ export function TransactionForm({ defaultValues, onSubmit, submitLabel, allowSpl
               </Button>
             </div>
           )}
-          <SplitFields form={form} index={index} accounts={accounts} autoFocus={index === 0} showQuickPicks={fields.length === 1} />
+          <SplitFields form={form} index={index} accounts={accounts} autoFocus={index === 0} showQuickPicks={quickPicks && fields.length === 1} />
         </div>
       ))}
 

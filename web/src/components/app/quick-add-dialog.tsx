@@ -49,6 +49,7 @@ export function QuickAddDialog({ open, onOpenChange, defaults }: QuickAddDialogP
         <TransactionForm
           defaultValues={values}
           submitLabel={editing ? t('Save changes') : t('Save')}
+          quickPicks={!editing}
           onCancel={() => onOpenChange(false)}
           onSubmit={async (input) => {
             await save.mutateAsync(input)
