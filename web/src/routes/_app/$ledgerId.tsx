@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AppSidebar } from '@/components/app/app-sidebar'
 import { CommandPalette } from '@/components/app/command-palette'
+import { NotificationBell } from '@/components/app/notification-bell'
 import { QuickAddContext, type QuickAddDefaults } from '@/components/app/quick-add-context'
 import { QuickAddDialog } from '@/components/app/quick-add-dialog'
 import { Button } from '@/components/ui/button'
@@ -59,8 +60,10 @@ function LedgerLayout() {
               <span className="truncate">{t('Search or jump to…')}</span>
               <Kbd className="ml-auto hidden sm:inline-flex">⌘K</Kbd>
             </Button>
+            <div className="ml-auto" />
+            <NotificationBell />
             {canEdit && (
-              <Button className="ml-auto" onClick={() => openQuickAdd()}>
+              <Button onClick={() => openQuickAdd()}>
                 <PlusIcon />
                 <span className="hidden sm:inline">{t('Add')}</span>
                 <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden sm:inline-flex">N</Kbd>

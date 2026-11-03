@@ -39,7 +39,17 @@ docker compose up -d
 docker compose exec api php artisan db:seed --force
 ```
 
-The seed step loads the currency list; it is safe to run again.
+The seed step loads the currency list and built-in link types; it is safe to run again.
+
+### Notifications
+
+Email uses the `MAIL_*` settings in `api/.env`. For push notifications, generate VAPID keys once and put them in `api/.env`:
+
+```bash
+docker compose exec api php artisan webpush:vapid --show
+```
+
+The `queue` container delivers notifications and webhooks, and the `scheduler` container runs bill reminders, automatic budgets, recurring transactions and the weekly summary.
 
 The app is served on `http://localhost:8000` (change with `APP_PORT`). Nginx serves the web app and forwards `/api`, `/sanctum`, `/storage` and `/docs` to Laravel, so both share one origin. Migrations run automatically when the `api` container starts.
 
@@ -61,6 +71,12 @@ cp .env.example .env            # set DB_PASSWORD to the same value as in ../.en
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
+```
+
+Notifications and webhooks are queued. To process them locally, run a worker in another terminal:
+
+```bash
+cd api && php artisan queue:work
 ```
 
 Web (in another terminal):

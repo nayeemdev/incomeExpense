@@ -39,6 +39,7 @@ const schema = z.object({
   active: z.boolean(),
   notes: z.string(),
   object_group: z.string(),
+  low_balance_threshold: z.string(),
 })
 
 type Values = z.infer<typeof schema>
@@ -76,6 +77,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
       active: account?.active ?? true,
       notes: account?.notes ?? '',
       object_group: account?.object_group ?? '',
+      low_balance_threshold: account?.low_balance_threshold ?? '',
     },
   })
   const role = useWatch({ control: form.control, name: 'asset_role' })
@@ -96,6 +98,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
           iban: values.iban || null,
           bic: values.bic || null,
           account_number: values.account_number || null,
+          low_balance_threshold: values.low_balance_threshold || null,
         }),
         ...(type === 'asset' && {
           asset_role: values.asset_role,
@@ -167,6 +170,17 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
               {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
             </FormField>
           </div>
+        )}
+
+        {own && (
+          <FormField
+            control={form.control}
+            name="low_balance_threshold"
+            label={t('Warn me below')}
+            description={t('Optional. You get an alert when the balance drops under this amount.')}
+          >
+            {(field) => <MoneyInput {...field} allowNegative />}
+          </FormField>
         )}
 
         {type === 'asset' && role === 'credit_card' && (

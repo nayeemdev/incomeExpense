@@ -21,6 +21,7 @@ import {
   SunIcon,
   TagIcon,
   WalletIcon,
+  WandSparklesIcon,
 } from 'lucide-react'
 import { useTheme } from '@/hooks/use-theme'
 import { useTranslation } from 'react-i18next'
@@ -84,6 +85,7 @@ export function AppSidebar() {
   const organise = [
     { to: '/$ledgerId/categories', label: t('Categories'), icon: FolderIcon },
     { to: '/$ledgerId/tags', label: t('Tags'), icon: TagIcon },
+    { to: '/$ledgerId/rules', label: t('Rules'), icon: WandSparklesIcon },
   ] as const
 
   return (
