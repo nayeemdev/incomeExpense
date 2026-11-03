@@ -10,6 +10,7 @@ The full feature scope and roadmap live in [docs/PLAN.md](docs/PLAN.md).
 |---|---|
 | `api/` | Laravel 13 API (PHP 8.5), served under `/api/v1` |
 | `web/` | React + Vite single page app, built to static files |
+| `mobile/` | Flutter app for iOS and Android ([guide](mobile/README.md)) |
 | `widgets/` | iOS quick entry: Scriptable widget and Shortcuts setup ([guide](widgets/README.md)) |
 | `docker/` | Images and config for the Compose stack |
 | `docs/` | Plan and project documentation |
@@ -92,6 +93,8 @@ Vite proxies API requests to `API_PROXY_TARGET`, so open the Vite URL and everyt
 
 API documentation is available at `/docs/api` while `APP_ENV=local`.
 
+Mobile: see [mobile/README.md](mobile/README.md).
+
 ## Quality checks
 
 ```bash
@@ -100,6 +103,10 @@ cd api && composer lint && php artisan test
 
 ```bash
 cd web && pnpm lint && pnpm build && pnpm test
+```
+
+```bash
+cd mobile && flutter analyze && flutter test
 ```
 
 The test suite uses the `ledgerfly_testing` database, which the MySQL container creates on first start.
