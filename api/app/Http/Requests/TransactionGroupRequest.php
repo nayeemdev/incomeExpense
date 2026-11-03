@@ -30,6 +30,8 @@ class TransactionGroupRequest extends FormRequest
             'transactions.*.foreign_currency_id' => ['nullable', 'required_with:transactions.*.foreign_amount', Rule::exists('currencies', 'id')],
             'transactions.*.category_id' => ['nullable', 'integer'],
             'transactions.*.category_name' => ['nullable', 'string', 'max:255'],
+            'transactions.*.budget_id' => ['nullable', 'integer'],
+            'transactions.*.bill_id' => ['nullable', 'integer'],
             'transactions.*.tags' => ['nullable', 'array'],
             'transactions.*.tags.*' => ['nullable', 'string', 'max:255'],
             'transactions.*.notes' => ['nullable', 'string', 'max:65000'],

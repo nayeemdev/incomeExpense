@@ -23,10 +23,13 @@ use Illuminate\Support\Carbon;
  * @property-read Account $destinationAccount
  * @property-read Currency $currency
  * @property-read ?Currency $foreignCurrency
+ * @property-read ?Category $category
+ * @property-read ?Budget $budget
+ * @property-read ?Bill $bill
  */
 #[Fillable([
     'ledger_id', 'type', 'date', 'description', 'source_account_id', 'destination_account_id',
-    'currency_id', 'amount', 'foreign_currency_id', 'foreign_amount', 'category_id', 'notes', 'order',
+    'currency_id', 'amount', 'foreign_currency_id', 'foreign_amount', 'category_id', 'budget_id', 'bill_id', 'notes', 'order',
 ])]
 class Transaction extends Model
 {
@@ -90,6 +93,22 @@ class Transaction extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return BelongsTo<Budget, $this>
+     */
+    public function budget(): BelongsTo
+    {
+        return $this->belongsTo(Budget::class);
+    }
+
+    /**
+     * @return BelongsTo<Bill, $this>
+     */
+    public function bill(): BelongsTo
+    {
+        return $this->belongsTo(Bill::class);
     }
 
     /**

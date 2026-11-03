@@ -22,6 +22,7 @@ class AccountResource extends JsonResource
             'id' => $this->id,
             'type' => $this->type,
             'name' => $this->name,
+            'object_group' => $this->whenLoaded('objectGroup', fn () => $this->objectGroup?->title),
             'currency' => new CurrencyResource($this->whenLoaded('currency')),
             'asset_role' => $this->asset_role,
             'liability_type' => $this->liability_type,
