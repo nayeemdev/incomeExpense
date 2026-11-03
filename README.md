@@ -10,6 +10,7 @@ The full feature scope and roadmap live in [docs/PLAN.md](docs/PLAN.md).
 |---|---|
 | `api/` | Laravel 13 API (PHP 8.5), served under `/api/v1` |
 | `web/` | React + Vite single page app, built to static files |
+| `widgets/` | iOS quick entry: Scriptable widget and Shortcuts setup ([guide](widgets/README.md)) |
 | `docker/` | Images and config for the Compose stack |
 | `docs/` | Plan and project documentation |
 
@@ -31,11 +32,14 @@ cp api/.env.example api/.env
 echo "base64:$(openssl rand -base64 32)"
 ```
 
-Put the printed key into `APP_KEY` in `api/.env`, then:
+Put the printed key into `APP_KEY` in `api/.env`, set `APP_URL` to the address you will open LedgerFly at, then:
 
 ```bash
 docker compose up -d
+docker compose exec api php artisan db:seed --force
 ```
+
+The seed step loads the currency list; it is safe to run again.
 
 The app is served on `http://localhost:8000` (change with `APP_PORT`). Nginx serves the web app and forwards `/api`, `/sanctum`, `/storage` and `/docs` to Laravel, so both share one origin. Migrations run automatically when the `api` container starts.
 
@@ -55,7 +59,7 @@ cd api
 composer install
 cp .env.example .env            # set DB_PASSWORD to the same value as in ../.env
 php artisan key:generate
-php artisan migrate
+php artisan migrate --seed
 php artisan serve
 ```
 
