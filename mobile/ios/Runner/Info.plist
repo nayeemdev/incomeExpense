@@ -13,6 +13,19 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.nayeemdev.ledgerfly</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ledgerfly</string>
+			</array>
+		</dict>
+	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
 	<key>CFBundleDisplayName</key>
 	<string>LedgerFly</string>
 	<key>CFBundleExecutable</key>

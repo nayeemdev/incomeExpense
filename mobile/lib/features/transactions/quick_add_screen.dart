@@ -19,10 +19,14 @@ const _types = {'withdrawal': 'Expense', 'deposit': 'Income', 'transfer': 'Trans
 
 /// Adds or edits a single transaction with an on-screen keypad, so nothing needs the system keyboard but the title.
 class QuickAddScreen extends ConsumerStatefulWidget {
-  const QuickAddScreen({super.key, this.type = 'withdrawal', this.group});
+  const QuickAddScreen({super.key, this.type = 'withdrawal', this.group, this.amount, this.title});
 
   final String type;
   final TransactionGroup? group;
+
+  /// Prefills from a widget or Siri shortcut link.
+  final String? amount;
+  final String? title;
 
   @override
   ConsumerState<QuickAddScreen> createState() => _QuickAddScreenState();
@@ -51,6 +55,8 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     if (existing == null) {
       _fromId = ref.read(currentLedgerProvider).defaultAccountId;
       _toId = _type == 'deposit' ? _fromId : null;
+      if ((double.tryParse(widget.amount ?? '') ?? 0) > 0) _amount = widget.amount!;
+      _title.text = widget.title ?? '';
       return;
     }
     _type = existing.type;

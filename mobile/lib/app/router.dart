@@ -21,6 +21,7 @@ import '../features/transactions/quick_add_screen.dart';
 import '../features/transactions/transaction_form_screen.dart';
 import '../features/transactions/transaction_screen.dart';
 import '../features/transactions/transactions_screen.dart';
+import '../features/widgets/widget_sync.dart';
 import '../shared/widgets.dart';
 import 'theme.dart';
 
@@ -49,7 +50,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootKey,
         path: '/new',
-        pageBuilder: (_, state) => _sheet(state, QuickAddScreen(type: state.uri.queryParameters['type'] ?? 'withdrawal')),
+        pageBuilder: (_, state) => _sheet(
+          state,
+          QuickAddScreen(
+            type: const ['withdrawal', 'deposit', 'transfer'].contains(state.uri.queryParameters['type'])
+                ? state.uri.queryParameters['type']!
+                : 'withdrawal',
+            amount: state.uri.queryParameters['amount'],
+            title: state.uri.queryParameters['title'],
+          ),
+        ),
         routes: [
           GoRoute(parentNavigatorKey: _rootKey, path: 'split', pageBuilder: (_, state) => _sheet(state, const TransactionFormScreen())),
         ],
@@ -131,10 +141,16 @@ class _Shell extends ConsumerWidget {
           ),
         ),
       ),
-      AsyncValue(hasValue: true, :final value?) => Scaffold(
-        extendBody: true,
-        body: shell,
-        bottomNavigationBar: _BottomBar(shell: shell, canAdd: value.canEdit),
+      AsyncValue(hasValue: true, :final value?) => Consumer(
+        builder: (context, ref, child) {
+          ref.watch(widgetSyncProvider);
+          return child!;
+        },
+        child: Scaffold(
+          extendBody: true,
+          body: shell,
+          bottomNavigationBar: _BottomBar(shell: shell, canAdd: value.canEdit),
+        ),
       ),
       AsyncValue(:final error?) => Scaffold(
         body: Center(
