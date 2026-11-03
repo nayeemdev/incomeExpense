@@ -221,6 +221,7 @@ svg { flex: none; }
 /* Sections */
 .section { padding: 120px 0; }
 .section-sm { padding: 80px 0; }
+section[id], [id].prose h2 { scroll-margin-top: 96px; }
 .head { max-width: 720px; margin: 0 auto 64px; text-align: center; }
 .head h2 { font-size: clamp(34px, 5vw, 56px); margin-top: 22px; }
 .head p { color: var(--muted); font-size: 18px; margin-top: 18px; }
@@ -293,7 +294,8 @@ svg { flex: none; }
 .steps-intro { position: sticky; top: 120px; }
 .steps-intro h2 { font-size: clamp(34px, 4.6vw, 54px); margin-top: 20px; }
 .steps-intro p { color: var(--muted); font-size: 18px; margin-top: 18px; max-width: 420px; }
-.steps-intro .btn { margin-top: 30px; }
+.steps-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+pre.prompt { white-space: pre-wrap; font-size: 13.5px; }
 .step { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 28px; align-items: center; background: var(--panel); border-radius: 28px; padding: 30px; }
 .step + .step { margin-top: 20px; }
 .step-num { font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -0.04em; color: color-mix(in srgb, var(--primary) 22%, transparent); }
@@ -365,7 +367,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
 .footer-nav { display: flex; flex-wrap: wrap; gap: 6px 30px; }
 .footer-nav a { color: var(--muted); font-weight: 500; font-size: 15px; transition: color 0.2s; }
 .footer-nav a:hover { color: var(--text); }
-.wordmark { font-size: clamp(90px, 21vw, 300px); font-weight: 700; letter-spacing: -0.06em; line-height: 0.8; text-align: center; color: color-mix(in srgb, var(--primary) 9%, transparent); margin: 40px 0 0; user-select: none; }
+.footer-top { position: relative; z-index: 1; }
+.wordmark { pointer-events: none; font-size: clamp(90px, 21vw, 300px); font-weight: 700; letter-spacing: -0.06em; line-height: 0.8; text-align: center; color: color-mix(in srgb, var(--primary) 9%, transparent); margin: 40px 0 0; user-select: none; }
 .footer-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; padding: 26px 0 32px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
 
 /* Reveal on scroll, only when scripts run */
