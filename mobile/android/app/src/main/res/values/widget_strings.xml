@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">What you have spent, the budget left and the next bill due.</string>
+    <string name="widget_spent">Spent</string>
+    <string name="widget_this_month">this month</string>
+    <string name="widget_left">%1$s left</string>
+    <string name="widget_earned">Earned</string>
+    <string name="widget_next_bill">Next bill</string>
+    <string name="widget_all_paid">All paid</string>
+    <string name="widget_signed_out">Open LedgerFly to sign in</string>
+    <string name="widget_add">Add expense</string>
+</resources>
