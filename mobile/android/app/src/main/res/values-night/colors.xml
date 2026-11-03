@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="launch_background">#08182A</color>
+    <color name="widget_background">#0D2238</color>
+    <color name="widget_ink">#E6EEF5</color>
+    <color name="widget_muted">#8DA4B5</color>
+    <color name="widget_track">#15304B</color>
+    <color name="widget_brand">#2F9DCA</color>
+    <color name="widget_expense">#F68D66</color>
 </resources>

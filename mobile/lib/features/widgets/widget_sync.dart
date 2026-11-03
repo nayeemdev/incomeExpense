@@ -8,6 +8,7 @@ import '../ledger/ledger_data.dart';
 
 const appGroup = 'group.com.nayeemdev.ledgerfly';
 const _widgetKind = 'LedgerFlyWidget';
+const _androidWidget = 'LedgerFlyWidgetProvider';
 
 /// Copies this month's numbers into the App Group the home and lock screen widgets read from.
 final widgetSyncProvider = Provider.autoDispose<void>((ref) {
@@ -39,12 +40,12 @@ Future<void> _write(Ledger ledger, Summary summary, List<Budget> budgets, List<B
     HomeWidget.saveWidgetData('bill_amount', next == null ? null : formatMoney(next.amountMax, next.currency.code)),
     HomeWidget.saveWidgetData('bill_due', next == null ? null : formatDay(next.expectedDates.first)),
   ]);
-  await HomeWidget.updateWidget(iOSName: _widgetKind);
+  await HomeWidget.updateWidget(iOSName: _widgetKind, androidName: _androidWidget);
 }
 
 /// Hides the numbers on the widgets once nobody is signed in.
 Future<void> clearWidget() async {
   await HomeWidget.setAppGroupId(appGroup);
   await HomeWidget.saveWidgetData('signed_in', false);
-  await HomeWidget.updateWidget(iOSName: _widgetKind);
+  await HomeWidget.updateWidget(iOSName: _widgetKind, androidName: _androidWidget);
 }
