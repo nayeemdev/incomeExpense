@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ThemeProvider } from '@/hooks/use-theme'
 import { ApiError } from '@/lib/api/client'
@@ -10,7 +10,20 @@ import { routeTree } from './routeTree.gen'
 import './i18n'
 import './index.css'
 
+const guestPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/two-factor-challenge']
+
+// Any request answered with 401 means the session ended (signed out elsewhere or expired), so leave the app right away.
+function sendToLogin(error: unknown) {
+  if (!(error instanceof ApiError && error.isUnauthenticated) || guestPaths.includes(window.location.pathname)) return
+
+  queryClient.clear()
+  const redirect = window.location.pathname + window.location.search
+  window.location.assign(`/login?redirect=${encodeURIComponent(redirect)}`)
+}
+
 const queryClient = new QueryClient({
+  queryCache: new QueryCache({ onError: sendToLogin }),
+  mutationCache: new MutationCache({ onError: sendToLogin }),
   defaultOptions: {
     queries: {
       staleTime: 30_000,
