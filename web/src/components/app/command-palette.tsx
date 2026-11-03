@@ -6,6 +6,10 @@ import {
   ArrowUpRightIcon,
   FolderIcon,
   LayoutDashboardIcon,
+  PieChartIcon,
+  PiggyBankIcon,
+  ReceiptIcon,
+  RepeatIcon,
   SettingsIcon,
   TagIcon,
   WalletIcon,
@@ -89,6 +93,22 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               {typeLabels[type]}
             </CommandItem>
           ))}
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/budgets', params: { ledgerId } }))}>
+            <PieChartIcon />
+            {t('Budgets')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/bills', params: { ledgerId } }))}>
+            <ReceiptIcon />
+            {t('Bills')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/piggy-banks', params: { ledgerId } }))}>
+            <PiggyBankIcon />
+            {t('Piggy banks')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/recurring', params: { ledgerId } }))}>
+            <RepeatIcon />
+            {t('Recurring transactions')}
+          </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/categories', params: { ledgerId } }))}>
             <FolderIcon />
             {t('Categories')}

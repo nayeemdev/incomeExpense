@@ -6,7 +6,6 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { FieldGroup, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useLedger } from '@/hooks/use-ledger'
@@ -20,6 +19,7 @@ import { CurrencySelect } from './currency-select'
 import { DatePicker } from './date-picker'
 import { FormField } from './form-field'
 import { MoneyInput } from './money-input'
+import { SelectField } from './select-field'
 
 const schema = z.object({
   name: z.string().trim().min(1).max(255),
@@ -38,26 +38,10 @@ const schema = z.object({
   include_net_worth: z.boolean(),
   active: z.boolean(),
   notes: z.string(),
+  object_group: z.string(),
 })
 
 type Values = z.infer<typeof schema>
-
-function SelectField({ value, onChange, options, id }: { id: string; value: string; onChange: (value: string) => void; options: Record<string, string> }) {
-  return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger id={id} className="w-full">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {Object.entries(options).map(([key, label]) => (
-          <SelectItem key={key} value={key}>
-            {label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  )
-}
 
 type AccountFormProps = {
   type: AccountType
@@ -91,6 +75,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
       include_net_worth: account?.include_net_worth ?? true,
       active: account?.active ?? true,
       notes: account?.notes ?? '',
+      object_group: account?.object_group ?? '',
     },
   })
   const role = useWatch({ control: form.control, name: 'asset_role' })
@@ -101,6 +86,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
         ...(account ? {} : { type }),
         name: values.name,
         notes: values.notes || null,
+        object_group: values.object_group,
         active: values.active,
         currency_id: values.currency_id,
         ...(own && {
@@ -223,6 +209,10 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
             </FormField>
           </>
         )}
+
+        <FormField control={form.control} name="object_group" label={t('Group')} description={t('Optional. Groups accounts together in lists, for example "Family".')}>
+          {(field) => <Input {...field} />}
+        </FormField>
 
         <FormField control={form.control} name="notes" label={t('Notes')}>
           {(field) => <Textarea rows={3} {...field} />}

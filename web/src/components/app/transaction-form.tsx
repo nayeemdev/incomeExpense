@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useLedger } from '@/hooks/use-ledger'
 import { ApiError } from '@/lib/api/client'
-import { accountsQuery, categoriesQuery, tagsQuery } from '@/lib/api/queries'
+import { accountsQuery, activeBudgetsQuery, billsQuery, categoriesQuery, tagsQuery } from '@/lib/api/queries'
 import type { Account, Transaction, TransactionGroupInput } from '@/lib/api/types'
 import { notifyError } from '@/lib/forms'
 import { transactionTypeLabels } from '@/lib/labels'
@@ -204,6 +204,8 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
   const split = useWatch({ control: form.control, name: `splits.${index}` })
   const { data: categories = [] } = useQuery({ ...categoriesQuery(ledger.id), select: (page) => page.data })
   const { data: tags = [] } = useQuery({ ...tagsQuery(ledger.id), select: (page) => page.data })
+  const { data: budgets = [] } = useQuery({ ...activeBudgetsQuery(ledger.id), enabled: type === 'withdrawal' })
+  const { data: bills = [] } = useQuery({ ...billsQuery(ledger.id), enabled: type === 'withdrawal', select: (items) => items.filter((bill) => bill.active) })
 
   const accountById = (choice: AccountChoice) =>
     choice && 'id' in choice ? accounts.find((account) => account.id === choice.id) : undefined
@@ -225,6 +227,8 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
     if (!current.destination) form.setValue(`${path}.destination`, accountRef(transaction.destination))
     if (!current.category && transaction.category) form.setValue(`${path}.category`, transaction.category)
     if (current.tags.length === 0 && transaction.tags) form.setValue(`${path}.tags`, transaction.tags.map((tag) => tag.name))
+    if (!current.budget_id && transaction.budget) form.setValue(`${path}.budget_id`, transaction.budget.id)
+    if (!current.bill_id && transaction.bill) form.setValue(`${path}.bill_id`, transaction.bill.id)
   }
 
   return (
@@ -292,6 +296,36 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
               <TagInput id={field.id} value={field.value || []} onChange={field.onChange} suggestions={tags.map((tag) => tag.name)} />
             )}
           </FormField>
+        </div>
+      )}
+      {type === 'withdrawal' && (budgets.length > 0 || bills.length > 0) && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {budgets.length > 0 && (
+            <FormField control={form.control} name={`splits.${index}.budget_id`} label={t('Budget')}>
+              {(field) => (
+                <Combobox
+                  id={field.id}
+                  options={budgets.map((budget) => ({ value: String(budget.id), label: budget.name }))}
+                  value={field.value ? String(field.value) : null}
+                  onChange={(next) => field.onChange(next ? Number(next) : null)}
+                  placeholder={t('No budget')}
+                />
+              )}
+            </FormField>
+          )}
+          {bills.length > 0 && (
+            <FormField control={form.control} name={`splits.${index}.bill_id`} label={t('Bill')}>
+              {(field) => (
+                <Combobox
+                  id={field.id}
+                  options={bills.map((bill) => ({ value: String(bill.id), label: bill.name }))}
+                  value={field.value ? String(field.value) : null}
+                  onChange={(next) => field.onChange(next ? Number(next) : null)}
+                  placeholder={t('Not a bill')}
+                />
+              )}
+            </FormField>
+          )}
         </div>
       )}
       <FormField control={form.control} name={`splits.${index}.notes`} label={t('Notes')}>

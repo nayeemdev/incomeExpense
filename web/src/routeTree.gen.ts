@@ -24,8 +24,15 @@ import { Route as AppLedgerIdSettingsRouteImport } from './routes/_app/$ledgerId
 import { Route as AppInvitationsTokenRouteImport } from './routes/_app/invitations.$token'
 import { Route as AppLedgerIdAccountsIndexRouteImport } from './routes/_app/$ledgerId/accounts/index'
 import { Route as AppLedgerIdAccountsAccountIdRouteImport } from './routes/_app/$ledgerId/accounts/$accountId'
+import { Route as AppLedgerIdBillsIndexRouteImport } from './routes/_app/$ledgerId/bills/index'
+import { Route as AppLedgerIdBillsBillIdRouteImport } from './routes/_app/$ledgerId/bills/$billId'
+import { Route as AppLedgerIdBudgetsIndexRouteImport } from './routes/_app/$ledgerId/budgets/index'
+import { Route as AppLedgerIdBudgetsBudgetIdRouteImport } from './routes/_app/$ledgerId/budgets/$budgetId'
 import { Route as AppLedgerIdCategoriesIndexRouteImport } from './routes/_app/$ledgerId/categories/index'
 import { Route as AppLedgerIdCategoriesCategoryIdRouteImport } from './routes/_app/$ledgerId/categories/$categoryId'
+import { Route as AppLedgerIdPiggyBanksIndexRouteImport } from './routes/_app/$ledgerId/piggy-banks/index'
+import { Route as AppLedgerIdPiggyBanksPiggyBankIdRouteImport } from './routes/_app/$ledgerId/piggy-banks/$piggyBankId'
+import { Route as AppLedgerIdRecurringIndexRouteImport } from './routes/_app/$ledgerId/recurring/index'
 import { Route as AppLedgerIdTagsIndexRouteImport } from './routes/_app/$ledgerId/tags/index'
 import { Route as AppLedgerIdTagsTagIdRouteImport } from './routes/_app/$ledgerId/tags/$tagId'
 import { Route as AppLedgerIdTransactionsIndexRouteImport } from './routes/_app/$ledgerId/transactions/index'
@@ -108,6 +115,27 @@ const AppLedgerIdAccountsAccountIdRoute =
     path: '/accounts/$accountId',
     getParentRoute: () => AppLedgerIdRoute,
   } as any)
+const AppLedgerIdBillsIndexRoute = AppLedgerIdBillsIndexRouteImport.update({
+  id: '/bills/',
+  path: '/bills/',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppLedgerIdBillsBillIdRoute = AppLedgerIdBillsBillIdRouteImport.update({
+  id: '/bills/$billId',
+  path: '/bills/$billId',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppLedgerIdBudgetsIndexRoute = AppLedgerIdBudgetsIndexRouteImport.update({
+  id: '/budgets/',
+  path: '/budgets/',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppLedgerIdBudgetsBudgetIdRoute =
+  AppLedgerIdBudgetsBudgetIdRouteImport.update({
+    id: '/budgets/$budgetId',
+    path: '/budgets/$budgetId',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
 const AppLedgerIdCategoriesIndexRoute =
   AppLedgerIdCategoriesIndexRouteImport.update({
     id: '/categories/',
@@ -118,6 +146,24 @@ const AppLedgerIdCategoriesCategoryIdRoute =
   AppLedgerIdCategoriesCategoryIdRouteImport.update({
     id: '/categories/$categoryId',
     path: '/categories/$categoryId',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdPiggyBanksIndexRoute =
+  AppLedgerIdPiggyBanksIndexRouteImport.update({
+    id: '/piggy-banks/',
+    path: '/piggy-banks/',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdPiggyBanksPiggyBankIdRoute =
+  AppLedgerIdPiggyBanksPiggyBankIdRouteImport.update({
+    id: '/piggy-banks/$piggyBankId',
+    path: '/piggy-banks/$piggyBankId',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdRecurringIndexRoute =
+  AppLedgerIdRecurringIndexRouteImport.update({
+    id: '/recurring/',
+    path: '/recurring/',
     getParentRoute: () => AppLedgerIdRoute,
   } as any)
 const AppLedgerIdTagsIndexRoute = AppLedgerIdTagsIndexRouteImport.update({
@@ -168,11 +214,18 @@ export interface FileRoutesByFullPath {
   '/invitations/$token': typeof AppInvitationsTokenRoute
   '/$ledgerId/': typeof AppLedgerIdIndexRoute
   '/$ledgerId/accounts/$accountId': typeof AppLedgerIdAccountsAccountIdRoute
+  '/$ledgerId/bills/$billId': typeof AppLedgerIdBillsBillIdRoute
+  '/$ledgerId/budgets/$budgetId': typeof AppLedgerIdBudgetsBudgetIdRoute
   '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
   '/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
   '/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
+  '/$ledgerId/bills/': typeof AppLedgerIdBillsIndexRoute
+  '/$ledgerId/budgets/': typeof AppLedgerIdBudgetsIndexRoute
   '/$ledgerId/categories/': typeof AppLedgerIdCategoriesIndexRoute
+  '/$ledgerId/piggy-banks/': typeof AppLedgerIdPiggyBanksIndexRoute
+  '/$ledgerId/recurring/': typeof AppLedgerIdRecurringIndexRoute
   '/$ledgerId/tags/': typeof AppLedgerIdTagsIndexRoute
   '/$ledgerId/transactions/': typeof AppLedgerIdTransactionsIndexRoute
   '/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
@@ -190,11 +243,18 @@ export interface FileRoutesByTo {
   '/invitations/$token': typeof AppInvitationsTokenRoute
   '/$ledgerId': typeof AppLedgerIdIndexRoute
   '/$ledgerId/accounts/$accountId': typeof AppLedgerIdAccountsAccountIdRoute
+  '/$ledgerId/bills/$billId': typeof AppLedgerIdBillsBillIdRoute
+  '/$ledgerId/budgets/$budgetId': typeof AppLedgerIdBudgetsBudgetIdRoute
   '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
   '/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
   '/$ledgerId/accounts': typeof AppLedgerIdAccountsIndexRoute
+  '/$ledgerId/bills': typeof AppLedgerIdBillsIndexRoute
+  '/$ledgerId/budgets': typeof AppLedgerIdBudgetsIndexRoute
   '/$ledgerId/categories': typeof AppLedgerIdCategoriesIndexRoute
+  '/$ledgerId/piggy-banks': typeof AppLedgerIdPiggyBanksIndexRoute
+  '/$ledgerId/recurring': typeof AppLedgerIdRecurringIndexRoute
   '/$ledgerId/tags': typeof AppLedgerIdTagsIndexRoute
   '/$ledgerId/transactions': typeof AppLedgerIdTransactionsIndexRoute
   '/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
@@ -216,11 +276,18 @@ export interface FileRoutesById {
   '/_app/invitations/$token': typeof AppInvitationsTokenRoute
   '/_app/$ledgerId/': typeof AppLedgerIdIndexRoute
   '/_app/$ledgerId/accounts/$accountId': typeof AppLedgerIdAccountsAccountIdRoute
+  '/_app/$ledgerId/bills/$billId': typeof AppLedgerIdBillsBillIdRoute
+  '/_app/$ledgerId/budgets/$budgetId': typeof AppLedgerIdBudgetsBudgetIdRoute
   '/_app/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/_app/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/_app/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
   '/_app/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
   '/_app/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
+  '/_app/$ledgerId/bills/': typeof AppLedgerIdBillsIndexRoute
+  '/_app/$ledgerId/budgets/': typeof AppLedgerIdBudgetsIndexRoute
   '/_app/$ledgerId/categories/': typeof AppLedgerIdCategoriesIndexRoute
+  '/_app/$ledgerId/piggy-banks/': typeof AppLedgerIdPiggyBanksIndexRoute
+  '/_app/$ledgerId/recurring/': typeof AppLedgerIdRecurringIndexRoute
   '/_app/$ledgerId/tags/': typeof AppLedgerIdTagsIndexRoute
   '/_app/$ledgerId/transactions/': typeof AppLedgerIdTransactionsIndexRoute
   '/_app/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
@@ -241,11 +308,18 @@ export interface FileRouteTypes {
     | '/invitations/$token'
     | '/$ledgerId/'
     | '/$ledgerId/accounts/$accountId'
+    | '/$ledgerId/bills/$billId'
+    | '/$ledgerId/budgets/$budgetId'
     | '/$ledgerId/categories/$categoryId'
+    | '/$ledgerId/piggy-banks/$piggyBankId'
     | '/$ledgerId/tags/$tagId'
     | '/$ledgerId/transactions/new'
     | '/$ledgerId/accounts/'
+    | '/$ledgerId/bills/'
+    | '/$ledgerId/budgets/'
     | '/$ledgerId/categories/'
+    | '/$ledgerId/piggy-banks/'
+    | '/$ledgerId/recurring/'
     | '/$ledgerId/tags/'
     | '/$ledgerId/transactions/'
     | '/$ledgerId/transactions/$groupId/edit'
@@ -263,11 +337,18 @@ export interface FileRouteTypes {
     | '/invitations/$token'
     | '/$ledgerId'
     | '/$ledgerId/accounts/$accountId'
+    | '/$ledgerId/bills/$billId'
+    | '/$ledgerId/budgets/$budgetId'
     | '/$ledgerId/categories/$categoryId'
+    | '/$ledgerId/piggy-banks/$piggyBankId'
     | '/$ledgerId/tags/$tagId'
     | '/$ledgerId/transactions/new'
     | '/$ledgerId/accounts'
+    | '/$ledgerId/bills'
+    | '/$ledgerId/budgets'
     | '/$ledgerId/categories'
+    | '/$ledgerId/piggy-banks'
+    | '/$ledgerId/recurring'
     | '/$ledgerId/tags'
     | '/$ledgerId/transactions'
     | '/$ledgerId/transactions/$groupId/edit'
@@ -288,11 +369,18 @@ export interface FileRouteTypes {
     | '/_app/invitations/$token'
     | '/_app/$ledgerId/'
     | '/_app/$ledgerId/accounts/$accountId'
+    | '/_app/$ledgerId/bills/$billId'
+    | '/_app/$ledgerId/budgets/$budgetId'
     | '/_app/$ledgerId/categories/$categoryId'
+    | '/_app/$ledgerId/piggy-banks/$piggyBankId'
     | '/_app/$ledgerId/tags/$tagId'
     | '/_app/$ledgerId/transactions/new'
     | '/_app/$ledgerId/accounts/'
+    | '/_app/$ledgerId/bills/'
+    | '/_app/$ledgerId/budgets/'
     | '/_app/$ledgerId/categories/'
+    | '/_app/$ledgerId/piggy-banks/'
+    | '/_app/$ledgerId/recurring/'
     | '/_app/$ledgerId/tags/'
     | '/_app/$ledgerId/transactions/'
     | '/_app/$ledgerId/transactions/$groupId/edit'
@@ -411,6 +499,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLedgerIdAccountsAccountIdRouteImport
       parentRoute: typeof AppLedgerIdRoute
     }
+    '/_app/$ledgerId/bills/': {
+      id: '/_app/$ledgerId/bills/'
+      path: '/bills'
+      fullPath: '/$ledgerId/bills/'
+      preLoaderRoute: typeof AppLedgerIdBillsIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/bills/$billId': {
+      id: '/_app/$ledgerId/bills/$billId'
+      path: '/bills/$billId'
+      fullPath: '/$ledgerId/bills/$billId'
+      preLoaderRoute: typeof AppLedgerIdBillsBillIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/budgets/': {
+      id: '/_app/$ledgerId/budgets/'
+      path: '/budgets'
+      fullPath: '/$ledgerId/budgets/'
+      preLoaderRoute: typeof AppLedgerIdBudgetsIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/budgets/$budgetId': {
+      id: '/_app/$ledgerId/budgets/$budgetId'
+      path: '/budgets/$budgetId'
+      fullPath: '/$ledgerId/budgets/$budgetId'
+      preLoaderRoute: typeof AppLedgerIdBudgetsBudgetIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
     '/_app/$ledgerId/categories/': {
       id: '/_app/$ledgerId/categories/'
       path: '/categories'
@@ -423,6 +539,27 @@ declare module '@tanstack/react-router' {
       path: '/categories/$categoryId'
       fullPath: '/$ledgerId/categories/$categoryId'
       preLoaderRoute: typeof AppLedgerIdCategoriesCategoryIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/piggy-banks/': {
+      id: '/_app/$ledgerId/piggy-banks/'
+      path: '/piggy-banks'
+      fullPath: '/$ledgerId/piggy-banks/'
+      preLoaderRoute: typeof AppLedgerIdPiggyBanksIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/piggy-banks/$piggyBankId': {
+      id: '/_app/$ledgerId/piggy-banks/$piggyBankId'
+      path: '/piggy-banks/$piggyBankId'
+      fullPath: '/$ledgerId/piggy-banks/$piggyBankId'
+      preLoaderRoute: typeof AppLedgerIdPiggyBanksPiggyBankIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/recurring/': {
+      id: '/_app/$ledgerId/recurring/'
+      path: '/recurring'
+      fullPath: '/$ledgerId/recurring/'
+      preLoaderRoute: typeof AppLedgerIdRecurringIndexRouteImport
       parentRoute: typeof AppLedgerIdRoute
     }
     '/_app/$ledgerId/tags/': {
@@ -474,11 +611,18 @@ interface AppLedgerIdRouteChildren {
   AppLedgerIdSettingsRoute: typeof AppLedgerIdSettingsRoute
   AppLedgerIdIndexRoute: typeof AppLedgerIdIndexRoute
   AppLedgerIdAccountsAccountIdRoute: typeof AppLedgerIdAccountsAccountIdRoute
+  AppLedgerIdBillsBillIdRoute: typeof AppLedgerIdBillsBillIdRoute
+  AppLedgerIdBudgetsBudgetIdRoute: typeof AppLedgerIdBudgetsBudgetIdRoute
   AppLedgerIdCategoriesCategoryIdRoute: typeof AppLedgerIdCategoriesCategoryIdRoute
+  AppLedgerIdPiggyBanksPiggyBankIdRoute: typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   AppLedgerIdTagsTagIdRoute: typeof AppLedgerIdTagsTagIdRoute
   AppLedgerIdTransactionsNewRoute: typeof AppLedgerIdTransactionsNewRoute
   AppLedgerIdAccountsIndexRoute: typeof AppLedgerIdAccountsIndexRoute
+  AppLedgerIdBillsIndexRoute: typeof AppLedgerIdBillsIndexRoute
+  AppLedgerIdBudgetsIndexRoute: typeof AppLedgerIdBudgetsIndexRoute
   AppLedgerIdCategoriesIndexRoute: typeof AppLedgerIdCategoriesIndexRoute
+  AppLedgerIdPiggyBanksIndexRoute: typeof AppLedgerIdPiggyBanksIndexRoute
+  AppLedgerIdRecurringIndexRoute: typeof AppLedgerIdRecurringIndexRoute
   AppLedgerIdTagsIndexRoute: typeof AppLedgerIdTagsIndexRoute
   AppLedgerIdTransactionsIndexRoute: typeof AppLedgerIdTransactionsIndexRoute
   AppLedgerIdTransactionsGroupIdEditRoute: typeof AppLedgerIdTransactionsGroupIdEditRoute
@@ -489,11 +633,18 @@ const AppLedgerIdRouteChildren: AppLedgerIdRouteChildren = {
   AppLedgerIdSettingsRoute: AppLedgerIdSettingsRoute,
   AppLedgerIdIndexRoute: AppLedgerIdIndexRoute,
   AppLedgerIdAccountsAccountIdRoute: AppLedgerIdAccountsAccountIdRoute,
+  AppLedgerIdBillsBillIdRoute: AppLedgerIdBillsBillIdRoute,
+  AppLedgerIdBudgetsBudgetIdRoute: AppLedgerIdBudgetsBudgetIdRoute,
   AppLedgerIdCategoriesCategoryIdRoute: AppLedgerIdCategoriesCategoryIdRoute,
+  AppLedgerIdPiggyBanksPiggyBankIdRoute: AppLedgerIdPiggyBanksPiggyBankIdRoute,
   AppLedgerIdTagsTagIdRoute: AppLedgerIdTagsTagIdRoute,
   AppLedgerIdTransactionsNewRoute: AppLedgerIdTransactionsNewRoute,
   AppLedgerIdAccountsIndexRoute: AppLedgerIdAccountsIndexRoute,
+  AppLedgerIdBillsIndexRoute: AppLedgerIdBillsIndexRoute,
+  AppLedgerIdBudgetsIndexRoute: AppLedgerIdBudgetsIndexRoute,
   AppLedgerIdCategoriesIndexRoute: AppLedgerIdCategoriesIndexRoute,
+  AppLedgerIdPiggyBanksIndexRoute: AppLedgerIdPiggyBanksIndexRoute,
+  AppLedgerIdRecurringIndexRoute: AppLedgerIdRecurringIndexRoute,
   AppLedgerIdTagsIndexRoute: AppLedgerIdTagsIndexRoute,
   AppLedgerIdTransactionsIndexRoute: AppLedgerIdTransactionsIndexRoute,
   AppLedgerIdTransactionsGroupIdEditRoute:

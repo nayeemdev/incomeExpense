@@ -3,6 +3,7 @@ import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PencilIcon, Trash2Icon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Attachments } from '@/components/app/attachments'
+import { TransactionLinks } from '@/components/app/transaction-links'
 import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
 import { Badge } from '@/components/ui/badge'
@@ -138,6 +139,26 @@ function TransactionDetail() {
                       </dd>
                     </div>
                   )}
+                  {transaction.budget && (
+                    <div>
+                      <dt className="text-muted-foreground">{t('Budget')}</dt>
+                      <dd>
+                        <Link to="/$ledgerId/budgets/$budgetId" params={{ ledgerId, budgetId: String(transaction.budget.id) }} search={{}} className="hover:underline">
+                          {transaction.budget.name}
+                        </Link>
+                      </dd>
+                    </div>
+                  )}
+                  {transaction.bill && (
+                    <div>
+                      <dt className="text-muted-foreground">{t('Bill')}</dt>
+                      <dd>
+                        <Link to="/$ledgerId/bills/$billId" params={{ ledgerId, billId: String(transaction.bill.id) }} className="hover:underline">
+                          {transaction.bill.name}
+                        </Link>
+                      </dd>
+                    </div>
+                  )}
                   {transaction.tags && transaction.tags.length > 0 && (
                     <div>
                       <dt className="text-muted-foreground">{t('Tags')}</dt>
@@ -168,8 +189,9 @@ function TransactionDetail() {
             </p>
           )}
         </div>
-        <div>
+        <div className="space-y-4">
           <Attachments type="transaction_group" id={group.id} />
+          <TransactionLinks groupId={group.id} />
         </div>
       </div>
     </>
