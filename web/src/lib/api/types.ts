@@ -329,6 +329,8 @@ export type NotificationSettings = {
   quiet_hours: { start: string; end: string } | null
   large_transaction_amount: string | number | null
   push_public_key: string | null
+  ntfy: { server: string; topic: string; has_token: boolean; private: boolean } | null
+  ntfy_default_server: string
 }
 
 export type RuleTrigger = { type: string; value: string | null; negated: boolean }
