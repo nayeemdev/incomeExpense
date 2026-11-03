@@ -25,6 +25,8 @@ class CategoryRequest extends FormRequest
                 'max:255',
                 Rule::unique('categories')->where('ledger_id', $ledger->id)->ignore($category instanceof Category ? $category->id : null),
             ],
+            'icon' => ['nullable', Rule::in(config()->array('ledgerfly.categories.icons'))],
+            'color' => ['nullable', Rule::in(config()->array('ledgerfly.categories.colors'))],
             'notes' => ['nullable', 'string', 'max:65000'],
         ];
     }

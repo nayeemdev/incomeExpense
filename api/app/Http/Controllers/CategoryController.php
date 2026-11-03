@@ -6,6 +6,7 @@ use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Ledger;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
@@ -21,6 +22,14 @@ class CategoryController extends Controller
                 ->orderBy('name')
                 ->paginate($this->perPage($request)),
         );
+    }
+
+    public function styles(): JsonResponse
+    {
+        return response()->json(['data' => [
+            'icons' => config()->array('ledgerfly.categories.icons'),
+            'colors' => config()->array('ledgerfly.categories.colors'),
+        ]]);
     }
 
     public function store(CategoryRequest $request, Ledger $ledger): CategoryResource

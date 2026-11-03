@@ -94,7 +94,7 @@ class SummaryController extends Controller
     }
 
     /**
-     * @return list<array{id: ?int, name: ?string, currency: string, amount: string}>
+     * @return list<array{id: ?int, name: ?string, icon: ?string, color: ?string, currency: string, amount: string}>
      */
     private function topCategories(Ledger $ledger, string $start, string $end): array
     {
@@ -103,8 +103,8 @@ class SummaryController extends Controller
             ->where('transactions.type', TransactionType::Withdrawal)
             ->whereBetween('transactions.date', [$start, $end])
             ->leftJoin('categories', 'categories.id', '=', 'transactions.category_id')
-            ->groupBy('transactions.category_id', 'categories.name', 'transactions.currency_id')
-            ->select('transactions.category_id', 'categories.name', 'transactions.currency_id', DB::raw('SUM(transactions.amount) AS total'))
+            ->groupBy('transactions.category_id', 'categories.name', 'categories.icon', 'categories.color', 'transactions.currency_id')
+            ->select('transactions.category_id', 'categories.name', 'categories.icon', 'categories.color', 'transactions.currency_id', DB::raw('SUM(transactions.amount) AS total'))
             ->orderByDesc('total')
             ->limit(config()->integer('ledgerfly.summary.top_categories'))
             ->toBase()
@@ -113,10 +113,12 @@ class SummaryController extends Controller
         $result = [];
 
         foreach ($rows as $row) {
-            /** @var object{category_id: ?int, name: ?string, currency_id: int, total: string} $row */
+            /** @var object{category_id: ?int, name: ?string, icon: ?string, color: ?string, currency_id: int, total: string} $row */
             $result[] = [
                 'id' => $row->category_id,
                 'name' => $row->name,
+                'icon' => $row->icon,
+                'color' => $row->color,
                 ...$this->amount($row->currency_id, $row->total),
             ];
         }
