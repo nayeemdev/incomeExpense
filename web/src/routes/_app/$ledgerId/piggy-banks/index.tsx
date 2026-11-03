@@ -31,13 +31,13 @@ function PiggyBanks() {
   return (
     <>
       <PageHeader
-        title={t('Piggy banks')}
-        description={t('Set money aside for goals without moving it out of your accounts.')}
+        title={t('Goals')}
+        description={t('Save towards things you want without moving money out of your accounts.')}
         actions={
           canEdit && (
             <Button onClick={() => setCreating(true)}>
               <PlusIcon />
-              {t('New piggy bank')}
+              {t('New goal')}
             </Button>
           )
         }
@@ -46,12 +46,12 @@ function PiggyBanks() {
       {piggyBanks?.length === 0 && (
         <Empty className="surface-card">
           <EmptyHeader>
-            <EmptyTitle>{t('No piggy banks yet')}</EmptyTitle>
+            <EmptyTitle>{t('No goals yet')}</EmptyTitle>
             <EmptyDescription>{t('Save towards a holiday, a new phone or an emergency fund.')}</EmptyDescription>
           </EmptyHeader>
           {canEdit && (
             <EmptyContent>
-              <Button onClick={() => setCreating(true)}>{t('New piggy bank')}</Button>
+              <Button onClick={() => setCreating(true)}>{t('New goal')}</Button>
             </EmptyContent>
           )}
         </Empty>
@@ -87,7 +87,7 @@ function PiggyBanks() {
           </Card>
         ))}
       </div>
-      <FormDialog open={creating} onOpenChange={setCreating} title={t('New piggy bank')} size="lg">
+      <FormDialog open={creating} onOpenChange={setCreating} title={t('New goal')} size="lg">
         <PiggyBankForm onCancel={() => setCreating(false)} onSaved={() => setCreating(false)} />
       </FormDialog>
     </>

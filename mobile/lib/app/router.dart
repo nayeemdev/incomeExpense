@@ -219,8 +219,8 @@ class _BottomBar extends StatelessWidget {
           ),
           child: Row(
             children: [
-              item(0, LucideIcons.house, 'Home'),
-              item(1, LucideIcons.chartColumn, 'Analytics'),
+              item(0, LucideIcons.layoutDashboard, 'Dashboard'),
+              item(1, LucideIcons.chartColumn, 'Reports'),
               if (canAdd)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),

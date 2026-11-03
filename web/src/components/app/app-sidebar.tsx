@@ -13,7 +13,7 @@ import {
   LogOutIcon,
   MonitorIcon,
   PieChartIcon,
-  PiggyBankIcon,
+  TargetIcon,
   ReceiptIcon,
   RepeatIcon,
   MoonIcon,
@@ -81,7 +81,7 @@ export function AppSidebar() {
   const planning = [
     { to: '/$ledgerId/budgets', label: t('Budgets'), icon: PieChartIcon },
     { to: '/$ledgerId/bills', label: t('Bills'), icon: ReceiptIcon },
-    { to: '/$ledgerId/piggy-banks', label: t('Piggy banks'), icon: PiggyBankIcon },
+    { to: '/$ledgerId/piggy-banks', label: t('Goals'), icon: TargetIcon },
     { to: '/$ledgerId/recurring', label: t('Recurring'), icon: RepeatIcon },
   ] as const
 

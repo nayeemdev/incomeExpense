@@ -116,7 +116,7 @@ export function PiggyBankForm({ piggyBank, onSaved, onCancel }: PiggyBankFormPro
           {t('Cancel')}
         </Button>
         <Button type="submit" disabled={save.isPending}>
-          {piggyBank ? t('Save changes') : t('Create piggy bank')}
+          {piggyBank ? t('Save changes') : t('Create goal')}
         </Button>
       </div>
     </form>
