@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
@@ -917,6 +918,9 @@ class _LogoPainter extends CustomPainter {
   @override
   bool shouldRepaint(_LogoPainter old) => false;
 }
+
+/// Leaves a pushed screen. Screens opened from a link or widget have nothing underneath, so those go to the dashboard.
+void closeScreen(BuildContext context) => context.canPop() ? context.pop() : context.go('/');
 
 void showError(BuildContext context, Object error) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(ApiException.from(error).message)));

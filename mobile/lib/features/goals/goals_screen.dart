@@ -177,7 +177,7 @@ class GoalScreen extends ConsumerWidget {
     try {
       await ref.read(apiProvider).delete(ledgerPath(ref.read(currentLedgerProvider), 'piggy-banks/${goal.id}'));
       ref.invalidate(goalsProvider);
-      if (context.mounted) context.pop();
+      if (context.mounted) closeScreen(context);
     } catch (error) {
       if (context.mounted) showError(context, error);
     }

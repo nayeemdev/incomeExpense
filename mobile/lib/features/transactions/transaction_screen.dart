@@ -34,7 +34,7 @@ class TransactionScreen extends ConsumerWidget {
       refreshLedgerData(ref);
       if (context.mounted) {
         showToast(context, 'Transaction deleted');
-        context.pop();
+        closeScreen(context);
       }
     } catch (error) {
       if (context.mounted) showError(context, error);
