@@ -74,6 +74,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('notifications/{notification}', [NotificationController::class, 'destroy']);
         Route::get('notification-settings', [NotificationController::class, 'settings']);
         Route::patch('notification-settings', [NotificationController::class, 'updateSettings']);
+        Route::post('notification-settings/ntfy-test', [NotificationController::class, 'testNtfy']);
         Route::post('push-subscriptions', [NotificationController::class, 'subscribe']);
         Route::delete('push-subscriptions', [NotificationController::class, 'unsubscribe']);
         Route::get('rule-options', [RuleController::class, 'options']);

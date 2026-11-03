@@ -11,6 +11,7 @@ import '../auth/lock.dart';
 import '../auth/session.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
+import '../notifications/ntfy_settings.dart';
 
 const _themeLabels = {ThemeMode.system: 'System', ThemeMode.light: 'Light', ThemeMode.dark: 'Dark'};
 
@@ -38,6 +39,7 @@ class SettingsScreen extends ConsumerWidget {
     final current = ref.watch(currentLedgerProvider);
     final lock = ref.watch(lockEnabledProvider).value ?? false;
     final theme = ref.watch(themeModeProvider).value ?? ThemeMode.system;
+    final ntfy = ref.watch(ntfySettingsProvider);
     final chevron = Icon(LucideIcons.chevronRight, size: 18, color: palette.subtle);
     final initials = (user?.name ?? '?')
         .trim()
@@ -132,6 +134,24 @@ class SettingsScreen extends ConsumerWidget {
                 title: 'Notifications',
                 trailing: chevron,
                 onTap: () => context.push('/notifications'),
+              ),
+            ],
+          ),
+          const _Heading('Alerts'),
+          _Group(
+            children: [
+              ListRow(
+                leading: const CategoryIcon(glyph: LucideIcons.smartphone, color: 'orange', size: 40),
+                title: 'Phone alerts with ntfy',
+                subtitle: ntfy.value?.topic == null ? 'Off' : 'On · ${ntfy.value!.topic}',
+                trailing: chevron,
+                onTap: ntfy.value == null
+                    ? null
+                    : () => showAppSheet<void>(
+                        context,
+                        title: 'Phone alerts',
+                        builder: (_) => NtfySheet(settings: ntfy.value!),
+                      ),
               ),
             ],
           ),

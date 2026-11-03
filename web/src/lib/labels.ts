@@ -107,6 +107,7 @@ export const channelLabels = (): Record<string, string> => ({
   database: t('In app'),
   mail: t('Email'),
   webpush: t('Push'),
+  ntfy: t('ntfy'),
 })
 
 export const triggerLabels = (): Record<string, string> => ({

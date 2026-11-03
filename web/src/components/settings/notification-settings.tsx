@@ -18,6 +18,7 @@ import type { NotificationSettings as Settings } from '@/lib/api/types'
 import { notifyError } from '@/lib/forms'
 import { channelLabels, notificationEventLabels } from '@/lib/labels'
 import { currentSubscription, disablePush, enablePush, pushSupported } from '@/lib/push'
+import { NtfySettings } from './ntfy-settings'
 
 export function NotificationSettings() {
   const { t } = useTranslation()
@@ -91,6 +92,8 @@ export function NotificationSettings() {
           </Field>
         </CardContent>
       </Card>
+
+      <NtfySettings key={settings.ntfy?.topic ?? 'new'} settings={settings} />
 
       <Card>
         <CardHeader>

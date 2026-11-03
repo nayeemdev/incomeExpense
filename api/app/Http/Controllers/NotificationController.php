@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\Channels\NtfyChannel;
 use App\Support\NotificationPreferences;
 use Illuminate\Container\Attributes\CurrentUser;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 
 class NotificationController extends Controller
@@ -66,6 +69,13 @@ class NotificationController extends Controller
             'quiet_hours' => $preferences['quiet_hours'] ?? null,
             'large_transaction_amount' => $preferences['large_transaction_amount'] ?? null,
             'push_public_key' => config('webpush.vapid.public_key'),
+            'ntfy' => ($ntfy = NtfyChannel::settings($user)) === null ? null : [
+                'server' => $ntfy['server'],
+                'topic' => $ntfy['topic'],
+                'has_token' => $ntfy['token'] !== null,
+                'private' => $ntfy['private'],
+            ],
+            'ntfy_default_server' => config('ledgerfly.notifications.ntfy_server'),
         ]]);
     }
 
@@ -82,6 +92,11 @@ class NotificationController extends Controller
             'quiet_hours.start' => ['required_with:quiet_hours', 'date_format:H:i'],
             'quiet_hours.end' => ['required_with:quiet_hours', 'date_format:H:i'],
             'large_transaction_amount' => ['nullable', 'numeric', 'gt:0'],
+            'ntfy' => ['nullable', 'array'],
+            'ntfy.server' => ['required_with:ntfy', 'url:http,https', 'max:255'],
+            'ntfy.topic' => ['required_with:ntfy', 'regex:/^[A-Za-z0-9_-]{1,64}$/'],
+            'ntfy.token' => ['nullable', 'string', 'max:255'],
+            'ntfy.private' => ['sometimes', 'boolean'],
         ]);
 
         $preferences = $user->preferences ?? [];
@@ -99,9 +114,56 @@ class NotificationController extends Controller
             }
         }
 
+        if ($request->exists('ntfy')) {
+            $preferences['ntfy'] = $this->ntfyPreferences($validated['ntfy'] ?? null, $request->has('ntfy.token'), $preferences['ntfy'] ?? null);
+        }
+
         $user->update(['preferences' => $preferences]);
 
         return $this->settings($user->refresh());
+    }
+
+    public function testNtfy(#[CurrentUser] User $user): JsonResponse
+    {
+        try {
+            $response = NtfyChannel::publish($user, __('LedgerFly is connected'), __('Alerts will arrive here from now on.'), url('/'));
+        } catch (ConnectionException) {
+            return response()->json(['message' => __('Could not reach the ntfy server. Check its address.')], 422);
+        }
+
+        if ($response === null) {
+            return response()->json(['message' => __('Set up ntfy first.')], 422);
+        }
+
+        if ($response->failed()) {
+            return response()->json(['message' => __('ntfy answered with :status. Check the server, topic and token.', ['status' => $response->status()])], 422);
+        }
+
+        return response()->json(['data' => ['sent' => true]]);
+    }
+
+    /**
+     * Keeps the saved token when a change leaves it out, and stores tokens encrypted.
+     *
+     * @param  array<string, mixed>|null  $input
+     * @return array<string, mixed>|null
+     */
+    private function ntfyPreferences(?array $input, bool $tokenGiven, mixed $current): ?array
+    {
+        if ($input === null) {
+            return null;
+        }
+
+        $token = $tokenGiven
+            ? (is_string($input['token'] ?? null) && $input['token'] !== '' ? Crypt::encryptString($input['token']) : null)
+            : (is_array($current) ? ($current['token'] ?? null) : null);
+
+        return [
+            'server' => rtrim((string) $input['server'], '/'),
+            'topic' => (string) $input['topic'],
+            'token' => $token,
+            'private' => (bool) ($input['private'] ?? true),
+        ];
     }
 
     public function subscribe(Request $request, #[CurrentUser] User $user): Response
