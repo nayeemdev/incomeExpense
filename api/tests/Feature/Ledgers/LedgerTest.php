@@ -16,6 +16,16 @@ it('creates a ledger owned by the creator', function () {
         ->assertJsonPath('data.primary_currency.code', 'EUR');
 });
 
+it('starts a new ledger with styled default categories', function () {
+    Sanctum::actingAs(User::factory()->create(), ['*']);
+
+    $id = $this->postJson('/api/v1/ledgers', ['name' => 'Household', 'primary_currency_id' => Currency::findByCode('EUR')->id])->json('data.id');
+    $groceries = Ledger::query()->findOrFail($id)->categories()->where('name', 'Groceries')->firstOrFail();
+
+    expect(Ledger::query()->findOrFail($id)->categories()->count())->toBe(count(config('ledgerfly.categories.defaults')))
+        ->and($groceries->icon)->toBe('shopping-cart');
+});
+
 it('lists only the ledgers the user belongs to', function () {
     actingAsMember();
     Ledger::factory()->create();

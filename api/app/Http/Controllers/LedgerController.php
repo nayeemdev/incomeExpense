@@ -26,6 +26,7 @@ class LedgerController extends Controller
         $ledger = DB::transaction(function () use ($request, $user) {
             $ledger = Ledger::create($request->validated());
             $ledger->addMember($user, LedgerRole::Owner);
+            $ledger->categories()->createMany(array_map(fn (string $name) => ['name' => $name], config()->array('ledgerfly.categories.defaults')));
 
             return $ledger;
         });
