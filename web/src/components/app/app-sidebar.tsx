@@ -6,6 +6,7 @@ import {
   BookOpenIcon,
   ChevronsUpDownIcon,
   CreditCardIcon,
+  FileUpIcon,
   FolderIcon,
   HandCoinsIcon,
   LayoutDashboardIcon,
@@ -169,6 +170,14 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip={t('Import')}>
+              <Link to="/$ledgerId/import" params={{ ledgerId }} activeProps={{ 'data-active': true }}>
+                <FileUpIcon />
+                <span>{t('Import')}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip={t('Settings')}>
               <Link to="/$ledgerId/settings" params={{ ledgerId }} activeProps={{ 'data-active': true }}>
