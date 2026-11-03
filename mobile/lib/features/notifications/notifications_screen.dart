@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../api/models.dart';
 import '../../app/theme.dart';
+import '../../shared/category_style.dart';
 import '../../shared/format.dart';
 import '../../shared/widgets.dart';
 import '../auth/session.dart';
@@ -42,7 +43,7 @@ class NotificationsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(),
+        title: const Text('Notifications'),
         actions: [
           if (hasUnread)
             TextButton(onPressed: () => _run(context, ref, () => api.post('notifications/read-all')), child: const Text('Mark all read')),
@@ -54,13 +55,12 @@ class NotificationsScreen extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.only(bottom: 32),
           children: [
-            const PageHeader(title: 'Notifications', description: 'Bill reminders, budget alerts and other updates.'),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: AsyncView(
                 value: notices,
                 onRetry: () => ref.invalidate(notificationsProvider),
-                loading: const SurfaceCard(child: Column(children: [SkeletonRow(), SkeletonRow(), SkeletonRow()])),
+                loading: const SkeletonList(rows: 3),
                 builder: (notices) => SurfaceCard(
                   child: notices.isEmpty
                       ? const EmptyState(
@@ -91,7 +91,7 @@ class NotificationsScreen extends ConsumerWidget {
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        IconTile(LucideIcons.bell, tone: notice.readAt == null ? Tone.brand : Tone.neutral, size: 36),
+                                        CategoryIcon(glyph: LucideIcons.bell, color: notice.readAt == null ? 'blue' : 'slate', size: 40),
                                         const SizedBox(width: 14),
                                         Expanded(
                                           child: Column(

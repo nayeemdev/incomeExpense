@@ -4,14 +4,13 @@ Flutter app for iOS and Android. It talks to the same `/api/v1` as the web app a
 
 ## What it does
 
-- Sign in with your server address, email and password, including two-factor codes and recovery codes.
-- Optional Face ID, Touch ID or passcode lock (Settings).
-- Dashboard for the current month: net worth, spent, earned, accounts, top spending and recent transactions.
-- Transactions with search (the same query language as the web app, e.g. `category:Groceries`) and type filters.
-- Add, edit, split and delete transactions. The payee is optional; the description is used when it is left empty.
-- Accounts by type with balances, and each account's transactions.
-- Budgets with what is left this month, and bills with paid or due status.
-- Notifications inbox.
+- Sign in with your server address, email and password, including two-factor and recovery codes.
+- Home: total balance, this month's expense and income, account cards, your top goal, top spending and recent history.
+- Add from the centre button with an on-screen keypad. Pick a category from an icon grid, the account, payee, date and details from chips, or tap a recent transaction to fill everything in. Splits open a dedicated editor.
+- Analytics: spending or income by day or month with a bar chart, totals by category and budgets left.
+- Goals: overall progress gauge, one card per goal, add or withdraw money, and create new goals.
+- Categories have an icon and color, suggested from their name and editable from a predefined set.
+- Settings: switch ledger, accounts, categories, budgets and bills, notifications, light, dark or system theme, Face ID lock and logout.
 
 ## Running locally
 
@@ -33,6 +32,6 @@ Plain `http` works for local network addresses on iOS and in Android debug build
 lib/
   api/        HTTP client and API models
   app/        theme and router
-  features/   one folder per area (auth, dashboard, transactions, accounts, planning, notifications, settings)
+  features/   one folder per area (auth, home, analytics, goals, transactions, categories, accounts, planning, notifications, settings)
   shared/     formatting helpers and common widgets
 ```

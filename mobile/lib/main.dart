@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'app/preferences.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'features/auth/lock.dart';
@@ -17,11 +18,13 @@ class LedgerFlyApp extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     final light = buildTheme(Brightness.light);
     final dark = buildTheme(Brightness.dark);
+    final mode = ref.watch(themeModeProvider).value ?? ThemeMode.system;
 
     if (!session.hasValue) {
       return MaterialApp(
         theme: light,
         darkTheme: dark,
+        themeMode: mode,
         debugShowCheckedModeBanner: false,
         home: const Scaffold(body: Center(child: LogoMark(size: 48))),
       );
@@ -31,6 +34,7 @@ class LedgerFlyApp extends ConsumerWidget {
       title: 'LedgerFly',
       theme: light,
       darkTheme: dark,
+      themeMode: mode,
       debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(routerProvider),
       builder: (context, child) => LockGate(child: child!),

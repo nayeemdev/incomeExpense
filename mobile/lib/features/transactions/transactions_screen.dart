@@ -14,7 +14,7 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  static const _types = {'': 'All', 'withdrawal': 'Expenses', 'deposit': 'Income', 'transfer': 'Transfers'};
+  static const _types = {'': 'All', 'withdrawal': 'Expense', 'deposit': 'Income', 'transfer': 'Transfer'};
 
   final _search = TextEditingController();
   Timer? _debounce;
@@ -36,39 +36,36 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: TransactionList(
-          filter: (query: _query, type: _type.isEmpty ? null : _type, accountId: null),
-          header: [
-            const PageHeader(title: 'Transactions', description: 'Every expense, income and transfer. Search to narrow it down.'),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                controller: _search,
-                onChanged: _onSearch,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  prefixIcon: const Icon(LucideIcons.search, size: 18),
-                  hintText: 'Search, e.g. coffee or category:Groceries',
-                  suffixIcon: _search.text.isEmpty
-                      ? null
-                      : IconButton(
-                          icon: const Icon(LucideIcons.x, size: 18),
-                          onPressed: () {
-                            _search.clear();
-                            setState(() => _query = '');
-                          },
-                        ),
-                ),
+      appBar: AppBar(title: const Text('History')),
+      body: TransactionList(
+        filter: (query: _query, type: _type.isEmpty ? null : _type, accountId: null),
+        header: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+            child: TextField(
+              controller: _search,
+              onChanged: _onSearch,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(LucideIcons.search, size: 18),
+                hintText: 'Search, e.g. coffee or category:Groceries',
+                suffixIcon: _search.text.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: const Icon(LucideIcons.x, size: 18),
+                        onPressed: () {
+                          _search.clear();
+                          setState(() => _query = '');
+                        },
+                      ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-              child: Segmented<String>(options: _types, value: _type, onChanged: (type) => setState(() => _type = type)),
-            ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+            child: Segmented<String>(options: _types, value: _type, onChanged: (type) => setState(() => _type = type)),
+          ),
+        ],
       ),
     );
   }

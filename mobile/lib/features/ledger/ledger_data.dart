@@ -126,5 +126,47 @@ void refreshLedgerData(WidgetRef ref) {
     ..invalidate(billsProvider)
     ..invalidate(transactionsProvider)
     ..invalidate(frequentProvider)
+    ..invalidate(reportProvider)
+    ..invalidate(goalsProvider)
+    ..invalidate(categoriesProvider)
     ..invalidate(transactionGroupProvider);
 }
+
+enum ReportRange { week, month, year }
+
+final reportProvider = FutureProvider.autoDispose.family<Report, ReportRange>((ref, range) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final today = Dates.today();
+  final (start, end, interval) = switch (range) {
+    ReportRange.week => (today.subtract(const Duration(days: 6)), today, 'day'),
+    ReportRange.month => (DateTime(today.year, today.month), DateTime(today.year, today.month + 1, 0), 'day'),
+    ReportRange.year => (DateTime(today.year), DateTime(today.year, 12, 31), 'month'),
+  };
+  final response = await ref
+      .watch(apiProvider)
+      .get(ledgerPath(ledger, 'reports/overview'), query: {'start': isoDate(start), 'end': isoDate(end), 'interval': interval});
+  return Report.fromJson(response as Json);
+});
+
+final goalsProvider = FutureProvider.autoDispose<List<Goal>>((ref) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'piggy-banks'));
+  return _data(response, Goal.fromJson);
+});
+
+final userProvider = FutureProvider<User>((ref) async {
+  final response = await ref.watch(apiProvider).get('user');
+  return User.fromJson(response['data'] as Json);
+});
+
+final categoryStylesProvider = FutureProvider<({List<String> icons, List<String> colors})>((ref) async {
+  final response = await ref.watch(apiProvider).get('category-styles');
+  final data = response['data'] as Json;
+  return (icons: (data['icons'] as List).cast<String>(), colors: (data['colors'] as List).cast<String>());
+});
+
+/// Category style by id, so report rows that only carry an id can still show their icon.
+final categoryStyleById = Provider.autoDispose<Map<int, NamedRef>>((ref) {
+  final categories = ref.watch(categoriesProvider).value ?? const <NamedRef>[];
+  return {for (final category in categories) category.id: category};
+});

@@ -5,17 +5,18 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../api/models.dart';
 import '../../app/theme.dart';
+import '../../shared/category_style.dart';
 import '../../shared/format.dart';
 import '../../shared/widgets.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
 import '../transactions/transaction_list.dart';
 
-const _types = {'asset': 'Assets', 'liability': 'Liabilities', 'expense': 'Expenses', 'revenue': 'Revenue'};
+const _types = {'asset': 'Assets', 'liability': 'Debts', 'expense': 'Payees', 'revenue': 'Payers'};
 
 const _descriptions = {
   'asset': 'Bank accounts, cash and cards you hold.',
-  'liability': 'Loans and debts. Covers money you owe and money owed to you.',
+  'liability': 'Loans and debts, both what you owe and what you are owed.',
   'expense': 'Shops and people you pay. Created as you record expenses.',
   'revenue': 'Employers and others who pay you.',
 };
@@ -35,9 +36,18 @@ IconData accountIcon(Account account) => switch (account.role) {
   'cash_wallet' => LucideIcons.wallet,
   'credit_card' => LucideIcons.creditCard,
   _ when account.type == 'liability' => LucideIcons.handCoins,
-  _ when account.type == 'expense' => LucideIcons.shoppingBag,
+  _ when account.type == 'expense' => LucideIcons.store,
   _ when account.type == 'revenue' => LucideIcons.briefcase,
   _ => LucideIcons.landmark,
+};
+
+String accountColor(Account account) => switch (account.role) {
+  'savings' => 'emerald',
+  'cash_wallet' => 'amber',
+  'credit_card' => 'violet',
+  _ when account.type == 'liability' => 'orange',
+  _ when account.type == 'expense' || account.type == 'revenue' => 'slate',
+  _ => 'blue',
 };
 
 class AccountsScreen extends ConsumerStatefulWidget {
@@ -52,96 +62,38 @@ class _AccountsScreenState extends ConsumerState<AccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = Palette.of(context);
     final accounts = ref.watch(accountsProvider(_type));
 
     return Scaffold(
-      body: SafeArea(
-        bottom: false,
-        child: RefreshIndicator.adaptive(
-          onRefresh: () => ref.refresh(accountsProvider(_type).future),
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.only(bottom: 110),
-            children: [
-              PageHeader(title: 'Accounts', description: _descriptions[_type]),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: Segmented<String>(options: _types, value: _type, onChanged: (type) => setState(() => _type = type)),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: AsyncView(
-                  value: accounts,
-                  onRetry: () => ref.invalidate(accountsProvider(_type)),
-                  loading: const SurfaceCard(child: Column(children: [SkeletonRow(), SkeletonRow(), SkeletonRow(), SkeletonRow()])),
-                  builder: (accounts) => SurfaceCard(
-                    child: accounts.isEmpty
-                        ? EmptyState(
-                            icon: LucideIcons.wallet,
-                            title: 'No accounts yet',
-                            message: _type == 'expense' || _type == 'revenue'
-                                ? 'These are created for you when you record transactions.'
-                                : 'Add accounts from the web app.',
-                          )
-                        : Column(
-                            children: [
-                              for (final (index, account) in accounts.indexed) ...[
-                                if (index > 0) const Divider(indent: 64),
-                                AccountTile(account, showIcon: true),
-                              ],
-                            ],
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AccountTile extends ConsumerWidget {
-  const AccountTile(this.account, {super.key, this.showIcon = false});
-
-  final Account account;
-  final bool showIcon;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final palette = Palette.of(context);
-    final text = Theme.of(context).textTheme;
-    final currency = account.currency ?? ref.watch(currentLedgerProvider).currency;
-    final role = roleLabel(account);
-
-    return InkWell(
-      onTap: () => context.push('/accounts/${account.id}', extra: account),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
+      appBar: AppBar(title: const Text('Accounts')),
+      body: RefreshIndicator.adaptive(
+        onRefresh: () => ref.refresh(accountsProvider(_type).future),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 32),
           children: [
-            if (showIcon) ...[IconTile(accountIcon(account), size: 34), const SizedBox(width: 14)],
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(account.name, style: text.titleSmall, overflow: TextOverflow.ellipsis),
-                      ),
-                      if (!account.active) ...[const SizedBox(width: 6), _Badge('Inactive', palette)],
-                    ],
-                  ),
-                  if (role != null) Text(role, style: text.bodySmall?.copyWith(color: palette.muted)),
-                ],
-              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+              child: Segmented<String>(options: _types, value: _type, onChanged: (type) => setState(() => _type = type)),
             ),
-            if (account.balance != null)
-              MoneyText(account.balance!, currency.code, decimals: currency.decimals)
-            else
-              Icon(LucideIcons.chevronRight, size: 18, color: palette.muted),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+              child: Text(_descriptions[_type]!, style: TextStyle(color: palette.muted, fontSize: 13.5)),
+            ),
+            AsyncView(
+              value: accounts,
+              onRetry: () => ref.invalidate(accountsProvider(_type)),
+              builder: (accounts) => accounts.isEmpty
+                  ? EmptyState(
+                      icon: LucideIcons.wallet,
+                      title: 'Nothing here yet',
+                      message: _type == 'expense' || _type == 'revenue'
+                          ? 'These are created for you as you record transactions.'
+                          : 'Add accounts from the web app.',
+                    )
+                  : Column(children: [for (final account in accounts) AccountTile(account)]),
+            ),
           ],
         ),
       ),
@@ -149,21 +101,23 @@ class AccountTile extends ConsumerWidget {
   }
 }
 
-class _Badge extends StatelessWidget {
-  const _Badge(this.label, this.palette);
+class AccountTile extends ConsumerWidget {
+  const AccountTile(this.account, {super.key});
 
-  final String label;
-  final Palette palette;
+  final Account account;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-      decoration: BoxDecoration(
-        border: Border.all(color: palette.border),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(label, style: TextStyle(fontSize: 11, color: palette.muted)),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = Palette.of(context);
+    final currency = account.currency ?? ref.watch(currentLedgerProvider).currency;
+    return ListRow(
+      onTap: () => context.push('/accounts/${account.id}', extra: account),
+      leading: CategoryIcon(glyph: accountIcon(account), color: accountColor(account)),
+      title: account.name,
+      subtitle: account.active ? roleLabel(account) : 'Inactive',
+      trailing: account.balance == null
+          ? Icon(LucideIcons.chevronRight, size: 18, color: palette.subtle)
+          : MoneyText(account.balance!, currency.code, decimals: currency.decimals),
     );
   }
 }
@@ -176,23 +130,49 @@ class AccountScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final palette = Palette.of(context);
     final account = ref.watch(accountProvider(accountId)).value ?? initial;
     final currency = account?.currency ?? ref.watch(currentLedgerProvider).currency;
 
     return Scaffold(
-      appBar: AppBar(leading: const BackButton()),
+      appBar: AppBar(title: Text(account?.name ?? 'Account')),
       body: TransactionList(
         filter: (query: '', type: null, accountId: accountId),
         header: [
-          PageHeader(title: account?.name ?? '', description: account == null ? null : roleLabel(account)),
           if (account?.balance case final balance?)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-              child: StatCard(
-                label: 'Balance',
-                value: formatMoney(balance, currency.code, decimals: currency.decimals),
-                icon: accountIcon(account!),
-                tone: balance.startsWith('-') ? Tone.negative : Tone.brand,
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: palette.brandGradient,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [BoxShadow(color: palette.accent.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(accountIcon(account!), color: Colors.white, size: 22),
+                        const SizedBox(width: 8),
+                        Text(
+                          roleLabel(account) ?? 'Account',
+                          style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+                    const Text('Balance', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                    const SizedBox(height: 2),
+                    FittedBox(
+                      child: Text(
+                        formatMoney(balance, currency.code, decimals: currency.decimals),
+                        style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w700, letterSpacing: -1),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
