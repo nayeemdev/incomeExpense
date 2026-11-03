@@ -151,6 +151,30 @@ class Ledger extends Model
         return $this->hasMany(TransactionLink::class);
     }
 
+    /**
+     * @return HasMany<RuleGroup, $this>
+     */
+    public function ruleGroups(): HasMany
+    {
+        return $this->hasMany(RuleGroup::class);
+    }
+
+    /**
+     * @return HasMany<Rule, $this>
+     */
+    public function rules(): HasMany
+    {
+        return $this->hasMany(Rule::class);
+    }
+
+    /**
+     * @return HasMany<Webhook, $this>
+     */
+    public function webhooks(): HasMany
+    {
+        return $this->hasMany(Webhook::class);
+    }
+
     public function membershipOf(User $user): ?LedgerMember
     {
         if (! array_key_exists($user->id, $this->membershipCache)) {

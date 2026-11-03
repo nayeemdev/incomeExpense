@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TokenAbility;
 use App\Http\Resources\PersonalAccessTokenResource;
 use App\Models\User;
+use App\Notifications\TokenCreatedNotification;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,7 @@ class PersonalAccessTokenController extends Controller
         ]);
 
         $token = $user->createToken($validated['name'], $validated['abilities']);
+        $user->notify(new TokenCreatedNotification($validated['name']));
 
         return response()->json([
             'token' => $token->plainTextToken,

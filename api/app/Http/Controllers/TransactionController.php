@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Actions\Transactions\SaveTransactionGroup;
 use App\Enums\TransactionType;
+use App\Events\TransactionGroupDeleted;
 use App\Http\Requests\TransactionGroupRequest;
 use App\Http\Resources\TransactionGroupResource;
 use App\Http\Resources\TransactionResource;
+use App\Listeners\SendTransactionWebhooks;
 use App\Models\Account;
 use App\Models\Ledger;
 use App\Models\Posting;
@@ -110,7 +112,9 @@ class TransactionController extends Controller
     {
         abort_if($this->isSystemGroup($transactionGroup), 403, __('This transaction is managed by its account.'));
 
+        $snapshot = SendTransactionWebhooks::snapshot($transactionGroup);
         $transactionGroup->deleteWithTransactions();
+        TransactionGroupDeleted::dispatch($ledger->id, $transactionGroup->id, $snapshot);
 
         return response()->noContent();
     }

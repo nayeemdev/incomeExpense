@@ -15,17 +15,21 @@ use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LedgerInvitationController;
 use App\Http\Controllers\LedgerMemberController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ObjectGroupController;
 use App\Http\Controllers\PersonalAccessTokenController;
 use App\Http\Controllers\PiggyBankController;
 use App\Http\Controllers\QuickEntryController;
 use App\Http\Controllers\ReconciliationController;
 use App\Http\Controllers\RecurrenceController;
+use App\Http\Controllers\RuleController;
+use App\Http\Controllers\RuleGroupController;
 use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionLinkController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('auth/tokens', [TokenController::class, 'store'])->middleware('throttle:login');
@@ -55,6 +59,16 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('currencies', [CurrencyController::class, 'index']);
 
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::post('notifications/read-all', [NotificationController::class, 'readAll']);
+        Route::post('notifications/{notification}/read', [NotificationController::class, 'read']);
+        Route::delete('notifications/{notification}', [NotificationController::class, 'destroy']);
+        Route::get('notification-settings', [NotificationController::class, 'settings']);
+        Route::patch('notification-settings', [NotificationController::class, 'updateSettings']);
+        Route::post('push-subscriptions', [NotificationController::class, 'subscribe']);
+        Route::delete('push-subscriptions', [NotificationController::class, 'unsubscribe']);
+        Route::get('rule-options', [RuleController::class, 'options']);
+
         Route::get('invitations/{token}', [InvitationController::class, 'show']);
         Route::post('invitations/{token}/accept', [InvitationController::class, 'accept']);
 
@@ -79,6 +93,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('object-groups', [ObjectGroupController::class, 'index']);
             Route::get('link-types', [TransactionLinkController::class, 'linkTypes']);
             Route::get('transactions/{transactionGroup}/links', [TransactionLinkController::class, 'index']);
+            Route::get('rule-groups', [RuleGroupController::class, 'index']);
+            Route::get('rules/{rule}', [RuleController::class, 'show']);
+            Route::post('rules/{rule}/test', [RuleController::class, 'test']);
             Route::get('attachments', [AttachmentController::class, 'index']);
             Route::get('attachments/{attachment}/download', [AttachmentController::class, 'download']);
 
@@ -107,6 +124,13 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::delete('link-types/{linkType}', [TransactionLinkController::class, 'destroyLinkType']);
                 Route::post('transactions/{transactionGroup}/links', [TransactionLinkController::class, 'store']);
                 Route::delete('links/{transactionLink}', [TransactionLinkController::class, 'destroy']);
+                Route::post('rule-groups', [RuleGroupController::class, 'store']);
+                Route::patch('rule-groups/{ruleGroup}', [RuleGroupController::class, 'update']);
+                Route::delete('rule-groups/{ruleGroup}', [RuleGroupController::class, 'destroy']);
+                Route::post('rules', [RuleController::class, 'store']);
+                Route::put('rules/{rule}', [RuleController::class, 'update']);
+                Route::delete('rules/{rule}', [RuleController::class, 'destroy']);
+                Route::post('rules/{rule}/apply', [RuleController::class, 'apply']);
                 Route::post('attachments', [AttachmentController::class, 'store']);
                 Route::delete('attachments/{attachment}', [AttachmentController::class, 'destroy']);
             });
@@ -118,6 +142,13 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::get('invitations', [LedgerInvitationController::class, 'index']);
                 Route::post('invitations', [LedgerInvitationController::class, 'store']);
                 Route::delete('invitations/{invitation}', [LedgerInvitationController::class, 'destroy']);
+                Route::get('webhooks', [WebhookController::class, 'index']);
+                Route::post('webhooks', [WebhookController::class, 'store']);
+                Route::patch('webhooks/{webhook}', [WebhookController::class, 'update']);
+                Route::delete('webhooks/{webhook}', [WebhookController::class, 'destroy']);
+                Route::post('webhooks/{webhook}/secret', [WebhookController::class, 'secret']);
+                Route::get('webhooks/{webhook}/deliveries', [WebhookController::class, 'deliveries']);
+                Route::post('webhooks/{webhook}/deliveries/{delivery}/redeliver', [WebhookController::class, 'redeliver']);
             });
         });
     });

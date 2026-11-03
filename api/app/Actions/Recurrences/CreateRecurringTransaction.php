@@ -6,6 +6,7 @@ use App\Actions\Transactions\SaveTransactionGroup;
 use App\Models\Recurrence;
 use App\Models\RecurrenceTransaction;
 use App\Models\TransactionGroup;
+use App\Notifications\RecurringCreatedNotification;
 use Carbon\CarbonImmutable;
 
 class CreateRecurringTransaction
@@ -70,7 +71,10 @@ class CreateRecurringTransaction
             $recurrence->creator,
             ['title' => $recurrence->transactions->count() > 1 ? $recurrence->title : null, 'transactions' => $splits],
             groupAttributes: ['recurrence_id' => $recurrence->id, 'recurrence_date' => $date->toDateString()],
+            applyRules: (bool) $recurrence->getAttribute('apply_rules'),
         );
+
+        $recurrence->creator?->notify(new RecurringCreatedNotification($recurrence, $group));
 
         $recurrence->update([
             'occurrences_created' => $recurrence->occurrences_created + 1,
