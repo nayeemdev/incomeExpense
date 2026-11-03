@@ -5,8 +5,11 @@ namespace App\Providers;
 use App\Models\Account;
 use App\Models\TransactionGroup;
 use App\Models\User;
+use App\Support\SystemSettings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,5 +24,11 @@ class AppServiceProvider extends ServiceProvider
             'transaction_group' => TransactionGroup::class,
             'user' => User::class,
         ]);
+
+        Gate::define('admin', fn (User $user) => $user->is_admin);
+
+        SystemSettings::apply();
+        // Queue workers run for days, so pick up changes the admin made since they started.
+        Queue::before(fn () => SystemSettings::apply());
     }
 }
