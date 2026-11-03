@@ -150,7 +150,7 @@ svg { flex: none; }
 
 /* Hero */
 .hero { position: relative; padding: 64px 0 0; text-align: center; }
-.hero h1 { font-size: clamp(42px, 7vw, 82px); max-width: 940px; margin: 26px auto 0; }
+.hero h1 { font-size: clamp(42px, 7vw, 82px); max-width: 940px; margin: 12px auto 0; }
 .hero h1 span { color: var(--primary); }
 .hero .lead { font-size: clamp(17px, 2vw, 20px); color: var(--muted); max-width: 620px; margin: 24px auto 0; }
 .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 36px; }
@@ -164,13 +164,9 @@ svg { flex: none; }
   position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
   font-size: 14px; font-weight: 600; color: #fff; box-shadow: var(--shadow); animation: bob 5s ease-in-out infinite;
 }
-.float-chip .cursor { position: absolute; width: 22px; height: 22px; }
 .chip-a { left: 6%; top: 300px; background: #d97706; transform: rotate(-6deg); }
-.chip-a .cursor { right: -16px; top: -16px; color: #d97706; transform: rotate(90deg); }
 .chip-b { right: 6%; top: 210px; background: #e1573a; transform: rotate(5deg); animation-delay: -2.5s; }
-.chip-b .cursor { left: -16px; top: -14px; color: #e1573a; }
-.chip-c { left: 12%; top: 120px; background: #0d9488; transform: rotate(4deg); animation-delay: -1.2s; }
-.chip-c .cursor { right: -14px; bottom: -16px; color: #0d9488; transform: rotate(180deg); }
+.chip-c { right: 11%; top: 360px; background: #0d9488; transform: rotate(4deg); animation-delay: -1.2s; }
 @property --bob { syntax: "<length>"; inherits: false; initial-value: 0px; }
 @keyframes bob { 0%, 100% { --bob: 0px; } 50% { --bob: -10px; } }
 [data-speed] { translate: 0 var(--py, 0px); will-change: translate; }
