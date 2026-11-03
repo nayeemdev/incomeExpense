@@ -241,6 +241,12 @@ section[id], [id].prose h2 { scroll-margin-top: 96px; }
 .art-tr { right: 28px; top: 40px; }
 .art-bl { left: 28px; bottom: 36px; }
 .art-br { right: 28px; bottom: 40px; }
+.widgets-art { background: var(--panel-strong); }
+.widget-stack { position: relative; width: 84%; aspect-ratio: 1 / 0.97; }
+.widget-stack img { position: absolute; left: 0; height: auto; filter: drop-shadow(0 18px 30px rgb(15 41 66 / 0.22)); }
+.widget-medium { top: 0; width: 100%; }
+.widget-small { bottom: 0; width: 45%; }
+.widgets-art .art-br { right: 7%; bottom: 14%; width: 42%; }
 .terminal { width: 74%; border-radius: 18px; background: var(--code); color: #dbe7f1; padding: 22px 24px; font: 14.5px/1.8 ui-monospace, SFMono-Regular, Menlo, monospace; box-shadow: var(--shadow-lg); }
 .terminal .c { color: #6f8ea8; }
 .terminal .p { color: #69bcdd; }
@@ -422,6 +428,7 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0
   .section { padding: 84px 0; }
   .benefit + .benefit { margin-top: 84px; }
   .benefit-art .ui { width: 180px; padding: 12px 14px; }
+  .widgets-art .ui { display: none; }
   .benefit-art .ui-value { font-size: 18px; }
   .art-tl, .art-bl { left: 14px; }
   .art-tr, .art-br { right: 14px; }
