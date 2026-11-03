@@ -9,50 +9,540 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as GuestRouteImport } from './routes/_guest'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppLedgerIdRouteImport } from './routes/_app/$ledgerId'
+import { Route as AppOnboardingRouteImport } from './routes/_app/onboarding'
+import { Route as GuestForgotPasswordRouteImport } from './routes/_guest/forgot-password'
+import { Route as GuestLoginRouteImport } from './routes/_guest/login'
+import { Route as GuestRegisterRouteImport } from './routes/_guest/register'
+import { Route as GuestResetPasswordRouteImport } from './routes/_guest/reset-password'
+import { Route as GuestTwoFactorChallengeRouteImport } from './routes/_guest/two-factor-challenge'
+import { Route as AppLedgerIdIndexRouteImport } from './routes/_app/$ledgerId/index'
+import { Route as AppLedgerIdSettingsRouteImport } from './routes/_app/$ledgerId/settings'
+import { Route as AppInvitationsTokenRouteImport } from './routes/_app/invitations.$token'
+import { Route as AppLedgerIdAccountsIndexRouteImport } from './routes/_app/$ledgerId/accounts/index'
+import { Route as AppLedgerIdAccountsAccountIdRouteImport } from './routes/_app/$ledgerId/accounts/$accountId'
+import { Route as AppLedgerIdCategoriesIndexRouteImport } from './routes/_app/$ledgerId/categories/index'
+import { Route as AppLedgerIdCategoriesCategoryIdRouteImport } from './routes/_app/$ledgerId/categories/$categoryId'
+import { Route as AppLedgerIdTagsIndexRouteImport } from './routes/_app/$ledgerId/tags/index'
+import { Route as AppLedgerIdTagsTagIdRouteImport } from './routes/_app/$ledgerId/tags/$tagId'
+import { Route as AppLedgerIdTransactionsIndexRouteImport } from './routes/_app/$ledgerId/transactions/index'
+import { Route as AppLedgerIdTransactionsNewRouteImport } from './routes/_app/$ledgerId/transactions/new'
+import { Route as AppLedgerIdTransactionsGroupIdIndexRouteImport } from './routes/_app/$ledgerId/transactions/$groupId/index'
+import { Route as AppLedgerIdTransactionsGroupIdEditRouteImport } from './routes/_app/$ledgerId/transactions/$groupId/edit'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuestRoute = GuestRouteImport.update({
+  id: '/_guest',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLedgerIdRoute = AppLedgerIdRouteImport.update({
+  id: '/$ledgerId',
+  path: '/$ledgerId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOnboardingRoute = AppOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const GuestForgotPasswordRoute = GuestForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestLoginRoute = GuestLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestRegisterRoute = GuestRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestResetPasswordRoute = GuestResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestTwoFactorChallengeRoute = GuestTwoFactorChallengeRouteImport.update({
+  id: '/two-factor-challenge',
+  path: '/two-factor-challenge',
+  getParentRoute: () => GuestRoute,
+} as any)
+const AppLedgerIdIndexRoute = AppLedgerIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppLedgerIdSettingsRoute = AppLedgerIdSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppInvitationsTokenRoute = AppInvitationsTokenRouteImport.update({
+  id: '/invitations/$token',
+  path: '/invitations/$token',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLedgerIdAccountsIndexRoute =
+  AppLedgerIdAccountsIndexRouteImport.update({
+    id: '/accounts/',
+    path: '/accounts/',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdAccountsAccountIdRoute =
+  AppLedgerIdAccountsAccountIdRouteImport.update({
+    id: '/accounts/$accountId',
+    path: '/accounts/$accountId',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdCategoriesIndexRoute =
+  AppLedgerIdCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdCategoriesCategoryIdRoute =
+  AppLedgerIdCategoriesCategoryIdRouteImport.update({
+    id: '/categories/$categoryId',
+    path: '/categories/$categoryId',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdTagsIndexRoute = AppLedgerIdTagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppLedgerIdTagsTagIdRoute = AppLedgerIdTagsTagIdRouteImport.update({
+  id: '/tags/$tagId',
+  path: '/tags/$tagId',
+  getParentRoute: () => AppLedgerIdRoute,
+} as any)
+const AppLedgerIdTransactionsIndexRoute =
+  AppLedgerIdTransactionsIndexRouteImport.update({
+    id: '/transactions/',
+    path: '/transactions/',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdTransactionsNewRoute =
+  AppLedgerIdTransactionsNewRouteImport.update({
+    id: '/transactions/new',
+    path: '/transactions/new',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdTransactionsGroupIdIndexRoute =
+  AppLedgerIdTransactionsGroupIdIndexRouteImport.update({
+    id: '/transactions/$groupId/',
+    path: '/transactions/$groupId/',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdTransactionsGroupIdEditRoute =
+  AppLedgerIdTransactionsGroupIdEditRouteImport.update({
+    id: '/transactions/$groupId/edit',
+    path: '/transactions/$groupId/edit',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/$ledgerId': typeof AppLedgerIdRouteWithChildren
+  '/onboarding': typeof AppOnboardingRoute
+  '/forgot-password': typeof GuestForgotPasswordRoute
+  '/login': typeof GuestLoginRoute
+  '/register': typeof GuestRegisterRoute
+  '/reset-password': typeof GuestResetPasswordRoute
+  '/two-factor-challenge': typeof GuestTwoFactorChallengeRoute
+  '/$ledgerId/settings': typeof AppLedgerIdSettingsRoute
+  '/invitations/$token': typeof AppInvitationsTokenRoute
+  '/$ledgerId/': typeof AppLedgerIdIndexRoute
+  '/$ledgerId/accounts/$accountId': typeof AppLedgerIdAccountsAccountIdRoute
+  '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
+  '/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
+  '/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
+  '/$ledgerId/categories/': typeof AppLedgerIdCategoriesIndexRoute
+  '/$ledgerId/tags/': typeof AppLedgerIdTagsIndexRoute
+  '/$ledgerId/transactions/': typeof AppLedgerIdTransactionsIndexRoute
+  '/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
+  '/$ledgerId/transactions/$groupId/': typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/onboarding': typeof AppOnboardingRoute
+  '/forgot-password': typeof GuestForgotPasswordRoute
+  '/login': typeof GuestLoginRoute
+  '/register': typeof GuestRegisterRoute
+  '/reset-password': typeof GuestResetPasswordRoute
+  '/two-factor-challenge': typeof GuestTwoFactorChallengeRoute
+  '/$ledgerId/settings': typeof AppLedgerIdSettingsRoute
+  '/invitations/$token': typeof AppInvitationsTokenRoute
+  '/$ledgerId': typeof AppLedgerIdIndexRoute
+  '/$ledgerId/accounts/$accountId': typeof AppLedgerIdAccountsAccountIdRoute
+  '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
+  '/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
+  '/$ledgerId/accounts': typeof AppLedgerIdAccountsIndexRoute
+  '/$ledgerId/categories': typeof AppLedgerIdCategoriesIndexRoute
+  '/$ledgerId/tags': typeof AppLedgerIdTagsIndexRoute
+  '/$ledgerId/transactions': typeof AppLedgerIdTransactionsIndexRoute
+  '/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
+  '/$ledgerId/transactions/$groupId': typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_guest': typeof GuestRouteWithChildren
+  '/_app/$ledgerId': typeof AppLedgerIdRouteWithChildren
+  '/_app/onboarding': typeof AppOnboardingRoute
+  '/_guest/forgot-password': typeof GuestForgotPasswordRoute
+  '/_guest/login': typeof GuestLoginRoute
+  '/_guest/register': typeof GuestRegisterRoute
+  '/_guest/reset-password': typeof GuestResetPasswordRoute
+  '/_guest/two-factor-challenge': typeof GuestTwoFactorChallengeRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/$ledgerId/settings': typeof AppLedgerIdSettingsRoute
+  '/_app/invitations/$token': typeof AppInvitationsTokenRoute
+  '/_app/$ledgerId/': typeof AppLedgerIdIndexRoute
+  '/_app/$ledgerId/accounts/$accountId': typeof AppLedgerIdAccountsAccountIdRoute
+  '/_app/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/_app/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
+  '/_app/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
+  '/_app/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
+  '/_app/$ledgerId/categories/': typeof AppLedgerIdCategoriesIndexRoute
+  '/_app/$ledgerId/tags/': typeof AppLedgerIdTagsIndexRoute
+  '/_app/$ledgerId/transactions/': typeof AppLedgerIdTransactionsIndexRoute
+  '/_app/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
+  '/_app/$ledgerId/transactions/$groupId/': typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/$ledgerId'
+    | '/onboarding'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/two-factor-challenge'
+    | '/$ledgerId/settings'
+    | '/invitations/$token'
+    | '/$ledgerId/'
+    | '/$ledgerId/accounts/$accountId'
+    | '/$ledgerId/categories/$categoryId'
+    | '/$ledgerId/tags/$tagId'
+    | '/$ledgerId/transactions/new'
+    | '/$ledgerId/accounts/'
+    | '/$ledgerId/categories/'
+    | '/$ledgerId/tags/'
+    | '/$ledgerId/transactions/'
+    | '/$ledgerId/transactions/$groupId/edit'
+    | '/$ledgerId/transactions/$groupId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/onboarding'
+    | '/forgot-password'
+    | '/login'
+    | '/register'
+    | '/reset-password'
+    | '/two-factor-challenge'
+    | '/$ledgerId/settings'
+    | '/invitations/$token'
+    | '/$ledgerId'
+    | '/$ledgerId/accounts/$accountId'
+    | '/$ledgerId/categories/$categoryId'
+    | '/$ledgerId/tags/$tagId'
+    | '/$ledgerId/transactions/new'
+    | '/$ledgerId/accounts'
+    | '/$ledgerId/categories'
+    | '/$ledgerId/tags'
+    | '/$ledgerId/transactions'
+    | '/$ledgerId/transactions/$groupId/edit'
+    | '/$ledgerId/transactions/$groupId'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_guest'
+    | '/_app/$ledgerId'
+    | '/_app/onboarding'
+    | '/_guest/forgot-password'
+    | '/_guest/login'
+    | '/_guest/register'
+    | '/_guest/reset-password'
+    | '/_guest/two-factor-challenge'
+    | '/_app/'
+    | '/_app/$ledgerId/settings'
+    | '/_app/invitations/$token'
+    | '/_app/$ledgerId/'
+    | '/_app/$ledgerId/accounts/$accountId'
+    | '/_app/$ledgerId/categories/$categoryId'
+    | '/_app/$ledgerId/tags/$tagId'
+    | '/_app/$ledgerId/transactions/new'
+    | '/_app/$ledgerId/accounts/'
+    | '/_app/$ledgerId/categories/'
+    | '/_app/$ledgerId/tags/'
+    | '/_app/$ledgerId/transactions/'
+    | '/_app/$ledgerId/transactions/$groupId/edit'
+    | '/_app/$ledgerId/transactions/$groupId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  GuestRoute: typeof GuestRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_guest': {
+      id: '/_guest'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof GuestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$ledgerId': {
+      id: '/_app/$ledgerId'
+      path: '/$ledgerId'
+      fullPath: '/$ledgerId'
+      preLoaderRoute: typeof AppLedgerIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/onboarding': {
+      id: '/_app/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_guest/forgot-password': {
+      id: '/_guest/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof GuestForgotPasswordRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/login': {
+      id: '/_guest/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof GuestLoginRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/register': {
+      id: '/_guest/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof GuestRegisterRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/reset-password': {
+      id: '/_guest/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof GuestResetPasswordRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/two-factor-challenge': {
+      id: '/_guest/two-factor-challenge'
+      path: '/two-factor-challenge'
+      fullPath: '/two-factor-challenge'
+      preLoaderRoute: typeof GuestTwoFactorChallengeRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_app/$ledgerId/': {
+      id: '/_app/$ledgerId/'
+      path: '/'
+      fullPath: '/$ledgerId/'
+      preLoaderRoute: typeof AppLedgerIdIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/settings': {
+      id: '/_app/$ledgerId/settings'
+      path: '/settings'
+      fullPath: '/$ledgerId/settings'
+      preLoaderRoute: typeof AppLedgerIdSettingsRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/invitations/$token': {
+      id: '/_app/invitations/$token'
+      path: '/invitations/$token'
+      fullPath: '/invitations/$token'
+      preLoaderRoute: typeof AppInvitationsTokenRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/$ledgerId/accounts/': {
+      id: '/_app/$ledgerId/accounts/'
+      path: '/accounts'
+      fullPath: '/$ledgerId/accounts/'
+      preLoaderRoute: typeof AppLedgerIdAccountsIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/accounts/$accountId': {
+      id: '/_app/$ledgerId/accounts/$accountId'
+      path: '/accounts/$accountId'
+      fullPath: '/$ledgerId/accounts/$accountId'
+      preLoaderRoute: typeof AppLedgerIdAccountsAccountIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/categories/': {
+      id: '/_app/$ledgerId/categories/'
+      path: '/categories'
+      fullPath: '/$ledgerId/categories/'
+      preLoaderRoute: typeof AppLedgerIdCategoriesIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/categories/$categoryId': {
+      id: '/_app/$ledgerId/categories/$categoryId'
+      path: '/categories/$categoryId'
+      fullPath: '/$ledgerId/categories/$categoryId'
+      preLoaderRoute: typeof AppLedgerIdCategoriesCategoryIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/tags/': {
+      id: '/_app/$ledgerId/tags/'
+      path: '/tags'
+      fullPath: '/$ledgerId/tags/'
+      preLoaderRoute: typeof AppLedgerIdTagsIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/tags/$tagId': {
+      id: '/_app/$ledgerId/tags/$tagId'
+      path: '/tags/$tagId'
+      fullPath: '/$ledgerId/tags/$tagId'
+      preLoaderRoute: typeof AppLedgerIdTagsTagIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/transactions/': {
+      id: '/_app/$ledgerId/transactions/'
+      path: '/transactions'
+      fullPath: '/$ledgerId/transactions/'
+      preLoaderRoute: typeof AppLedgerIdTransactionsIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/transactions/new': {
+      id: '/_app/$ledgerId/transactions/new'
+      path: '/transactions/new'
+      fullPath: '/$ledgerId/transactions/new'
+      preLoaderRoute: typeof AppLedgerIdTransactionsNewRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/transactions/$groupId/': {
+      id: '/_app/$ledgerId/transactions/$groupId/'
+      path: '/transactions/$groupId'
+      fullPath: '/$ledgerId/transactions/$groupId/'
+      preLoaderRoute: typeof AppLedgerIdTransactionsGroupIdIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/transactions/$groupId/edit': {
+      id: '/_app/$ledgerId/transactions/$groupId/edit'
+      path: '/transactions/$groupId/edit'
+      fullPath: '/$ledgerId/transactions/$groupId/edit'
+      preLoaderRoute: typeof AppLedgerIdTransactionsGroupIdEditRouteImport
+      parentRoute: typeof AppLedgerIdRoute
     }
   }
 }
 
+interface AppLedgerIdRouteChildren {
+  AppLedgerIdSettingsRoute: typeof AppLedgerIdSettingsRoute
+  AppLedgerIdIndexRoute: typeof AppLedgerIdIndexRoute
+  AppLedgerIdAccountsAccountIdRoute: typeof AppLedgerIdAccountsAccountIdRoute
+  AppLedgerIdCategoriesCategoryIdRoute: typeof AppLedgerIdCategoriesCategoryIdRoute
+  AppLedgerIdTagsTagIdRoute: typeof AppLedgerIdTagsTagIdRoute
+  AppLedgerIdTransactionsNewRoute: typeof AppLedgerIdTransactionsNewRoute
+  AppLedgerIdAccountsIndexRoute: typeof AppLedgerIdAccountsIndexRoute
+  AppLedgerIdCategoriesIndexRoute: typeof AppLedgerIdCategoriesIndexRoute
+  AppLedgerIdTagsIndexRoute: typeof AppLedgerIdTagsIndexRoute
+  AppLedgerIdTransactionsIndexRoute: typeof AppLedgerIdTransactionsIndexRoute
+  AppLedgerIdTransactionsGroupIdEditRoute: typeof AppLedgerIdTransactionsGroupIdEditRoute
+  AppLedgerIdTransactionsGroupIdIndexRoute: typeof AppLedgerIdTransactionsGroupIdIndexRoute
+}
+
+const AppLedgerIdRouteChildren: AppLedgerIdRouteChildren = {
+  AppLedgerIdSettingsRoute: AppLedgerIdSettingsRoute,
+  AppLedgerIdIndexRoute: AppLedgerIdIndexRoute,
+  AppLedgerIdAccountsAccountIdRoute: AppLedgerIdAccountsAccountIdRoute,
+  AppLedgerIdCategoriesCategoryIdRoute: AppLedgerIdCategoriesCategoryIdRoute,
+  AppLedgerIdTagsTagIdRoute: AppLedgerIdTagsTagIdRoute,
+  AppLedgerIdTransactionsNewRoute: AppLedgerIdTransactionsNewRoute,
+  AppLedgerIdAccountsIndexRoute: AppLedgerIdAccountsIndexRoute,
+  AppLedgerIdCategoriesIndexRoute: AppLedgerIdCategoriesIndexRoute,
+  AppLedgerIdTagsIndexRoute: AppLedgerIdTagsIndexRoute,
+  AppLedgerIdTransactionsIndexRoute: AppLedgerIdTransactionsIndexRoute,
+  AppLedgerIdTransactionsGroupIdEditRoute:
+    AppLedgerIdTransactionsGroupIdEditRoute,
+  AppLedgerIdTransactionsGroupIdIndexRoute:
+    AppLedgerIdTransactionsGroupIdIndexRoute,
+}
+
+const AppLedgerIdRouteWithChildren = AppLedgerIdRoute._addFileChildren(
+  AppLedgerIdRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppLedgerIdRoute: typeof AppLedgerIdRouteWithChildren
+  AppOnboardingRoute: typeof AppOnboardingRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppInvitationsTokenRoute: typeof AppInvitationsTokenRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppLedgerIdRoute: AppLedgerIdRouteWithChildren,
+  AppOnboardingRoute: AppOnboardingRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppInvitationsTokenRoute: AppInvitationsTokenRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
+interface GuestRouteChildren {
+  GuestForgotPasswordRoute: typeof GuestForgotPasswordRoute
+  GuestLoginRoute: typeof GuestLoginRoute
+  GuestRegisterRoute: typeof GuestRegisterRoute
+  GuestResetPasswordRoute: typeof GuestResetPasswordRoute
+  GuestTwoFactorChallengeRoute: typeof GuestTwoFactorChallengeRoute
+}
+
+const GuestRouteChildren: GuestRouteChildren = {
+  GuestForgotPasswordRoute: GuestForgotPasswordRoute,
+  GuestLoginRoute: GuestLoginRoute,
+  GuestRegisterRoute: GuestRegisterRoute,
+  GuestResetPasswordRoute: GuestResetPasswordRoute,
+  GuestTwoFactorChallengeRoute: GuestTwoFactorChallengeRoute,
+}
+
+const GuestRouteWithChildren = GuestRoute._addFileChildren(GuestRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  GuestRoute: GuestRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
