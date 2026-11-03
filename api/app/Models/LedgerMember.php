@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * @property LedgerRole $role
+ * @property ?int $default_account_id
  */
 class LedgerMember extends Pivot
 {

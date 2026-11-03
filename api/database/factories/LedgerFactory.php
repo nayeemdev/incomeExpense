@@ -18,7 +18,7 @@ class LedgerFactory extends Factory
     {
         return [
             'name' => fake()->words(2, true),
-            'primary_currency_id' => fn () => Currency::query()->inRandomOrder()->value('id'),
+            'primary_currency_id' => fn () => Currency::findByCode('USD')?->id,
         ];
     }
 }
