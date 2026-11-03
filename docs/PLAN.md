@@ -18,7 +18,7 @@ The current code is a Laravel 8 Blade app with three flat tables (`incomes`, `ex
 | Tests (API) | Pest, Larastan (level 8), Pint | |
 | Web | React 19 + Vite, TanStack Router, TypeScript | Builds to static files that any web server (or shared hosting) can serve. A plain SPA has real dynamic routes, which Next.js static export does not |
 | UI | Tailwind CSS v4 + shadcn/ui, lucide icons, Recharts (via shadcn charts) | |
-| Web data | TanStack Query, react-hook-form + zod, `openapi-typescript` generated types | |
+| Web data | TanStack Query, react-hook-form + zod, typed API client | |
 | Tests (web) | Vitest + Testing Library, Playwright for core flows | |
 | Mobile | Flutter (stable), bundle id `com.nayeemdev.ledgerfly`, Riverpod, go_router, dio, generated Dart client from OpenAPI | |
 | Mobile widgets | Swift WidgetKit + App Intents (iOS), Glance (Android), bridged with `home_widget` | Interactive widgets must be native |
@@ -88,7 +88,7 @@ No shared package between web and mobile beyond the OpenAPI spec. Clients are re
 - **2FA** (TOTP + recovery codes), **passkeys** (WebAuthn) as a later addition.
 - Active sessions and device list, revoke.
 - **Personal access tokens** with abilities (e.g. a widget token that can only create transactions and read the summary).
-- **Multi-user and shared ledgers:** a user belongs to one or more ledgers (Firefly "administrations") with roles: owner, full, read-only, specific (budgets, transactions, reports). Every finance table is scoped by `ledger_id`.
+- **Multi-user and shared ledgers:** a user belongs to one or more ledgers (Firefly "administrations") with roles: owner (manages the ledger and members), editor (records and edits everything), viewer (read only). Every finance table is scoped by `ledger_id`.
 - Preferences: language, locale/number format, timezone, date format, first day of week, fiscal year start, default view range, primary currency, default source account for quick entry, theme.
 - Admin: user management, instance config (registration open/closed, email settings), currency list, link types.
 - **Audit log** of changes to financial data.
@@ -255,7 +255,7 @@ Passkeys, bank sync (GoCardless), audit log UI, admin panel polish.
 - Seeders limited to the essentials in section 5.
 - No new dependency without a concrete need it solves.
 - Thin controllers, Form Requests, Policies, action classes; no repository pattern, no service-locator magic.
-- Every API endpoint has a feature test; money math has unit tests including multi-currency and splits.
+- Every API endpoint has a feature test, including multi-currency and split transactions.
 - Commit messages describe what changed and why, written plainly.
 
 ## 11. Decisions
