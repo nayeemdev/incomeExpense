@@ -692,7 +692,7 @@ class AmountKeypad extends StatelessWidget {
       crossAxisCount: 3,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.4,
+      childAspectRatio: 2.9,
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
       children: [
