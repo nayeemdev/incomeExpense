@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useLedger } from '@/hooks/use-ledger'
 import { ApiError } from '@/lib/api/client'
-import { accountsQuery, activeBudgetsQuery, billsQuery, categoriesQuery, tagsQuery } from '@/lib/api/queries'
+import { accountsQuery, activeBudgetsQuery, billsQuery, categoriesQuery, frequentQuery, tagsQuery } from '@/lib/api/queries'
 import type { Account, Transaction, TransactionGroupInput } from '@/lib/api/types'
 import { notifyError } from '@/lib/forms'
 import { transactionTypeLabels } from '@/lib/labels'
@@ -22,7 +22,9 @@ import { Combobox } from './combobox'
 import { DatePicker } from './date-picker'
 import { DescriptionInput } from './description-input'
 import { FormField } from './form-field'
+import { Money } from './money'
 import { MoneyInput } from './money-input'
+import { QuickPicks } from './quick-picks'
 import { TagInput } from './tag-input'
 import {
   accountRef,
@@ -153,7 +155,7 @@ export function TransactionForm({ defaultValues, onSubmit, submitLabel, allowSpl
               </Button>
             </div>
           )}
-          <SplitFields form={form} index={index} accounts={accounts} autoFocus={index === 0} />
+          <SplitFields form={form} index={index} accounts={accounts} autoFocus={index === 0} showQuickPicks={fields.length === 1} />
         </div>
       ))}
 
@@ -195,15 +197,17 @@ type SplitFieldsProps = {
   index: number
   accounts: Account[]
   autoFocus?: boolean
+  showQuickPicks?: boolean
 }
 
-function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
+function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: SplitFieldsProps) {
   const { t } = useTranslation()
   const ledger = useLedger()
   const type = useWatch({ control: form.control, name: 'type' })
   const split = useWatch({ control: form.control, name: `splits.${index}` })
   const { data: categories = [] } = useQuery({ ...categoriesQuery(ledger.id), select: (page) => page.data })
   const { data: tags = [] } = useQuery({ ...tagsQuery(ledger.id), select: (page) => page.data })
+  const { data: frequent } = useQuery({ ...frequentQuery(ledger.id, type), enabled: showQuickPicks })
   const { data: budgets = [] } = useQuery({ ...activeBudgetsQuery(ledger.id), enabled: type === 'withdrawal' })
   const { data: bills = [] } = useQuery({ ...billsQuery(ledger.id), enabled: type === 'withdrawal', select: (items) => items.filter((bill) => bill.active) })
 
@@ -214,6 +218,48 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
   const currency = (type === 'deposit' ? destination : source)?.currency ?? ledger.primary_currency
   const needsForeign =
     type === 'transfer' && !!source?.currency && !!destination?.currency && source.currency.id !== destination.currency.id
+
+  const counterpartySide = type === 'deposit' ? 'source' : 'destination'
+  const counterparty = split[counterpartySide]
+  const ownSide = type === 'deposit' ? 'destination' : 'source'
+  const assets = accounts.filter((account) => account.type === 'asset' && account.active)
+  const onlyAssetId = assets.length === 1 ? assets[0].id : null
+
+  useEffect(() => {
+    if (type !== 'transfer' && onlyAssetId !== null && !form.getValues(`splits.${index}.${ownSide}`)) {
+      form.setValue(`splits.${index}.${ownSide}`, { id: onlyAssetId })
+    }
+  }, [form, index, onlyAssetId, ownSide, type])
+
+  const payeePicks = (side: 'source' | 'destination') =>
+    showQuickPicks && counterpartySide === side && type !== 'transfer' ? (
+      <QuickPicks
+        label={t('Frequent payees')}
+        items={(frequent?.counterparties ?? []).slice(0, 5).map((account) => ({
+          key: String(account.id),
+          label: account.name,
+          active: !!counterparty && ('name' in counterparty ? counterparty.name === account.name : counterparty.id === account.id),
+        }))}
+        onPick={(key) => {
+          const account = frequent?.counterparties.find((item) => String(item.id) === key)
+          if (account) form.setValue(`splits.${index}.${side}`, accountRef(account), { shouldValidate: true })
+        }}
+      />
+    ) : null
+
+  const applyAll = (transaction: Transaction) => {
+    const path = `splits.${index}` as const
+
+    form.setValue(`${path}.description`, transaction.description)
+    form.setValue(`${path}.amount`, transaction.amount)
+    form.setValue(`${path}.source`, accountRef(transaction.source))
+    form.setValue(`${path}.destination`, accountRef(transaction.destination))
+    form.setValue(`${path}.category`, transaction.category ?? null)
+    form.setValue(`${path}.budget_id`, transaction.budget?.id ?? null)
+    form.setValue(`${path}.bill_id`, transaction.bill?.id ?? null)
+    form.setValue(`${path}.tags`, transaction.tags?.map((tag) => tag.name) ?? [])
+    form.clearErrors(path)
+  }
 
   const prefill = (transaction: Transaction) => {
     const path = `splits.${index}` as const
@@ -233,6 +279,20 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
 
   return (
     <FieldGroup className="gap-4">
+      {showQuickPicks && !split.description && (frequent?.transactions.length ?? 0) > 0 && (
+        <QuickPicks
+          label={t('Frequent transactions')}
+          items={(frequent?.transactions ?? []).map((transaction) => ({
+            key: String(transaction.id),
+            label: transaction.description,
+            hint: <Money amount={transaction.amount} currency={transaction.currency.code} tone="none" />,
+          }))}
+          onPick={(key) => {
+            const transaction = frequent?.transactions.find((item) => String(item.id) === key)
+            if (transaction) applyAll(transaction)
+          }}
+        />
+      )}
       <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
         <FormField control={form.control} name={`splits.${index}.amount`} label={t('Amount')}>
           {(field) => (
@@ -254,16 +314,22 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
         </FormField>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <FormField control={form.control} name={`splits.${index}.source`} label={t('From')}>
-          {(field) => (
-            <AccountPicker id={field.id} type={type} side="source" accounts={accounts} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />
-          )}
-        </FormField>
-        <FormField control={form.control} name={`splits.${index}.destination`} label={t('To')}>
-          {(field) => (
-            <AccountPicker id={field.id} type={type} side="destination" accounts={accounts} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />
-          )}
-        </FormField>
+        <div className="space-y-2">
+          <FormField control={form.control} name={`splits.${index}.source`} label={t('From')}>
+            {(field) => (
+              <AccountPicker id={field.id} type={type} side="source" accounts={accounts} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />
+            )}
+          </FormField>
+          {payeePicks('source')}
+        </div>
+        <div className="space-y-2">
+          <FormField control={form.control} name={`splits.${index}.destination`} label={t('To')}>
+            {(field) => (
+              <AccountPicker id={field.id} type={type} side="destination" accounts={accounts} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />
+            )}
+          </FormField>
+          {payeePicks('destination')}
+        </div>
       </div>
       {needsForeign && destination?.currency && (
         <FormField
@@ -277,20 +343,36 @@ function SplitFields({ form, index, accounts, autoFocus }: SplitFieldsProps) {
       )}
       {type !== 'transfer' && (
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField control={form.control} name={`splits.${index}.category`} label={t('Category')}>
-            {(field) => (
-              <Combobox
-                id={field.id}
-                options={categories.map((category) => ({ value: String(category.id), label: category.name }))}
-                value={field.value?.id ? String(field.value.id) : null}
-                displayValue={field.value?.name}
-                onChange={(next, option) => field.onChange(next && option ? { id: Number(option.value), name: option.label } : null)}
-                onCreate={(name) => field.onChange({ name })}
-                placeholder={t('No category')}
-                searchPlaceholder={t('Search or create…')}
+          <div className="space-y-2">
+            <FormField control={form.control} name={`splits.${index}.category`} label={t('Category')}>
+              {(field) => (
+                <Combobox
+                  id={field.id}
+                  options={categories.map((category) => ({ value: String(category.id), label: category.name }))}
+                  value={field.value?.id ? String(field.value.id) : null}
+                  displayValue={field.value?.name}
+                  onChange={(next, option) => field.onChange(next && option ? { id: Number(option.value), name: option.label } : null)}
+                  onCreate={(name) => field.onChange({ name })}
+                  placeholder={t('No category')}
+                  searchPlaceholder={t('Search or create…')}
+                />
+              )}
+            </FormField>
+            {showQuickPicks && (frequent?.categories.length ?? 0) > 0 && (
+              <QuickPicks
+                label={t('Frequent categories')}
+                items={(frequent?.categories ?? []).slice(0, 5).map((category) => ({
+                  key: String(category.id),
+                  label: category.name,
+                  active: split.category?.id === category.id,
+                }))}
+                onPick={(key) => {
+                  const category = frequent?.categories.find((item) => String(item.id) === key)
+                  if (category) form.setValue(`splits.${index}.category`, split.category?.id === category.id ? null : category)
+                }}
               />
             )}
-          </FormField>
+          </div>
           <FormField control={form.control} name={`splits.${index}.tags`} label={t('Tags')}>
             {(field) => (
               <TagInput id={field.id} value={field.value || []} onChange={field.onChange} suggestions={tags.map((tag) => tag.name)} />

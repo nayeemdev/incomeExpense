@@ -52,3 +52,22 @@ it('suggests previous transactions by description', function () {
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.amount', '4.00');
 });
+
+it('suggests frequent transactions, categories and payees for quick picks', function () {
+    $ledger = actingAsMember();
+    $checking = Account::factory()->for($ledger)->create();
+    $today = now()->toDateString();
+
+    foreach ([['Coffee', 'Cafe', 'Eating out'], ['Coffee', 'Cafe', 'Eating out'], ['Coffee', 'Cafe', 'Eating out'], ['Bus', 'Metro', 'Transport']] as [$description, $payee, $category]) {
+        $this->postJson("/api/v1/ledgers/{$ledger->id}/transactions", ['transactions' => [[
+            'type' => 'withdrawal', 'date' => $today, 'description' => $description, 'amount' => '3',
+            'source_id' => $checking->id, 'destination_name' => $payee, 'category_name' => $category,
+        ]]])->assertCreated();
+    }
+
+    $this->getJson("/api/v1/ledgers/{$ledger->id}/autocomplete/frequent?type=withdrawal")
+        ->assertJsonPath('data.transactions.0.description', 'Coffee')
+        ->assertJsonPath('data.transactions.1.description', 'Bus')
+        ->assertJsonPath('data.categories.0.name', 'Eating out')
+        ->assertJsonPath('data.counterparties.0.name', 'Cafe');
+});
