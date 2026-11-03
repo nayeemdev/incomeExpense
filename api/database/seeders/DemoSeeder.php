@@ -34,6 +34,8 @@ class DemoSeeder extends Seeder
     /** @var array<string, Account> */
     private array $accounts = [];
 
+    private string $scale = '1';
+
     public function __construct(
         private SaveTransactionGroup $saveGroup,
         private SyncOpeningBalance $openingBalance,
@@ -57,6 +59,7 @@ class DemoSeeder extends Seeder
 
         $this->call([CurrencySeeder::class, LinkTypeSeeder::class]);
         mt_srand(2026);
+        $this->scale = (string) config('ledgerfly.demo.scale', '1');
 
         DB::transaction(function () {
             $configured = config('ledgerfly.demo.password');
@@ -93,7 +96,7 @@ class DemoSeeder extends Seeder
         $start = CarbonImmutable::today()->subYear()->startOfMonth();
 
         $definitions = [
-            'checking' => ['Everyday Checking', AccountType::Asset, ['asset_role' => 'default', 'low_balance_threshold' => '500'], '3200', $primary],
+            'checking' => ['Everyday Checking', AccountType::Asset, ['asset_role' => 'default', 'low_balance_threshold' => $this->money('500')], '3200', $primary],
             'savings' => ['Rainy Day Savings', AccountType::Asset, ['asset_role' => 'savings'], '8500', $primary],
             'wallet' => ['Wallet', AccountType::Asset, ['asset_role' => 'cash_wallet'], '120', $primary],
             'card' => ['Visa Card', AccountType::Asset, ['asset_role' => 'credit_card', 'credit_card_payment_day' => 25], '-350', $primary],
@@ -104,7 +107,7 @@ class DemoSeeder extends Seeder
 
         foreach ($definitions as $key => [$name, $type, $extra, $opening, $currencyId]) {
             $account = $this->ledger->accounts()->create(['type' => $type, 'name' => $name, 'currency_id' => $currencyId, ...$extra]);
-            $this->openingBalance->handle($account, $this->owner, $opening, $start->toDateString());
+            $this->openingBalance->handle($account, $this->owner, $key === 'euro' ? $opening : $this->money($opening), $start->toDateString());
             $this->accounts[$key] = $account;
         }
 
@@ -116,7 +119,7 @@ class DemoSeeder extends Seeder
                     'from_currency_id' => $primary,
                     'to_currency_id' => $euro,
                     'date' => CarbonImmutable::today()->subMonths($month)->startOfMonth()->toDateString(),
-                    'rate' => number_format(0.9 + mt_rand(-30, 30) / 1000, 4),
+                    'rate' => number_format((0.9 + mt_rand(-30, 30) / 1000) / (float) $this->scale, 6, '.', ''),
                 ]);
             }
         }
@@ -132,7 +135,7 @@ class DemoSeeder extends Seeder
                 'name' => $name,
                 'auto_budget_type' => $name === 'Fun' ? 'rollover' : 'reset',
                 'auto_budget_currency_id' => $primary,
-                'auto_budget_amount' => $amount,
+                'auto_budget_amount' => $this->money($amount),
                 'auto_budget_period' => 'monthly',
             ]);
 
@@ -147,7 +150,7 @@ class DemoSeeder extends Seeder
                 'currency_id' => $primary,
                 'start_date' => $date->startOfMonth()->toDateString(),
                 'end_date' => $date->endOfMonth()->toDateString(),
-                'amount' => '4200',
+                'amount' => $this->money('4200'),
             ]);
         }
 
@@ -164,8 +167,8 @@ class DemoSeeder extends Seeder
             $this->ledger->bills()->create([
                 'name' => $name,
                 'currency_id' => $primary,
-                'amount_min' => $min,
-                'amount_max' => $max,
+                'amount_min' => $this->money($min),
+                'amount_max' => $this->money($max),
                 'date' => $today->subYear()->startOfMonth()->setDay($day)->toDateString(),
                 'repeat_freq' => $frequency,
                 'object_group_id' => $this->ledger->objectGroups()->firstOrCreate(['title' => $group])->id,
@@ -173,12 +176,12 @@ class DemoSeeder extends Seeder
         }
 
         $holiday = $this->ledger->piggyBanks()->create([
-            'name' => 'Summer holiday', 'currency_id' => $primary, 'target_amount' => '2500',
+            'name' => 'Summer holiday', 'currency_id' => $primary, 'target_amount' => $this->money('2500'),
             'target_date' => $today->addMonths(5)->toDateString(),
         ]);
-        $laptop = $this->ledger->piggyBanks()->create(['name' => 'New laptop', 'currency_id' => $primary, 'target_amount' => '1600']);
+        $laptop = $this->ledger->piggyBanks()->create(['name' => 'New laptop', 'currency_id' => $primary, 'target_amount' => $this->money('1600')]);
 
-        foreach ([[$holiday, '1150'], [$laptop, '640']] as [$piggyBank, $saved]) {
+        foreach ([[$holiday, $this->money('1150')], [$laptop, $this->money('640')]] as [$piggyBank, $saved]) {
             $piggyBank->accounts()->attach($this->accounts['savings']->id, ['current_amount' => $saved]);
             $piggyBank->events()->create(['account_id' => $this->accounts['savings']->id, 'amount' => $saved, 'date' => $today->subMonths(2)->toDateString()]);
         }
@@ -210,7 +213,7 @@ class DemoSeeder extends Seeder
             foreach (['Electricity' => 12, 'Internet' => 18, 'Phone plan' => 20, 'Streaming' => 8] as $name => $day) {
                 if ($date->day === $day) {
                     $bill = $bills[$name];
-                    $amount = number_format(mt_rand((int) ((float) $bill->amount_min * 100), (int) ((float) $bill->amount_max * 100)) / 100, 2, '.', '');
+                    $amount = bcdiv(number_format(mt_rand((int) ((float) $bill->amount_min * 100), (int) ((float) $bill->amount_max * 100)) / 100, 2, '.', ''), $this->scale, 2);
                     $this->spend($date, $name, $amount, $name === 'Streaming' ? 'StreamCo' : "{$name} provider", $name === 'Streaming' ? 'Subscriptions' : 'Utilities', 'checking', bill: $bill->id);
                 }
             }
@@ -263,11 +266,11 @@ class DemoSeeder extends Seeder
 
         $this->save([
             'type' => 'withdrawal', 'date' => $today->subMonths(2)->toDateString(), 'description' => 'Lent to Sam for rent',
-            'amount' => '300', 'source_id' => $this->accounts['checking']->id, 'destination_id' => $this->accounts['lent']->id,
+            'amount' => $this->money('300'), 'source_id' => $this->accounts['checking']->id, 'destination_id' => $this->accounts['lent']->id,
         ]);
         $this->save([
             'type' => 'deposit', 'date' => $today->subMonth()->toDateString(), 'description' => 'Sam paid back part',
-            'amount' => '100', 'source_id' => $this->accounts['lent']->id, 'destination_id' => $this->accounts['checking']->id,
+            'amount' => $this->money('100'), 'source_id' => $this->accounts['lent']->id, 'destination_id' => $this->accounts['checking']->id,
         ]);
 
         $headphones = $this->spend($today->subDays(20), 'Headphones', '129.00', 'Gadget Hub', 'Electronics', 'card');
@@ -291,7 +294,7 @@ class DemoSeeder extends Seeder
         $recurrence->repetitions()->create(['type' => 'monthly', 'moment' => '5', 'skip' => 0, 'weekend' => 'after']);
         $recurrence->transactions()->create([
             'description' => 'Gym membership',
-            'amount' => '39',
+            'amount' => $this->money('39'),
             'source_account_id' => $this->accounts['card']->id,
             'destination_account_id' => $this->ledger->accounts()->firstOrCreate(['type' => AccountType::Expense, 'name' => 'FitLife Gym'])->id,
             'category_id' => $this->ledger->categories()->firstOrCreate(['name' => 'Health'])->id,
@@ -309,7 +312,7 @@ class DemoSeeder extends Seeder
         $rule->actions()->create(['type' => 'set_category', 'value' => 'Transport', 'order' => 0]);
 
         $rule = $this->ledger->rules()->create(['rule_group_id' => $group->id, 'title' => 'Tag big purchases', 'order' => 1]);
-        $rule->triggers()->create(['type' => 'amount_more', 'value' => '250', 'order' => 0]);
+        $rule->triggers()->create(['type' => 'amount_more', 'value' => $this->money('250'), 'order' => 0]);
         $rule->triggers()->create(['type' => 'transaction_type', 'value' => 'withdrawal', 'order' => 1]);
         $rule->actions()->create(['type' => 'add_tag', 'value' => 'big purchase', 'order' => 0]);
     }
@@ -318,11 +321,11 @@ class DemoSeeder extends Seeder
     {
         DB::table('saved_searches')->insert([
             ['ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Weekend fun', 'query' => 'tag:weekend', 'created_at' => now(), 'updated_at' => now()],
-            ['ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Big card spending', 'query' => 'account:Visa amount_more:100 type:withdrawal', 'created_at' => now(), 'updated_at' => now()],
+            ['ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Big card spending', 'query' => 'account:Visa amount_more:'.$this->money('100').' type:withdrawal', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $preferences = $this->owner->preferences ?? [];
-        $preferences['large_transaction_amount'] = 500;
+        $preferences['large_transaction_amount'] = (int) $this->money('500');
         $this->owner->update(['preferences' => $preferences]);
     }
 
@@ -332,7 +335,7 @@ class DemoSeeder extends Seeder
     private function spend(CarbonImmutable $date, string $description, string $amount, string $payee, string $category, string $from, array $tags = [], ?int $budget = null, ?int $bill = null): TransactionGroup
     {
         return $this->save([
-            'type' => 'withdrawal', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $amount,
+            'type' => 'withdrawal', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $from),
             'source_id' => $this->accounts[$from]->id, 'destination_name' => $payee, 'category_name' => $category,
             'tags' => $tags, 'budget_id' => $budget, 'bill_id' => $bill,
         ]);
@@ -341,7 +344,7 @@ class DemoSeeder extends Seeder
     private function deposit(CarbonImmutable $date, string $description, string $amount, string $payer, string $category, string $to): TransactionGroup
     {
         return $this->save([
-            'type' => 'deposit', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $amount,
+            'type' => 'deposit', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $to),
             'source_name' => $payer, 'destination_id' => $this->accounts[$to]->id, 'category_name' => $category,
         ]);
     }
@@ -351,7 +354,7 @@ class DemoSeeder extends Seeder
         $type = $this->accounts[$to]->type === AccountType::Liability ? 'withdrawal' : 'transfer';
 
         return $this->save([
-            'type' => $type, 'date' => $date->toDateString(), 'description' => $description, 'amount' => $amount,
+            'type' => $type, 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $from),
             'source_id' => $this->accounts[$from]->id, 'destination_id' => $this->accounts[$to]->id,
         ]);
     }
@@ -362,9 +365,20 @@ class DemoSeeder extends Seeder
     private function split(CarbonImmutable $date, string $description, string $amount, string $from, string $payee, string $category, ?int $budget = null): array
     {
         return [
-            'type' => 'withdrawal', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $amount,
+            'type' => 'withdrawal', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $from),
             'source_id' => $this->accounts[$from]->id, 'destination_name' => $payee, 'category_name' => $category, 'budget_id' => $budget,
         ];
+    }
+
+    private function money(string $amount): string
+    {
+        return bcmul($amount, $this->scale, 2);
+    }
+
+    /** Amounts on the euro travel account stay in euros; everything else is in the ledger currency. */
+    private function amountIn(string $amount, string $account): string
+    {
+        return $account === 'euro' ? $amount : $this->money($amount);
     }
 
     /**
