@@ -5,6 +5,7 @@ import 'app/router.dart';
 import 'app/theme.dart';
 import 'features/auth/lock.dart';
 import 'features/auth/session.dart';
+import 'shared/widgets.dart';
 
 void main() => runApp(const ProviderScope(child: LedgerFlyApp()));
 
@@ -22,7 +23,7 @@ class LedgerFlyApp extends ConsumerWidget {
         theme: light,
         darkTheme: dark,
         debugShowCheckedModeBanner: false,
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+        home: const Scaffold(body: Center(child: LogoMark(size: 48))),
       );
     }
 

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../shared/widgets.dart';
 import 'transaction_list.dart';
 
 class TransactionsScreen extends StatefulWidget {
@@ -12,12 +14,12 @@ class TransactionsScreen extends StatefulWidget {
 }
 
 class _TransactionsScreenState extends State<TransactionsScreen> {
-  static const _types = {'withdrawal': 'Expenses', 'deposit': 'Income', 'transfer': 'Transfers'};
+  static const _types = {'': 'All', 'withdrawal': 'Expenses', 'deposit': 'Income', 'transfer': 'Transfers'};
 
   final _search = TextEditingController();
   Timer? _debounce;
   String _query = '';
-  String? _type;
+  String _type = '';
 
   @override
   void dispose() {
@@ -34,50 +36,39 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Transactions')),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: TextField(
-              controller: _search,
-              onChanged: _onSearch,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.search),
-                hintText: 'Search, e.g. coffee or category:Groceries',
-                suffixIcon: _query.isEmpty
-                    ? null
-                    : IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () {
-                          _search.clear();
-                          setState(() => _query = '');
-                        },
-                      ),
+      body: SafeArea(
+        bottom: false,
+        child: TransactionList(
+          filter: (query: _query, type: _type.isEmpty ? null : _type, accountId: null),
+          header: [
+            const PageHeader(title: 'Transactions', description: 'Every expense, income and transfer. Search to narrow it down.'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _search,
+                onChanged: _onSearch,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  prefixIcon: const Icon(LucideIcons.search, size: 18),
+                  hintText: 'Search, e.g. coffee or category:Groceries',
+                  suffixIcon: _search.text.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: const Icon(LucideIcons.x, size: 18),
+                          onPressed: () {
+                            _search.clear();
+                            setState(() => _query = '');
+                          },
+                        ),
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                for (final MapEntry(:key, :value) in _types.entries)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: FilterChip(
-                      label: Text(value),
-                      selected: _type == key,
-                      onSelected: (selected) => setState(() => _type = selected ? key : null),
-                    ),
-                  ),
-              ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+              child: Segmented<String>(options: _types, value: _type, onChanged: (type) => setState(() => _type = type)),
             ),
-          ),
-          Expanded(child: TransactionList(filter: (query: _query, type: _type, accountId: null))),
-        ],
+          ],
+        ),
       ),
     );
   }

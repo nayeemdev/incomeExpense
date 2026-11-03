@@ -32,16 +32,16 @@ void main() {
 
   test('a bill is paid once every expected date has a payment', () {
     Bill bill(int payments) => Bill.fromJson({
-          'id': 1,
-          'name': 'Rent',
-          'currency': currency,
-          'amount_min': '1200.00',
-          'amount_max': '1200.00',
-          'repeat_freq': 'monthly',
-          'next_expected_date': '2026-11-01',
-          'expected_dates': ['2026-11-01'],
-          'payments': List.filled(payments, {'transaction_id': 1}),
-        });
+      'id': 1,
+      'name': 'Rent',
+      'currency': currency,
+      'amount_min': '1200.00',
+      'amount_max': '1200.00',
+      'repeat_freq': 'monthly',
+      'next_expected_date': '2026-11-01',
+      'expected_dates': ['2026-11-01'],
+      'payments': List.filled(payments, {'transaction_id': 1}),
+    });
 
     expect(bill(0).isDue, isTrue);
     expect(bill(1).isPaid, isTrue);

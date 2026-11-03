@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../app/theme.dart';
+import '../../shared/widgets.dart';
 import 'session.dart';
 
 const _lockKey = 'biometric_lock';
@@ -89,11 +92,13 @@ class _LockGateState extends ConsumerState<LockGate> with WidgetsBindingObserver
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/logo.png', height: 56),
+                  const LogoMark(size: 56),
                   const SizedBox(height: 16),
-                  Text('LedgerFly is locked', style: Theme.of(context).textTheme.titleMedium),
+                  Text('LedgerFly is locked', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 4),
+                  Text('Unlock to see your finances.', style: TextStyle(color: Palette.of(context).muted)),
                   const SizedBox(height: 24),
-                  FilledButton.icon(onPressed: _unlock, icon: const Icon(Icons.lock_open), label: const Text('Unlock')),
+                  FilledButton.icon(onPressed: _unlock, icon: const Icon(LucideIcons.scanFace, size: 18), label: const Text('Unlock')),
                 ],
               ),
             ),

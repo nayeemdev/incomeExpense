@@ -29,11 +29,11 @@ class User {
   const User({required this.id, required this.name, required this.email, required this.twoFactor});
 
   factory User.fromJson(Json json) => User(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        email: json['email'] as String,
-        twoFactor: json['two_factor_enabled'] as bool? ?? false,
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    email: json['email'] as String,
+    twoFactor: json['two_factor_enabled'] as bool? ?? false,
+  );
 
   final int id;
   final String name;
@@ -45,12 +45,12 @@ class Ledger {
   const Ledger({required this.id, required this.name, required this.currency, required this.role, this.defaultAccountId});
 
   factory Ledger.fromJson(Json json) => Ledger(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        currency: Currency.fromJson(json['primary_currency'] as Json),
-        role: json['role'] as String? ?? 'viewer',
-        defaultAccountId: json['default_account_id'] as int?,
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    currency: Currency.fromJson(json['primary_currency'] as Json),
+    role: json['role'] as String? ?? 'viewer',
+    defaultAccountId: json['default_account_id'] as int?,
+  );
 
   final int id;
   final String name;
@@ -74,15 +74,15 @@ class Account {
   });
 
   factory Account.fromJson(Json json) => Account(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        type: json['type'] as String,
-        active: json['active'] as bool? ?? true,
-        currency: json['currency'] is Map ? Currency.fromJson(json['currency'] as Json) : null,
-        balance: json['balance']?.toString(),
-        role: (json['asset_role'] ?? json['liability_type']) as String?,
-        liabilityDirection: json['liability_direction'] as String?,
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    type: json['type'] as String,
+    active: json['active'] as bool? ?? true,
+    currency: json['currency'] is Map ? Currency.fromJson(json['currency'] as Json) : null,
+    balance: json['balance']?.toString(),
+    role: (json['asset_role'] ?? json['liability_type']) as String?,
+    liabilityDirection: json['liability_direction'] as String?,
+  );
 
   final int id;
   final String name;
@@ -99,8 +99,7 @@ class Account {
 class AccountRef {
   const AccountRef({required this.id, required this.name, required this.type});
 
-  factory AccountRef.fromJson(Json json) =>
-      AccountRef(id: json['id'] as int, name: json['name'] as String, type: json['type'] as String);
+  factory AccountRef.fromJson(Json json) => AccountRef(id: json['id'] as int, name: json['name'] as String, type: json['type'] as String);
 
   final int id;
   final String name;
@@ -137,23 +136,23 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Json json) => Transaction(
-        id: json['id'] as int,
-        groupId: json['group_id'] as int,
-        groupTitle: json['group_title'] as String?,
-        type: json['type'] as String,
-        date: DateTime.parse(json['date'] as String),
-        description: json['description'] as String,
-        source: AccountRef.fromJson(json['source'] as Json),
-        destination: AccountRef.fromJson(json['destination'] as Json),
-        currency: Currency.fromJson(json['currency'] as Json),
-        amount: json['amount'].toString(),
-        category: json['category'] is Map ? NamedRef.fromJson(json['category'] as Json) : null,
-        budget: json['budget'] is Map ? NamedRef.fromJson(json['budget'] as Json) : null,
-        bill: json['bill'] is Map ? NamedRef.fromJson(json['bill'] as Json) : null,
-        tags: _list(json['tags'], (tag) => tag['name'] as String),
-        notes: json['notes'] as String?,
-        runningBalance: json['running_balance']?.toString(),
-      );
+    id: json['id'] as int,
+    groupId: json['group_id'] as int,
+    groupTitle: json['group_title'] as String?,
+    type: json['type'] as String,
+    date: DateTime.parse(json['date'] as String),
+    description: json['description'] as String,
+    source: AccountRef.fromJson(json['source'] as Json),
+    destination: AccountRef.fromJson(json['destination'] as Json),
+    currency: Currency.fromJson(json['currency'] as Json),
+    amount: json['amount'].toString(),
+    category: json['category'] is Map ? NamedRef.fromJson(json['category'] as Json) : null,
+    budget: json['budget'] is Map ? NamedRef.fromJson(json['budget'] as Json) : null,
+    bill: json['bill'] is Map ? NamedRef.fromJson(json['bill'] as Json) : null,
+    tags: _list(json['tags'], (tag) => tag['name'] as String),
+    notes: json['notes'] as String?,
+    runningBalance: json['running_balance']?.toString(),
+  );
 
   final int id;
   final int groupId;
@@ -176,11 +175,8 @@ class Transaction {
 class TransactionGroup {
   const TransactionGroup({required this.id, required this.title, required this.splits});
 
-  factory TransactionGroup.fromJson(Json json) => TransactionGroup(
-        id: json['id'] as int,
-        title: json['title'] as String?,
-        splits: _list(json['transactions'], Transaction.fromJson),
-      );
+  factory TransactionGroup.fromJson(Json json) =>
+      TransactionGroup(id: json['id'] as int, title: json['title'] as String?, splits: _list(json['transactions'], Transaction.fromJson));
 
   final int id;
   final String? title;
@@ -198,10 +194,10 @@ class BudgetLimit {
   const BudgetLimit({required this.currency, required this.amount, this.spent});
 
   factory BudgetLimit.fromJson(Json json) => BudgetLimit(
-        currency: Currency.fromJson(json['currency'] as Json),
-        amount: json['amount'].toString(),
-        spent: json['spent']?.toString(),
-      );
+    currency: Currency.fromJson(json['currency'] as Json),
+    amount: json['amount'].toString(),
+    spent: json['spent']?.toString(),
+  );
 
   final Currency currency;
   final String amount;
@@ -212,11 +208,11 @@ class Budget {
   const Budget({required this.id, required this.name, required this.limits, required this.spent});
 
   factory Budget.fromJson(Json json) => Budget(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        limits: _list(json['limits'], BudgetLimit.fromJson),
-        spent: _list(json['spent'], Amount.fromJson),
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    limits: _list(json['limits'], BudgetLimit.fromJson),
+    spent: _list(json['spent'], Amount.fromJson),
+  );
 
   final int id;
   final String name;
@@ -239,17 +235,17 @@ class Bill {
   });
 
   factory Bill.fromJson(Json json) => Bill(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        group: json['object_group'] as String?,
-        currency: Currency.fromJson(json['currency'] as Json),
-        amountMin: json['amount_min'].toString(),
-        amountMax: json['amount_max'].toString(),
-        repeatFreq: json['repeat_freq'] as String,
-        nextExpected: _date(json['next_expected_date']),
-        expectedDates: (json['expected_dates'] as List? ?? const []).map((date) => DateTime.parse(date as String)).toList(),
-        paidCount: (json['payments'] as List? ?? const []).length,
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    group: json['object_group'] as String?,
+    currency: Currency.fromJson(json['currency'] as Json),
+    amountMin: json['amount_min'].toString(),
+    amountMax: json['amount_max'].toString(),
+    repeatFreq: json['repeat_freq'] as String,
+    nextExpected: _date(json['next_expected_date']),
+    expectedDates: (json['expected_dates'] as List? ?? const []).map((date) => DateTime.parse(date as String)).toList(),
+    paidCount: (json['payments'] as List? ?? const []).length,
+  );
 
   final int id;
   final String name;
@@ -270,12 +266,12 @@ class Notice {
   const Notice({required this.id, required this.title, required this.body, required this.createdAt, this.readAt});
 
   factory Notice.fromJson(Json json) => Notice(
-        id: json['id'] as String,
-        title: json['title'] as String? ?? '',
-        body: json['body'] as String? ?? '',
-        createdAt: DateTime.parse(json['created_at'] as String),
-        readAt: _date(json['read_at']),
-      );
+    id: json['id'] as String,
+    title: json['title'] as String? ?? '',
+    body: json['body'] as String? ?? '',
+    createdAt: DateTime.parse(json['created_at'] as String),
+    readAt: _date(json['read_at']),
+  );
 
   final String id;
   final String title;
@@ -292,21 +288,15 @@ class CategoryTotal {
 }
 
 class Summary {
-  const Summary({
-    required this.netWorth,
-    required this.spent,
-    required this.earned,
-    required this.topCategories,
-    required this.accounts,
-  });
+  const Summary({required this.netWorth, required this.spent, required this.earned, required this.topCategories, required this.accounts});
 
   factory Summary.fromJson(Json json) => Summary(
-        netWorth: Amount.fromJson(json['net_worth_total'] as Json),
-        spent: Amount.fromJson(json['spent_total'] as Json),
-        earned: Amount.fromJson(json['earned_total'] as Json),
-        topCategories: _list(json['top_categories'], (row) => CategoryTotal(row['name'] as String?, Amount.fromJson(row))),
-        accounts: _list(json['accounts'], Account.fromJson),
-      );
+    netWorth: Amount.fromJson(json['net_worth_total'] as Json),
+    spent: Amount.fromJson(json['spent_total'] as Json),
+    earned: Amount.fromJson(json['earned_total'] as Json),
+    topCategories: _list(json['top_categories'], (row) => CategoryTotal(row['name'] as String?, Amount.fromJson(row))),
+    accounts: _list(json['accounts'], Account.fromJson),
+  );
 
   final Amount netWorth;
   final Amount spent;
