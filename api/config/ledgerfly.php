@@ -54,6 +54,11 @@ return [
         'max_per_page' => 200,
     ],
 
+    'demo' => [
+        'email' => env('DEMO_EMAIL', 'demo@ledgerfly.test'),
+        'currency' => env('DEMO_CURRENCY', 'USD'),
+    ],
+
     'dashboard_widgets' => ['trend', 'recent', 'accounts', 'bills', 'top_spending'],
 
     'default_preferences' => [
