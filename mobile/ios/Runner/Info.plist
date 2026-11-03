@@ -6,6 +6,10 @@
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Take a photo of a receipt to keep with a transaction.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo of a receipt to keep with a transaction.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Unlock LedgerFly with Face ID.</string>
 	<key>NSAppTransportSecurity</key>

@@ -11,6 +11,7 @@ import '../../shared/widgets.dart';
 import '../auth/session.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
+import '../receipts/receipts.dart';
 import 'transaction_tile.dart';
 
 const _typeNames = {'withdrawal': 'Expense', 'deposit': 'Income', 'transfer': 'Transfer'};
@@ -31,7 +32,7 @@ class TransactionScreen extends ConsumerWidget {
     if (!confirmed || !context.mounted) return;
     try {
       await ref.read(apiProvider).delete(ledgerPath(ref.read(currentLedgerProvider), 'transactions/$groupId'));
-      refreshLedgerData(ref);
+      refreshLedgerData(ref.invalidate);
       if (context.mounted) {
         showToast(context, 'Transaction deleted');
         closeScreen(context);
@@ -48,6 +49,7 @@ class TransactionScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: context.canPop() ? null : IconButton(icon: const Icon(LucideIcons.x, size: 22), onPressed: () => closeScreen(context)),
         title: const Text('Transaction details'),
         actions: [
           if (canEdit && group.hasValue)
@@ -70,6 +72,7 @@ class TransactionScreen extends ConsumerWidget {
                       child: Text(group.title!, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
                     ),
                   for (final split in group.splits) ...[_SplitDetail(split), const SizedBox(height: 14)],
+                  ReceiptsSection(groupId: group.id),
                 ],
               ),
             ),

@@ -75,6 +75,13 @@ class ApiClient {
 
   Future<dynamic> delete(String path) => _send(() => _dio.delete(path));
 
+  /// Sends a file as multipart form data alongside [fields].
+  Future<dynamic> upload(String path, {required String filePath, required Map<String, Object> fields}) async =>
+      _send(() async => _dio.post(path, data: FormData.fromMap({...fields, 'file': await MultipartFile.fromFile(filePath)})));
+
+  Future<List<int>> bytes(String path) async =>
+      (await _send(() => _dio.get<List<int>>(path, options: Options(responseType: ResponseType.bytes)))) as List<int>;
+
   Future<dynamic> _send(Future<Response<dynamic>> Function() request) async {
     try {
       return (await request()).data;

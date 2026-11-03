@@ -382,3 +382,16 @@ class Report {
   final List<CategoryTotal> expenseCategories;
   final List<CategoryTotal> incomeCategories;
 }
+
+class Attachment {
+  const Attachment({required this.id, required this.filename, required this.mimeType});
+
+  factory Attachment.fromJson(Json json) =>
+      Attachment(id: json['id'] as int, filename: json['filename'] as String, mimeType: json['mime_type'] as String? ?? '');
+
+  final int id;
+  final String filename;
+  final String mimeType;
+
+  bool get isImage => mimeType.startsWith('image/');
+}
