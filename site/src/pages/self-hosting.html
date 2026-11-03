@@ -1,0 +1,154 @@
+<!--
+{
+  "path": "/self-hosting/",
+  "title": "Self-host LedgerFly with Docker: step by step guide",
+  "description": "Install LedgerFly on a new Linux server with Docker Compose: configure it, add HTTPS with Caddy, create the admin account, and set up backups and updates.",
+  "og": "self-hosting.png",
+  "ogAlt": "Self-host LedgerFly with Docker in about ten minutes",
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "Self-host LedgerFly with Docker",
+    "description": "Install LedgerFly on a new Linux server with Docker Compose and HTTPS.",
+    "totalTime": "PT15M",
+    "tool": [{ "@type": "HowToTool", "name": "Docker with Compose" }, { "@type": "HowToTool", "name": "Caddy" }],
+    "step": [
+      { "@type": "HowToStep", "name": "Install Docker", "url": "{{url}}/self-hosting/#install-docker" },
+      { "@type": "HowToStep", "name": "Download LedgerFly", "url": "{{url}}/self-hosting/#download" },
+      { "@type": "HowToStep", "name": "Configure", "url": "{{url}}/self-hosting/#configure" },
+      { "@type": "HowToStep", "name": "Start the stack", "url": "{{url}}/self-hosting/#start" },
+      { "@type": "HowToStep", "name": "Add HTTPS", "url": "{{url}}/self-hosting/#https" },
+      { "@type": "HowToStep", "name": "Create the admin account", "url": "{{url}}/self-hosting/#admin" }
+    ]
+  }
+}
+-->
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Self-hosting guide</span>
+    <h1>Install LedgerFly on your own server</h1>
+    <p class="lead">From a fresh Linux server to a running LedgerFly with HTTPS, backups and updates. Plan for about fifteen minutes.</p>
+  </div>
+</section>
+
+<div class="wrap doc">
+  <nav class="toc" aria-label="On this page">
+    <a href="#requirements">Requirements</a>
+    <a href="#install-docker">1. Install Docker</a>
+    <a href="#download">2. Download LedgerFly</a>
+    <a href="#configure">3. Configure</a>
+    <a href="#start">4. Start the stack</a>
+    <a href="#https">5. Add HTTPS</a>
+    <a href="#admin">6. Create the admin account</a>
+    <a href="#notifications">Notifications</a>
+    <a href="#backups">Backups</a>
+    <a href="#updates">Updates</a>
+    <a href="#troubleshooting">Troubleshooting</a>
+  </nav>
+
+  <article class="prose">
+    <h2 id="requirements">Requirements</h2>
+    <ul>
+      <li><strong>A Linux server</strong> you can reach over SSH. Ubuntu 24.04 or Debian 12 on a VPS with 2 GB of RAM is plenty for a household.</li>
+      <li><strong>A domain or subdomain</strong> pointing at the server, for example <code>money.example.com</code>, with an A record to the server's IP address.</li>
+      <li><strong>Ports 80 and 443</strong> open to the internet, so HTTPS certificates can be issued.</li>
+    </ul>
+    <p>Everything runs in Docker: the web app, the API, MySQL, a queue worker for notifications and a scheduler for bills, budgets and recurring transactions.</p>
+
+    <h2 id="install-docker">1. Install Docker</h2>
+    <p>Docker's convenience script installs Docker Engine and the Compose plugin. Run it as a user with <code>sudo</code>:</p>
+    <div class="code"><pre>curl -fsSL https://get.docker.com | sudo sh
+sudo usermod -aG docker $USER</pre></div>
+    <p>Log out and back in so the group change applies, then check that it works with <code>docker compose version</code>.</p>
+
+    <h2 id="download">2. Download LedgerFly</h2>
+    <div class="code"><pre>git clone {{repo}}.git ledgerfly
+cd ledgerfly</pre></div>
+
+    <h2 id="configure">3. Configure</h2>
+    <p>There are two settings files. The one in the project root holds database passwords for Docker; <code>api/.env</code> holds what the app needs before it can read its database.</p>
+    <div class="code"><pre>cp .env.example .env
+cp api/.env.example api/.env
+openssl rand -base64 24   # run twice, for the two database passwords
+echo "base64:$(openssl rand -base64 32)"   # the app key</pre></div>
+    <p>In <code>.env</code>, set:</p>
+    <table class="table">
+      <tr><th>Setting</th><th>Value</th></tr>
+      <tr><td><code>DB_PASSWORD</code></td><td>A long random password</td></tr>
+      <tr><td><code>DB_ROOT_PASSWORD</code></td><td>A different long random password</td></tr>
+      <tr><td><code>APP_PORT</code></td><td><code>127.0.0.1:8000</code>, so only Caddy on the same server can reach the app</td></tr>
+    </table>
+    <p>In <code>api/.env</code>, set:</p>
+    <table class="table">
+      <tr><th>Setting</th><th>Value</th></tr>
+      <tr><td><code>APP_KEY</code></td><td>The <code>base64:...</code> key printed above</td></tr>
+      <tr><td><code>APP_URL</code></td><td>Your address, for example <code>https://money.example.com</code></td></tr>
+      <tr><td><code>APP_ENV</code></td><td><code>production</code></td></tr>
+      <tr><td><code>APP_DEBUG</code></td><td><code>false</code></td></tr>
+      <tr><td><code>DEFAULT_TIMEZONE</code></td><td>Your time zone, for example <code>Asia/Dhaka</code></td></tr>
+    </table>
+    <p class="note">You do not need to set the database host or user in <code>api/.env</code>: Docker Compose passes them in from the root <code>.env</code>. Email, sign-ups and alert settings are managed from the app later.</p>
+
+    <h2 id="start">4. Start the stack</h2>
+    <div class="code"><pre>docker compose up -d --build
+docker compose exec api php artisan db:seed --force</pre></div>
+    <p>The first build takes a few minutes. Database migrations run automatically when the API starts, and the seed step loads the currency list and built-in link types. It is safe to run again.</p>
+    <p>Check that everything is up with <code>docker compose ps</code>. LedgerFly now answers on <code>http://127.0.0.1:8000</code> on the server itself.</p>
+
+    <h2 id="https">5. Add HTTPS</h2>
+    <p><a href="https://caddyserver.com/docs/install" rel="noopener">Install Caddy</a>, which gets and renews certificates on its own. Then replace <code>/etc/caddy/Caddyfile</code> with your domain:</p>
+    <div class="code"><pre>money.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8000
+}</pre></div>
+    <div class="code"><pre>sudo systemctl reload caddy</pre></div>
+    <p>Open <code>https://money.example.com</code>. If the certificate is not ready yet, check that the DNS record points at the server and ports 80 and 443 are open.</p>
+    <p class="note">Prefer Cloudflare Tunnel, Nginx Proxy Manager or Traefik? Point them at <code>127.0.0.1:8000</code> the same way.</p>
+
+    <h2 id="admin">6. Create the admin account</h2>
+    <p>Open your address and sign up. <strong>The first account on a new server becomes its admin.</strong> After that, sign-ups are closed unless you open them.</p>
+    <p>As the admin, open <strong>Settings, System</strong> in the web app to set up:</p>
+    <ul>
+      <li>Whether new people can sign up, and how long invitations stay valid</li>
+      <li>Outgoing email, with a test button</li>
+      <li>Automatic exchange rates</li>
+      <li>Bill reminder and budget warning thresholds</li>
+      <li>The suggested ntfy server and the upload size limit</li>
+    </ul>
+    <p>To share a ledger with family, invite them from the ledger's settings as an owner, editor or viewer.</p>
+
+    <h2 id="notifications">Notifications</h2>
+    <p>Alerts for budgets, bills, low balances and large spending can go out by email, browser push, <a href="https://ntfy.sh" rel="noopener">ntfy</a> or the mobile app. Each person picks channels and quiet hours under Settings, Notifications.</p>
+    <ul>
+      <li><strong>Email</strong> works once the admin sets up outgoing mail in Settings, System.</li>
+      <li><strong>Browser push</strong> needs keys, created once:</li>
+    </ul>
+    <div class="code"><pre>docker compose exec api php artisan webpush:vapid --show</pre></div>
+    <p>Copy the printed values into <code>api/.env</code> and restart with <code>docker compose up -d</code>.</p>
+    <ul>
+      <li><strong>ntfy</strong> needs nothing on the server: each person picks a topic in the app and subscribes to it in the ntfy app.</li>
+    </ul>
+
+    <h2 id="backups">Backups</h2>
+    <p>Back up the database and the uploaded files (receipts and attachments). From the <code>ledgerfly</code> folder:</p>
+    <div class="code"><pre>docker compose exec -T mysql sh -c 'exec mysqldump -uroot -p"$MYSQL_ROOT_PASSWORD" --single-transaction ledgerfly' | gzip > ledgerfly-$(date +%F).sql.gz
+docker run --rm -v ledgerfly_storage:/data -v "$PWD":/backup alpine tar czf /backup/storage-$(date +%F).tar.gz -C /data .</pre></div>
+    <p>Run these from cron every night and copy the files somewhere off the server. To restore the database into a running stack:</p>
+    <div class="code"><pre>gunzip -c ledgerfly-2026-01-31.sql.gz | docker compose exec -T mysql sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" ledgerfly'</pre></div>
+    <p>Each ledger can also be exported to a JSON backup from the web app.</p>
+
+    <h2 id="updates">Updates</h2>
+    <div class="code"><pre>cd ledgerfly
+git pull
+docker compose up -d --build</pre></div>
+    <p>New migrations run automatically when the API container starts. Take a backup first.</p>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+    <ul>
+      <li><strong>See what is happening:</strong> <code>docker compose logs -f api</code>, or <code>queue</code> for notifications and <code>scheduler</code> for scheduled jobs.</li>
+      <li><strong>Emails or alerts never arrive:</strong> check that the <code>queue</code> container is running and use the test buttons in Settings.</li>
+      <li><strong>Sign in fails behind a proxy:</strong> make sure <code>APP_URL</code> matches the address in the browser exactly, including <code>https</code>.</li>
+      <li><strong>Still stuck?</strong> <a href="{{repo}}/issues" rel="noopener">Open an issue on GitHub</a>.</li>
+    </ul>
+  </article>
+</div>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>LedgerFly social image</title>
+<style>
+  @font-face { font-family: "Geist"; src: url(../src/static/fonts/geist.woff2) format("woff2"); font-weight: 100 900; }
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1200px; height: 630px; overflow: hidden; background: #0c2239; color: #fff; font-family: "Geist", sans-serif; position: relative; }
+  .text { position: absolute; left: 72px; top: 72px; width: 560px; }
+  .brand { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 650; letter-spacing: -0.01em; }
+  .brand svg { width: 52px; height: 52px; }
+  .brand rect { fill: #2f9dca; }
+  .brand path { fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  h1 { margin-top: 56px; font-size: 60px; line-height: 1.05; letter-spacing: -0.03em; font-weight: 700; }
+  p { margin-top: 22px; font-size: 25px; line-height: 1.4; color: #b6c8d8; }
+  .tags { position: absolute; left: 72px; bottom: 64px; display: flex; gap: 10px; }
+  .tags span { font-size: 18px; font-weight: 600; color: #cfeaf5; border: 1px solid rgb(255 255 255 / 0.16); border-radius: 999px; padding: 8px 16px; }
+  .shot { position: absolute; border-radius: 14px; overflow: hidden; border: 1px solid rgb(255 255 255 / 0.14); box-shadow: 0 24px 60px -20px rgb(0 0 0 / 0.6); }
+  .shot img { display: block; width: 100%; }
+  .desktop { left: 690px; top: 96px; width: 760px; }
+  .phone { border: 6px solid #04121f; border-radius: 36px; }
+  .phone-a { left: 940px; top: 150px; width: 220px; }
+  .phone-b { left: 700px; top: 70px; width: 220px; }
+  .phone-c { left: 960px; top: 120px; width: 220px; }
+  .code { position: absolute; left: 690px; top: 120px; width: 470px; background: #04121f; border: 1px solid rgb(255 255 255 / 0.12); border-radius: 16px; padding: 28px 30px; font: 21px/1.75 ui-monospace, Menlo, monospace; color: #dbe7f1; }
+  .code .c { color: #6489a8; }
+  .code .p { color: #69bcdd; }
+</style>
+</head>
+<body>
+  <div class="text">
+    <div class="brand">
+      <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8"/><path d="M9.5 8v13.5a2 2 0 0 0 2 2H23"/><path d="M14 18.5l4-4 2.5 2.5L25 12.5M21.5 12.5H25V16"/></svg>
+      LedgerFly
+    </div>
+    <h1 id="title"></h1>
+    <p id="lead"></p>
+  </div>
+  <div class="tags" id="tags"></div>
+  <div id="art"></div>
+<script>
+  const img = (name) => `../src/static/images/${name}`;
+  const pages = {
+    home: {
+      title: 'Your money, on your own server.',
+      lead: 'Self-hosted personal finance with budgets, bills, goals and reports.',
+      tags: ['Open source', 'Self-hosted', 'Web, Android, iOS'],
+      art: `<div class="shot desktop"><img src="${img('web-dashboard-light-1600.webp')}"></div>
+            <div class="shot phone phone-a"><img src="${img('m-dashboard-light.webp')}"></div>`,
+    },
+    'self-hosting': {
+      title: 'Self-host LedgerFly in minutes.',
+      lead: 'A step by step guide: Docker, HTTPS, the admin account, backups and updates.',
+      tags: ['Docker Compose', 'HTTPS with Caddy', 'Backups'],
+      art: `<div class="code"><span class="c"># on your server</span><br>git clone …/ledgerfly.git<br>cd ledgerfly<br>cp .env.example .env<br><span class="p">docker compose up -d</span><br><br><span class="c"># then open your domain</span><br><span class="c"># and create the admin</span></div>`,
+    },
+    apps: {
+      title: 'LedgerFly for Android and iPhone.',
+      lead: 'Quick add, receipts, offline entry, widgets and alerts, connected to your own server.',
+      tags: ['Android', 'iOS', 'Widgets'],
+      art: `<div class="shot phone phone-b"><img src="${img('m-add-light.webp')}"></div>
+            <div class="shot phone phone-c"><img src="${img('m-reports-light.webp')}"></div>`,
+    },
+  };
+  const page = pages[new URLSearchParams(location.search).get('page') || 'home'];
+  document.getElementById('title').textContent = page.title;
+  document.getElementById('lead').textContent = page.lead;
+  document.getElementById('tags').innerHTML = page.tags.map((tag) => `<span>${tag}</span>`).join('');
+  document.getElementById('art').innerHTML = page.art;
+</script>
+</body>
+</html>
