@@ -150,6 +150,7 @@ class _Shell extends ConsumerWidget {
   }
 }
 
+/// A small floating pill, like recent iOS apps, with the add button as a solid circle in the middle.
 class _BottomBar extends StatelessWidget {
   const _BottomBar({required this.shell, required this.canAdd});
 
@@ -159,80 +160,83 @@ class _BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Palette.of(context);
+    final dark = Theme.of(context).brightness == Brightness.dark;
+
     Widget item(int index, IconData icon, String label) {
       final selected = shell.currentIndex == index;
       return Expanded(
-        child: InkResponse(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             HapticFeedback.selectionClick();
             shell.goBranch(index, initialLocation: index == shell.currentIndex);
           },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                decoration: BoxDecoration(
-                  color: selected ? palette.primaryTint : Colors.transparent,
-                  borderRadius: BorderRadius.circular(99),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            decoration: BoxDecoration(color: selected ? palette.primaryTint : Colors.transparent, borderRadius: BorderRadius.circular(99)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 21, color: selected ? palette.primary : palette.muted),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected ? palette.primary : palette.muted,
+                  ),
                 ),
-                child: Icon(icon, size: 22, color: selected ? palette.primary : palette.subtle),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: selected ? palette.foreground : palette.subtle,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: palette.card,
-        border: Border(top: BorderSide(color: palette.border)),
-        boxShadow: palette.shadow.isEmpty ? null : const [BoxShadow(color: Color(0x0A0E1726), blurRadius: 20, offset: Offset(0, -4))],
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 66,
+    return SafeArea(
+      top: false,
+      minimum: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Container(
+          height: 62,
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: palette.card,
+            borderRadius: BorderRadius.circular(99),
+            border: Border.all(color: palette.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: dark ? 0.4 : 0.08),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
           child: Row(
             children: [
               item(0, LucideIcons.house, 'Home'),
               item(1, LucideIcons.chartColumn, 'Analytics'),
-              SizedBox(
-                width: 76,
-                child: Center(
-                  child: canAdd
-                      ? GestureDetector(
-                          onTap: () {
-                            HapticFeedback.mediumImpact();
-                            context.push('/new');
-                          },
-                          child: Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: palette.primary,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(color: palette.accent.withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 6)),
-                              ],
-                            ),
-                            child: const Icon(LucideIcons.plus, color: Colors.white, size: 28),
-                          ),
-                        )
-                      : null,
+              if (canAdd)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Material(
+                    color: palette.primary,
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: () {
+                        HapticFeedback.mediumImpact();
+                        context.push('/new');
+                      },
+                      child: const SizedBox.square(dimension: 52, child: Icon(LucideIcons.plus, color: Colors.white, size: 26)),
+                    ),
+                  ),
                 ),
-              ),
               item(2, LucideIcons.target, 'Goals'),
               item(3, LucideIcons.settings, 'Settings'),
             ],
