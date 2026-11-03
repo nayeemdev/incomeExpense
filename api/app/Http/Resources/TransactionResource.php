@@ -40,7 +40,7 @@ class TransactionResource extends JsonResource
                 'name' => $tag->name,
             ])),
             'notes' => $this->notes,
-            'running_balance' => $this->when($this->running_balance !== null, fn () => $this->runningBalance($request)),
+            'running_balance' => $this->when(array_key_exists('running_balance', $this->resource->getAttributes()), fn () => $this->runningBalance($request)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

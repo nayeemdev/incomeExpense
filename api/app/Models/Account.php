@@ -8,6 +8,7 @@ use App\Enums\InterestPeriod;
 use App\Enums\LiabilityDirection;
 use App\Enums\LiabilityType;
 use App\Models\Concerns\BelongsToLedger;
+use App\Models\Concerns\HasAttachments;
 use Carbon\CarbonInterface;
 use Database\Factories\AccountFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -37,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Account extends Model
 {
     use BelongsToLedger;
+    use HasAttachments;
 
     /** @use HasFactory<AccountFactory> */
     use HasFactory;
