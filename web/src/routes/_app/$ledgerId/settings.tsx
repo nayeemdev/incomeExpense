@@ -4,13 +4,15 @@ import { z } from 'zod'
 import { PageHeader } from '@/components/app/page-header'
 import { LedgerSettings } from '@/components/settings/ledger-settings'
 import { MemberSettings } from '@/components/settings/member-settings'
+import { NotificationSettings } from '@/components/settings/notification-settings'
 import { PreferenceSettings } from '@/components/settings/preference-settings'
 import { ProfileSettings } from '@/components/settings/profile-settings'
 import { SecuritySettings } from '@/components/settings/security-settings'
 import { TokenSettings } from '@/components/settings/token-settings'
+import { WebhookSettings } from '@/components/settings/webhook-settings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-const tabs = ['ledger', 'members', 'profile', 'security', 'preferences', 'tokens'] as const
+const tabs = ['ledger', 'members', 'profile', 'security', 'notifications', 'preferences', 'tokens', 'webhooks'] as const
 
 export const Route = createFileRoute('/_app/$ledgerId/settings')({
   validateSearch: z.object({ tab: z.enum(tabs).optional().catch(undefined) }),
@@ -26,8 +28,10 @@ function Settings() {
     members: t('Members'),
     profile: t('Profile'),
     security: t('Security'),
+    notifications: t('Notifications'),
     preferences: t('Preferences'),
     tokens: t('Tokens'),
+    webhooks: t('Webhooks'),
   }
 
   return (
@@ -47,7 +51,9 @@ function Settings() {
           <TabsContent value="profile"><ProfileSettings /></TabsContent>
           <TabsContent value="security"><SecuritySettings /></TabsContent>
           <TabsContent value="preferences"><PreferenceSettings /></TabsContent>
+          <TabsContent value="notifications"><NotificationSettings /></TabsContent>
           <TabsContent value="tokens"><TokenSettings /></TabsContent>
+          <TabsContent value="webhooks"><WebhookSettings /></TabsContent>
         </div>
       </Tabs>
     </>

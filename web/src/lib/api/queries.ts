@@ -4,7 +4,13 @@ import type {
   Account,
   AccountType,
   Attachment,
+  AppNotification,
   AvailableBudget,
+  NotificationSettings,
+  RuleGroup,
+  RuleOptions,
+  Webhook,
+  WebhookDelivery,
   Bill,
   Budget,
   LinkType,
@@ -219,4 +225,40 @@ export const objectGroupsQuery = (ledgerId: number) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'object-groups'],
     queryFn: () => api.get<Resource<Array<{ id: number; title: string; order: number }>>>(`/ledgers/${ledgerId}/object-groups`).then((r) => r.data),
+  })
+
+export const notificationsQuery = queryOptions({
+  queryKey: ['notifications'],
+  queryFn: () =>
+    api.get<{ data: AppNotification[]; meta: { unread: number; total: number } }>('/notifications', { per_page: 15 }),
+  refetchInterval: 60_000,
+})
+
+export const notificationSettingsQuery = queryOptions({
+  queryKey: ['notification-settings'],
+  queryFn: () => api.get<Resource<NotificationSettings>>('/notification-settings').then((r) => r.data),
+})
+
+export const ruleGroupsQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'rule-groups'],
+    queryFn: () => api.get<Resource<RuleGroup[]>>(`/ledgers/${ledgerId}/rule-groups`).then((r) => r.data),
+  })
+
+export const ruleOptionsQuery = queryOptions({
+  queryKey: ['rule-options'],
+  queryFn: () => api.get<Resource<RuleOptions>>('/rule-options').then((r) => r.data),
+  staleTime: Infinity,
+})
+
+export const webhooksQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'webhooks'],
+    queryFn: () => api.get<Resource<Webhook[]>>(`/ledgers/${ledgerId}/webhooks`).then((r) => r.data),
+  })
+
+export const webhookDeliveriesQuery = (ledgerId: number, webhookId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'webhooks', webhookId, 'deliveries'],
+    queryFn: () => api.get<Resource<WebhookDelivery[]>>(`/ledgers/${ledgerId}/webhooks/${webhookId}/deliveries`).then((r) => r.data),
   })

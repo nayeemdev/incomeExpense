@@ -71,6 +71,7 @@ export type Account = {
   bic: string | null
   account_number: string | null
   virtual_balance: string | null
+  low_balance_threshold?: string | null
   balance: string | null
   opening_balance?: string | null
   opening_balance_date?: string | null
@@ -299,4 +300,68 @@ export type TransactionLink = {
   label: string
   group: { id: number; title: string | null; date: string | null }
   notes: string | null
+}
+
+export type AppNotification = {
+  id: string
+  event: string
+  title: string
+  body: string
+  path: string
+  ledger_id: number | null
+  read_at: string | null
+  created_at: string
+}
+
+export type NotificationSettings = {
+  channels: string[]
+  events: Record<string, string[]>
+  quiet_hours: { start: string; end: string } | null
+  large_transaction_amount: string | number | null
+  push_public_key: string | null
+}
+
+export type RuleTrigger = { type: string; value: string | null; negated: boolean }
+export type RuleAction = { type: string; value: string | null }
+
+export type Rule = {
+  id: number
+  rule_group_id: number
+  title: string
+  description: string | null
+  trigger_on: 'store' | 'update' | 'both'
+  strict: boolean
+  stop_processing: boolean
+  active: boolean
+  order: number
+  triggers: RuleTrigger[]
+  actions: RuleAction[]
+}
+
+export type RuleGroup = {
+  id: number
+  title: string
+  description: string | null
+  order: number
+  active: boolean
+  stop_processing: boolean
+  rules: Rule[]
+}
+
+export type RuleOptions = {
+  triggers: Array<{ type: string; needs_value: boolean }>
+  actions: Array<{ type: string; needs_value: boolean }>
+}
+
+export type Webhook = { id: number; title: string; url: string; events: string[]; active: boolean; created_at: string }
+
+export type WebhookDelivery = {
+  id: number
+  event: string
+  status_code: number | null
+  attempts: number
+  response: string | null
+  delivered_at: string | null
+  failed_at: string | null
+  created_at: string
 }
