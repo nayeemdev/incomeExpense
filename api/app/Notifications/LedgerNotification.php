@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\User;
+use App\Notifications\Channels\NtfyChannel;
 use App\Support\NotificationPreferences;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,6 +28,15 @@ abstract class LedgerNotification extends Notification implements ShouldQueue
 
     abstract public function path(): string;
 
+    /**
+     * The title sent to ntfy. In private mode it must not reveal amounts, since a public ntfy topic
+     * can be read by anyone who knows its name.
+     */
+    public function ntfyTitle(bool $private): string
+    {
+        return $this->title();
+    }
+
     public function ledgerId(): ?int
     {
         return null;
@@ -42,7 +52,11 @@ abstract class LedgerNotification extends Notification implements ShouldQueue
         }
 
         return array_map(
-            fn (string $channel) => $channel === 'webpush' ? WebPushChannel::class : $channel,
+            fn (string $channel) => match ($channel) {
+                'webpush' => WebPushChannel::class,
+                'ntfy' => NtfyChannel::class,
+                default => $channel,
+            },
             NotificationPreferences::for($notifiable)->channelsNow($this->event()),
         );
     }

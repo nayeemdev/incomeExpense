@@ -20,7 +20,8 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'is_admin' => $this->is_admin,
             'two_factor_enabled' => $this->hasTwoFactorEnabled(),
-            'preferences' => $this->resolvedPreferences(),
+            // ntfy settings, including its token, are only shown through the notification settings.
+            'preferences' => array_diff_key($this->resolvedPreferences(), ['ntfy' => true]),
             'created_at' => $this->created_at,
         ];
     }

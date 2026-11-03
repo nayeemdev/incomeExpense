@@ -19,6 +19,11 @@ class LargeTransactionNotification extends LedgerNotification
         return $this->transaction->ledger_id;
     }
 
+    public function ntfyTitle(bool $private): string
+    {
+        return $private ? __('Large transaction recorded') : $this->title();
+    }
+
     public function title(): string
     {
         return __('Large transaction: :amount :currency', [
