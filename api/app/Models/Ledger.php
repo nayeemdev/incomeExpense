@@ -47,6 +47,46 @@ class Ledger extends Model
         return $this->hasMany(LedgerInvitation::class);
     }
 
+    /**
+     * @return HasMany<Account, $this>
+     */
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+
+    /**
+     * @return HasMany<Category, $this>
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    /**
+     * @return HasMany<Tag, $this>
+     */
+    public function tags(): HasMany
+    {
+        return $this->hasMany(Tag::class);
+    }
+
+    /**
+     * @return HasMany<TransactionGroup, $this>
+     */
+    public function transactionGroups(): HasMany
+    {
+        return $this->hasMany(TransactionGroup::class);
+    }
+
+    /**
+     * @return HasMany<Transaction, $this>
+     */
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     public function roleOf(User $user): ?LedgerRole
     {
         if (! array_key_exists($user->id, $this->roleCache)) {
