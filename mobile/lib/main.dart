@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'app/preferences.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'features/auth/lock.dart';
 import 'features/auth/session.dart';
+import 'features/notifications/background_alerts.dart';
 import 'shared/widgets.dart';
 
-void main() => runApp(const ProviderScope(child: LedgerFlyApp()));
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Workmanager().initialize(alertsDispatcher);
+  runApp(const ProviderScope(child: LedgerFlyApp()));
+}
 
 class LedgerFlyApp extends ConsumerWidget {
   const LedgerFlyApp({super.key});

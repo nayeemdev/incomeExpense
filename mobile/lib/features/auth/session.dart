@@ -20,18 +20,20 @@ class Session {
 
 class TwoFactorRequired implements Exception {}
 
+Future<Session?> readSession(FlutterSecureStorage storage) async {
+  final server = await storage.read(key: _serverKey);
+  final token = await storage.read(key: _tokenKey);
+  if (server == null || token == null) return null;
+  return Session(serverUrl: server, token: token);
+}
+
 final sessionProvider = AsyncNotifierProvider<SessionNotifier, Session?>(SessionNotifier.new);
 
 class SessionNotifier extends AsyncNotifier<Session?> {
   FlutterSecureStorage get _storage => ref.read(storageProvider);
 
   @override
-  Future<Session?> build() async {
-    final server = await _storage.read(key: _serverKey);
-    final token = await _storage.read(key: _tokenKey);
-    if (server == null || token == null) return null;
-    return Session(serverUrl: server, token: token);
-  }
+  Future<Session?> build() => readSession(_storage);
 
   Future<String?> lastServer() => _storage.read(key: _serverKey);
 

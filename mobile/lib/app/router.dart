@@ -14,6 +14,7 @@ import '../features/goals/goals_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/ledger/ledger.dart';
 import '../features/ledger/ledger_data.dart';
+import '../features/notifications/background_alerts.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/planning/planning_screen.dart';
 import '../features/settings/settings_screen.dart';
@@ -145,7 +146,7 @@ class _Shell extends ConsumerWidget {
       AsyncValue(hasValue: true, :final value?) => Consumer(
         builder: (context, ref, child) {
           ref.watch(widgetSyncProvider);
-          return OutboxSync(child: child!);
+          return OutboxSync(child: AlertTaps(child: child!));
         },
         child: Scaffold(
           extendBody: true,
