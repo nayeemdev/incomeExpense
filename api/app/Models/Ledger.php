@@ -38,7 +38,7 @@ class Ledger extends Model
     {
         return $this->belongsToMany(User::class)
             ->using(LedgerMember::class)
-            ->withPivot('role', 'default_account_id')
+            ->withPivot('role', 'default_account_id', 'default_income_account_id')
             ->withTimestamps();
     }
 

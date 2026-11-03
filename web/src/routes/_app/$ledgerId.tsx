@@ -55,7 +55,7 @@ function LedgerLayout() {
             <SidebarTrigger className="-ml-1" />
             <Button
               variant="outline"
-              className="text-muted-foreground w-full max-w-sm justify-start gap-2 font-normal"
+              className="text-muted-foreground w-full min-w-0 max-w-sm shrink justify-start gap-2 font-normal"
               onClick={() => setPaletteOpen(true)}
             >
               <SearchIcon />

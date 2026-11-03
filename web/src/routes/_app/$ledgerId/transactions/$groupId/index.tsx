@@ -92,7 +92,7 @@ function TransactionDetail() {
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_20rem]">
         <div className="space-y-4">
           {group.transactions.map((transaction) => (
             <Card key={transaction.id}>
@@ -108,7 +108,7 @@ function TransactionDetail() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+                <dl className="grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
                   <div>
                     <dt className="text-muted-foreground">{t('From')}</dt>
                     <dd>{accountLink(transaction.source)}</dd>

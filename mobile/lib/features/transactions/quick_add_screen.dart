@@ -49,6 +49,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
   String _notes = '';
   String? _receipt;
   bool _saving = false;
+  bool _pickedAccount = false;
 
   Transaction? get _editing => widget.group?.splits.first;
 
@@ -57,8 +58,12 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     super.initState();
     final existing = _editing;
     if (existing == null) {
-      _fromId = ref.read(currentLedgerProvider).defaultAccountId;
-      _toId = _type == 'deposit' ? _fromId : null;
+      final own = ref.read(currentLedgerProvider).defaultAccountFor(_type);
+      if (_type == 'deposit') {
+        _toId = own;
+      } else {
+        _fromId = own;
+      }
       if ((double.tryParse(widget.amount ?? '') ?? 0) > 0) _amount = widget.amount!;
       _title.text = widget.title ?? '';
       return;
@@ -88,7 +93,10 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
 
   int? get _ownAccountId => _type == 'deposit' ? _toId : _fromId;
 
-  void _setOwnAccount(int id) => setState(() => _type == 'deposit' ? _toId = id : _fromId = id);
+  void _setOwnAccount(int id) => setState(() {
+    _pickedAccount = true;
+    _type == 'deposit' ? _toId = id : _fromId = id;
+  });
 
   void _applyPick(Transaction pick) {
     setState(() {
@@ -209,7 +217,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                   value: _type,
                   colors: {'withdrawal': palette.negative, 'deposit': palette.positive, 'transfer': palette.primary},
                   onChanged: (type) => setState(() {
-                    final own = _ownAccountId;
+                    final own = (_pickedAccount ? null : ref.read(currentLedgerProvider).defaultAccountFor(type)) ?? _ownAccountId;
                     _type = type;
                     if (type == 'deposit') _toId = own;
                     if (type == 'withdrawal') _fromId = own;

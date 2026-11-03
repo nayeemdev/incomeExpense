@@ -118,7 +118,7 @@ function AccountDetail() {
       />
 
       {own && (
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="stat-grid mb-6">
           <Card>
             <CardHeader>
               <CardDescription>{t('Current balance')}</CardDescription>
@@ -157,7 +157,7 @@ function AccountDetail() {
 
       {account.notes && <p className="text-muted-foreground mb-6 text-sm whitespace-pre-line">{account.notes}</p>}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_20rem]">
         <div>
           <TransactionList
             transactions={transactions?.data}

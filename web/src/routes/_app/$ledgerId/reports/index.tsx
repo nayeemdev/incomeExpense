@@ -135,7 +135,7 @@ function Overview({ start, end }: { start: string; end: string }) {
   return (
     <div className="space-y-4">
       <Incomplete meta={meta} />
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="stat-grid">
         {[
           [t('Income'), income, 'none'],
           [t('Expenses'), expense, 'none'],
@@ -151,7 +151,7 @@ function Overview({ start, end }: { start: string; end: string }) {
           </Card>
         ))}
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t('Income and expenses')}</CardTitle>
@@ -169,7 +169,7 @@ function Overview({ start, end }: { start: string; end: string }) {
           </CardContent>
         </Card>
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <CategoryList title={t('Where the money went')} rows={report.expense_categories} currency={currency} />
         <CategoryList title={t('Where the money came from')} rows={report.income_categories} currency={currency} />
       </div>

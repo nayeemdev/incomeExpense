@@ -74,7 +74,7 @@ export function RuleEditor({ groups, groupId, rule, onDone }: RuleEditorProps) {
           <Input id="rule-title" autoFocus value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} />
           {errors.title && <FieldError>{errors.title[0]}</FieldError>}
         </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field>
             <FieldLabel>{t('Group')}</FieldLabel>
             <SelectField

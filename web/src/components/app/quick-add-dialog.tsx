@@ -9,7 +9,7 @@ import { transactionGroupQuery } from '@/lib/api/queries'
 import { FormDialog } from './form-dialog'
 import type { QuickAddDefaults } from './quick-add-context'
 import { TransactionForm } from './transaction-form'
-import { emptySplit, groupToFormValues, newTransactionValues } from './transaction-form-values'
+import { defaultOwnAccount, emptySplit, groupToFormValues, newTransactionValues } from './transaction-form-values'
 
 type QuickAddDialogProps = {
   open: boolean
@@ -27,7 +27,7 @@ export function QuickAddDialog({ open, onOpenChange, defaults }: QuickAddDialogP
   const save = useSaveTransaction(ledger.id, defaults.groupId)
   const { data: group } = useQuery({ ...transactionGroupQuery(ledger.id, defaults.groupId ?? 0), enabled: open && editing })
   const type = defaults.type === 'deposit' || defaults.type === 'transfer' ? defaults.type : 'withdrawal'
-  const accountId = defaults.accountId ?? ledger.default_account_id ?? undefined
+  const accountId = defaults.accountId ?? defaultOwnAccount(ledger, type)
 
   const values = useMemo(() => {
     if (editing) return group ? groupToFormValues(group) : null

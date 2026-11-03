@@ -78,7 +78,7 @@ export function ExchangeRateSettings() {
         <CardContent className="space-y-6">
           {canEdit && (
             <form
-              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_10rem_8rem_auto] lg:items-end"
+              className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_10rem_8rem_auto] lg:items-end"
               onSubmit={(event) => {
                 event.preventDefault()
                 add.mutate()

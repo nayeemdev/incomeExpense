@@ -52,7 +52,7 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Ledger::class)
             ->using(LedgerMember::class)
-            ->withPivot('role', 'default_account_id')
+            ->withPivot('role', 'default_account_id', 'default_income_account_id')
             ->withTimestamps();
     }
 

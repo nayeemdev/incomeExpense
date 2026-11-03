@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { Account, SplitInput, Transaction, TransactionGroup, TransactionGroupInput } from '@/lib/api/types'
+import type { Account, Ledger, SplitInput, Transaction, TransactionGroup, TransactionGroupInput } from '@/lib/api/types'
 import { todayIso } from '@/lib/format'
 import { isCounterparty, type AccountChoice } from '@/lib/transactions'
 
@@ -56,6 +56,13 @@ export function emptySplit(overrides: Partial<SplitValues> = {}): SplitValues {
     ...overrides,
   }
 }
+
+/** Where new money comes from or goes to when the member has not picked an account yet. */
+export function defaultOwnAccount(ledger: Pick<Ledger, 'default_account_id' | 'default_income_account_id'>, type: EditableType) {
+  return (type === 'deposit' ? (ledger.default_income_account_id ?? ledger.default_account_id) : ledger.default_account_id) ?? undefined
+}
+
+export const ownSideOf = (type: EditableType) => (type === 'deposit' ? 'destination' : 'source')
 
 export function newTransactionValues(type: EditableType = 'withdrawal', accountId?: number): TransactionFormValues {
   const own = accountId ? { id: accountId } : null

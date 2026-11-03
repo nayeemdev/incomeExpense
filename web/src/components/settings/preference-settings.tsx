@@ -6,10 +6,8 @@ import { Combobox } from '@/components/app/combobox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { useLedger } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
-import { useInvalidateLedger } from '@/lib/api/mutations'
-import { accountsQuery, userQuery } from '@/lib/api/queries'
+import { userQuery } from '@/lib/api/queries'
 import type { Preferences } from '@/lib/api/types'
 import { notifyError } from '@/lib/forms'
 
@@ -19,25 +17,13 @@ export function PreferenceSettings() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
   const { setTheme } = useTheme()
-  const ledger = useLedger()
-  const invalidateLedger = useInvalidateLedger(ledger.id)
   const { data: user } = useQuery(userQuery)
-  const { data: accounts = [] } = useQuery({ ...accountsQuery(ledger.id, { type: ['asset'], active: true }), select: (page) => page.data })
 
   const update = useMutation({
     mutationFn: (patch: Partial<Preferences>) => api.patch('/user/preferences', patch),
     onMutate: (patch) => patch.theme && setTheme(patch.theme),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: userQuery.queryKey })
-      toast.success(t('Preferences saved'))
-    },
-    onError: notifyError,
-  })
-
-  const updateDefaultAccount = useMutation({
-    mutationFn: (accountId: number | null) => api.patch(`/ledgers/${ledger.id}/membership`, { default_account_id: accountId }),
-    onSuccess: async () => {
-      await invalidateLedger()
       toast.success(t('Preferences saved'))
     },
     onError: notifyError,
@@ -103,21 +89,6 @@ export function PreferenceSettings() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('Quick entry in {{ledger}}', { ledger: ledger.name })}</CardTitle>
-          <CardDescription>{t('The account new expenses come from when you do not pick one, for example from a widget.')}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Combobox
-            className="max-w-sm"
-            options={accounts.map((account) => ({ value: String(account.id), label: account.name, hint: account.currency?.code }))}
-            value={ledger.default_account_id ? String(ledger.default_account_id) : null}
-            onChange={(value) => updateDefaultAccount.mutate(value ? Number(value) : null)}
-            placeholder={t('First asset account')}
-          />
-        </CardContent>
-      </Card>
     </div>
   )
 }
