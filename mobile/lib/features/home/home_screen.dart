@@ -171,7 +171,7 @@ class _HomeBody extends ConsumerWidget {
         const SizedBox(height: 16),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: _GoalCard(goals)),
         if (summary.topCategories.isNotEmpty) ...[
-          SectionHeader('Top spending', action: 'Analytics', onAction: () => context.go('/analytics')),
+          SectionHeader('Top spending', action: 'Reports', onAction: () => context.go('/analytics')),
           for (final row in summary.topCategories.take(4))
             ListRow(
               leading: CategoryIcon(icon: row.icon, color: row.color),
@@ -180,7 +180,7 @@ class _HomeBody extends ConsumerWidget {
               trailing: MoneyText(row.amount.value, row.amount.currency, tone: MoneyTone.none),
             ),
         ],
-        SectionHeader('History', action: 'See all', onAction: () => context.push('/transactions')),
+        SectionHeader('Recent transactions', action: 'See all', onAction: () => context.push('/transactions')),
         switch (recent) {
           AsyncValue(hasValue: true, :final value?) when value.items.isEmpty => const EmptyState(
             icon: LucideIcons.receipt,

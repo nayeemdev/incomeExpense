@@ -12,13 +12,13 @@ import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
 import '../transactions/transaction_list.dart';
 
-const _types = {'asset': 'Assets', 'liability': 'Debts', 'expense': 'Payees', 'revenue': 'Payers'};
+const _types = {'asset': 'Assets', 'liability': 'Liabilities', 'expense': 'Expense', 'revenue': 'Revenue'};
 
 const _descriptions = {
-  'asset': 'Bank accounts, cash and cards you hold.',
-  'liability': 'Loans and debts, both what you owe and what you are owed.',
-  'expense': 'Shops and people you pay. Created as you record expenses.',
-  'revenue': 'Employers and others who pay you.',
+  'asset': 'Bank accounts, cards and cash you hold. Their balances add up to your net worth.',
+  'liability': 'Loans and debts in both directions: money you owe, and money owed to you.',
+  'expense': 'Shops, services and people you pay. Each is created the first time you pay them.',
+  'revenue': 'Employers, clients and people who pay you. Each is created the first time they pay you.',
 };
 
 const _roleLabels = {

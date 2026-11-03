@@ -36,7 +36,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('History')),
+      appBar: AppBar(title: const Text('Transactions')),
       body: TransactionList(
         filter: (query: _query, type: _type.isEmpty ? null : _type, accountId: null),
         header: [

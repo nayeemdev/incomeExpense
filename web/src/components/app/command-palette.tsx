@@ -9,7 +9,7 @@ import {
   FolderIcon,
   LayoutDashboardIcon,
   PieChartIcon,
-  PiggyBankIcon,
+  TargetIcon,
   ReceiptIcon,
   RepeatIcon,
   SettingsIcon,
@@ -109,8 +109,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             {t('Bills')}
           </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/piggy-banks', params: { ledgerId } }))}>
-            <PiggyBankIcon />
-            {t('Piggy banks')}
+            <TargetIcon />
+            {t('Goals')}
           </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/recurring', params: { ledgerId } }))}>
             <RepeatIcon />

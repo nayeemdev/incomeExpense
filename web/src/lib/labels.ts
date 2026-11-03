@@ -95,7 +95,7 @@ export const notificationEventLabels = (): Record<string, string> => ({
   large_transaction: t('Large transaction'),
   low_balance: t('Low account balance'),
   recurring_created: t('Recurring transaction recorded'),
-  piggy_bank_reached: t('Piggy bank goal reached'),
+  piggy_bank_reached: t('Goal reached'),
   rule_matched: t('Rule with a notify action matched'),
   webhook_failing: t('Webhook failing'),
   weekly_summary: t('Weekly summary'),
