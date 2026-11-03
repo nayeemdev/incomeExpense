@@ -95,3 +95,25 @@ it('only imports into own accounts of the ledger', function () {
         'account_id' => Account::factory()->create()->id, 'columns' => ['date' => 0, 'amount' => 1],
     ])->assertJsonValidationErrors('account_id');
 });
+
+it('offers a template whose columns map themselves', function () {
+    $ledger = actingAsMember();
+    $checking = Account::factory()->for($ledger)->currency('USD')->create();
+
+    $template = $this->get("/api/v1/ledgers/{$ledger->id}/imports/template.csv")->assertOk()->streamedContent();
+    expect(trim($template))->toBe('date,description,amount,payee,category,tags,notes,reference');
+
+    $job = upload($ledger, 'filled.csv', $template."2026-03-01,Groceries,-42.10,Market,Food,\"weekly,home\",,R-1\n");
+
+    expect($job['suggested_columns'])->toBe([
+        'date' => 0, 'description' => 1, 'amount' => 2, 'counterparty' => 3,
+        'category' => 4, 'notes' => 6, 'tags' => 5, 'external_id' => 7,
+    ]);
+
+    $this->postJson("/api/v1/ledgers/{$ledger->id}/imports/{$job['id']}/run", ['account_id' => $checking->id, 'columns' => $job['suggested_columns']])->assertOk();
+
+    expect(Transaction::sole())
+        ->category->name->toBe('Food')
+        ->external_id->toBe('R-1')
+        ->tags->pluck('name')->all()->toBe(['weekly', 'home']);
+});

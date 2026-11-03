@@ -144,6 +144,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::post('transactions/bulk', BulkTransactionController::class);
                 Route::get('imports', [ImportController::class, 'index']);
                 Route::post('imports', [ImportController::class, 'store']);
+                Route::get('imports/template.csv', [ImportController::class, 'template']);
                 Route::get('imports/{import}', [ImportController::class, 'show']);
                 Route::post('imports/{import}/preview', [ImportController::class, 'preview']);
                 Route::post('imports/{import}/run', [ImportController::class, 'run']);

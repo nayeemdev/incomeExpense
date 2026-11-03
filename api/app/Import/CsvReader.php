@@ -13,6 +13,20 @@ class CsvReader
 {
     public const array FIELDS = ['date', 'description', 'amount', 'debit', 'credit', 'counterparty', 'category', 'notes', 'tags', 'external_id'];
 
+    /**
+     * Columns of the downloadable template, keyed by the field each one maps to.
+     */
+    public const array TEMPLATE = [
+        'date' => 'date',
+        'description' => 'description',
+        'amount' => 'amount',
+        'counterparty' => 'payee',
+        'category' => 'category',
+        'tags' => 'tags',
+        'notes' => 'notes',
+        'external_id' => 'reference',
+    ];
+
     public const array DATE_FORMATS = ['Y-m-d', 'd/m/Y', 'm/d/Y', 'd.m.Y', 'd-m-Y', 'Y/m/d', 'd/m/y', 'm/d/y', 'j M Y', 'M j, Y', 'Ymd'];
 
     /**
