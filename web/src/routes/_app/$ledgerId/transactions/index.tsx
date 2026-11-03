@@ -74,6 +74,7 @@ function Transactions() {
     <>
       <PageHeader
         title={t('Transactions')}
+        description={t('Every expense, income and transfer. Search with filters, or select several to change them at once.')}
         actions={
           canEdit && (
             <>

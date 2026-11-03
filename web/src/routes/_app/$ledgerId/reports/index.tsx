@@ -83,7 +83,7 @@ function Reports() {
     <>
       <PageHeader
         title={t('Reports')}
-        description={t('All amounts in {{currency}}.', { currency: ledger.primary_currency.code })}
+        description={t('Where your money comes from and where it goes, over any period. All amounts in {{currency}}.', { currency: ledger.primary_currency.code })}
         actions={
           <div className="flex flex-wrap items-center gap-2 print:hidden">
             <RangePicker start={start} end={end} onChange={(range) => update(range)} />

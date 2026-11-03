@@ -55,7 +55,7 @@ function Budgets() {
     <>
       <PageHeader
         title={t('Budgets')}
-        description={new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current)}
+        description={t('Decide how much to spend on each part of life and see what is left. Showing {{month}}.', { month: new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current) })}
         actions={
           <>
             <MonthSwitcher isCurrent={!month} onChange={(offset) => navigate({ search: offset === null ? {} : { month: shift(offset) } })} />
@@ -198,7 +198,7 @@ function Budgets() {
         open={limitFor !== null}
         onOpenChange={(open) => !open && setLimitFor(null)}
         title={t('Budget for {{name}}', { name: limitFor?.name })}
-        description={new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current)}
+        description={t('Decide how much to spend on each part of life and see what is left. Showing {{month}}.', { month: new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current) })}
         currency={currency.code}
         initial={limitFor ? (limitOf(limitFor)?.amount ?? '') : ''}
         onSave={async (amount) => {

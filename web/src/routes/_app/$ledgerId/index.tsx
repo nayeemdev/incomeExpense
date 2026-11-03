@@ -132,7 +132,7 @@ function Dashboard() {
     <>
       <PageHeader
         title={new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current)}
-        description={ledger.name}
+        description={t('{{ledger}}: how this month is going at a glance.', { ledger: ledger.name })}
         actions={
           <div className="flex items-center gap-2">
             <MonthSwitcher isCurrent={!month} onChange={(offset) => navigate({ search: offset === null ? {} : { month: shift(offset) } })} />

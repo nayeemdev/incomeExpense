@@ -143,7 +143,12 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
             <FormField control={form.control} name="liability_type" label={t('Kind')}>
               {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={liabilityTypeLabels()} />}
             </FormField>
-            <FormField control={form.control} name="liability_direction" label={t('Direction')}>
+            <FormField
+              control={form.control}
+              name="liability_direction"
+              label={t('Direction')}
+              description={t('Choose "I am owed this" for money you lent to someone.')}
+            >
               {(field) => (
                 <SelectField id={field.id} value={field.value} onChange={field.onChange} options={liabilityDirectionLabels()} />
               )}
