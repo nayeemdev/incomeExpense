@@ -386,3 +386,39 @@ export type OverviewReport = {
 export type ExchangeRate = { id: number; from: string; to: string; date: string; rate: string; manual: boolean }
 
 export type SearchToken = { key: string; value: string; negated: boolean }
+
+export type ImportConfig = {
+  account_id?: number
+  columns?: Record<string, number | null>
+  has_header?: boolean
+  date_format?: string | null
+  decimal_separator?: string | null
+  negate?: boolean
+  skip_duplicates?: boolean
+  apply_rules?: boolean
+}
+
+export type ImportJob = {
+  id: number
+  filename: string
+  format: 'csv' | 'camt053'
+  status: 'uploaded' | 'queued' | 'running' | 'completed' | 'failed'
+  config: ImportConfig | null
+  stats: { created: number; duplicates: number; failed: number; failures: Array<{ line: number; message: string }> } | null
+  error: string | null
+  created_at: string
+  completed_at: string | null
+  sample?: string[][]
+  suggested_columns?: Record<string, number>
+}
+
+export type ImportPreviewRow = {
+  line: number
+  date: string | null
+  amount: string | null
+  description: string
+  counterparty: string | null
+  category: string | null
+  errors: string[]
+  duplicate: boolean
+}

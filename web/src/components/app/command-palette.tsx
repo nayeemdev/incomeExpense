@@ -5,6 +5,7 @@ import {
   ArrowLeftRightIcon,
   ArrowUpRightIcon,
   ChartColumnIcon,
+  FileUpIcon,
   FolderIcon,
   LayoutDashboardIcon,
   PieChartIcon,
@@ -126,6 +127,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/rules', params: { ledgerId } }))}>
             <WandSparklesIcon />
             {t('Rules')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/import', params: { ledgerId } }))}>
+            <FileUpIcon />
+            {t('Import from bank')}
           </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/settings', params: { ledgerId } }))}>
             <SettingsIcon />
