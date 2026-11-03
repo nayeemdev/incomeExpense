@@ -15,12 +15,13 @@ it('changes how the instance behaves without touching .env', function () {
     Sanctum::actingAs(User::factory()->create(['is_admin' => true]), ['*']);
 
     $this->getJson('/api/v1/auth/config')->assertJsonPath('data.registration_open', false);
-    $this->patchJson('/api/v1/admin/settings', ['registration_enabled' => true, 'bill_reminder_days' => 5])
+    $this->patchJson('/api/v1/admin/settings', ['registration_enabled' => true, 'bill_reminder_days' => 5, 'ntfy_server' => 'https://ntfy.example.com'])
         ->assertOk()
         ->assertJsonPath('data.registration_enabled', true)
         ->assertJsonPath('data.bill_reminder_days', 5);
 
     $this->getJson('/api/v1/auth/config')->assertJsonPath('data.registration_open', true);
+    $this->getJson('/api/v1/notification-settings')->assertJsonPath('data.ntfy_default_server', 'https://ntfy.example.com');
     expect(config('ledgerfly.notifications.bill_reminder_days'))->toBe(5);
 });
 
