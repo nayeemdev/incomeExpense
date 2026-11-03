@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../api/models.dart';
@@ -156,7 +155,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
       refreshLedgerData(ref);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_editing ? 'Transaction updated' : 'Transaction saved')));
-        context.pop();
+        closeScreen(context);
       }
     } catch (error) {
       if (mounted) showError(context, error);
@@ -187,7 +186,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(LucideIcons.x, size: 20), tooltip: 'Close', onPressed: () => context.pop()),
+        leading: IconButton(icon: const Icon(LucideIcons.x, size: 20), tooltip: 'Close', onPressed: () => closeScreen(context)),
         title: Text(_editing ? 'Edit transaction' : 'Split transaction'),
       ),
       body: AsyncView(

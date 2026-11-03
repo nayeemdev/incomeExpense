@@ -144,7 +144,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
       refreshLedgerData(ref);
       if (mounted) {
         showToast(context, widget.group == null ? '${_types[_type]} saved' : 'Transaction updated');
-        context.pop();
+        closeScreen(context);
       }
     } catch (error) {
       if (mounted) showError(context, error);
@@ -171,7 +171,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(LucideIcons.x, size: 22), tooltip: 'Close', onPressed: () => context.pop()),
+        leading: IconButton(icon: const Icon(LucideIcons.x, size: 22), tooltip: 'Close', onPressed: () => closeScreen(context)),
         title: Text(widget.group == null ? 'New transaction' : 'Edit transaction'),
         actions: [
           if (widget.group == null)
