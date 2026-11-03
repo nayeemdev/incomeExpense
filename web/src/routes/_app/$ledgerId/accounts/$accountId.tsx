@@ -1,12 +1,15 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { PencilIcon, PlusIcon, ScaleIcon, Trash2Icon } from 'lucide-react'
+import { toast } from 'sonner'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { AccountForm } from '@/components/app/account-form'
 import { Attachments } from '@/components/app/attachments'
 import { ConfirmDialog } from '@/components/app/confirm-dialog'
+import { DatePicker } from '@/components/app/date-picker'
+import { AmountDialog } from '@/components/planning/amount-dialog'
 import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
 import { Pagination } from '@/components/app/pagination'
@@ -21,6 +24,7 @@ import { useCanEdit, useLedger } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
 import { useInvalidateLedger } from '@/lib/api/mutations'
 import { accountQuery, transactionsQuery } from '@/lib/api/queries'
+import { todayIso } from '@/lib/format'
 import { notifyError } from '@/lib/forms'
 import { accountTypeSingular, assetRoleLabels, liabilityDirectionLabels, liabilityTypeLabels } from '@/lib/labels'
 
@@ -37,6 +41,8 @@ function AccountDetail() {
   const quickAdd = useQuickAdd()
   const invalidate = useInvalidateLedger(ledger.id)
   const [editing, setEditing] = useState(false)
+  const [reconciling, setReconciling] = useState(false)
+  const [reconcileDate, setReconcileDate] = useState(todayIso())
   const accountId = Number(Route.useParams().accountId)
   const { page = 1 } = Route.useSearch()
   const { data: account } = useQuery(accountQuery(ledger.id, accountId))
@@ -82,6 +88,12 @@ function AccountDetail() {
                 <Button onClick={() => quickAdd({ accountId: account.id, type: account.type === 'asset' ? 'withdrawal' : 'deposit' })}>
                   <PlusIcon />
                   {t('Add transaction')}
+                </Button>
+              )}
+              {own && (
+                <Button variant="outline" onClick={() => setReconciling(true)}>
+                  <ScaleIcon />
+                  {t('Reconcile')}
                 </Button>
               )}
               <Button variant="outline" onClick={() => setEditing(true)}>
@@ -161,6 +173,23 @@ function AccountDetail() {
           <Attachments type="account" id={account.id} />
         </div>
       </div>
+
+      <AmountDialog
+        open={reconciling}
+        onOpenChange={setReconciling}
+        title={t('Reconcile {{name}}', { name: account.name })}
+        description={t('Enter the balance from your statement. Any difference is recorded as a reconciliation.')}
+        currency={currency}
+        initial={account.balance ?? ''}
+        allowNegative
+        onSave={async (balance) => {
+          await api.post(`/ledgers/${ledger.id}/accounts/${account.id}/reconcile`, { date: reconcileDate, balance })
+          await invalidate()
+          toast.success(t('Account reconciled'))
+        }}
+      >
+        <DatePicker value={reconcileDate} onChange={(date) => setReconcileDate(date ?? todayIso())} />
+      </AmountDialog>
 
       <Sheet open={editing} onOpenChange={setEditing}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-lg">

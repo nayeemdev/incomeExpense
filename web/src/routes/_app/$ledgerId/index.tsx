@@ -1,22 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { addMonths, endOfMonth, format, parse, startOfMonth } from 'date-fns'
-import { ArrowRightIcon, ChevronLeftIcon, ChevronRightIcon, PlusIcon } from 'lucide-react'
+import { ArrowRightIcon, PlusIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Money } from '@/components/app/money'
+import { MonthSwitcher } from '@/components/app/month-switcher'
 import { PageHeader } from '@/components/app/page-header'
 import { useQuickAdd } from '@/components/app/quick-add-context'
 import { TransactionList } from '@/components/app/transaction-list'
+import { BillStatus } from '@/components/planning/bill-status'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
-import { summaryQuery, transactionsQuery } from '@/lib/api/queries'
+import { billsQuery, summaryQuery, transactionsQuery } from '@/lib/api/queries'
+import { todayIso } from '@/lib/format'
 import type { CurrencyAmount } from '@/lib/api/types'
-import { toIsoDate } from '@/lib/format'
+import { monthRange } from '@/lib/period'
 import { assetRoleLabels } from '@/lib/labels'
 
 export const Route = createFileRoute('/_app/$ledgerId/')({
@@ -48,16 +50,17 @@ function Dashboard() {
   const roles = assetRoleLabels()
   const { month } = Route.useSearch()
   const [today] = useState(() => new Date())
-  const current = month ? parse(month, 'yyyy-MM', today) : today
-  const start = toIsoDate(startOfMonth(current))
-  const end = toIsoDate(endOfMonth(current))
+  const { current, start, end, shift } = monthRange(month, today)
   const ledgerId = String(ledger.id)
   const currency = ledger.primary_currency.code
 
   const { data: summary } = useQuery(summaryQuery(ledger.id, start, end))
+  const { data: bills } = useQuery({
+    ...billsQuery(ledger.id, start, end),
+    select: (items) => items.filter((bill) => bill.active && (bill.expected_dates?.length ?? 0) > (bill.payments?.length ?? 0)),
+  })
   const { data: recent } = useQuery({ ...transactionsQuery(ledger.id, { start, end }), select: (page) => page.data.slice(0, 8) })
 
-  const goToMonth = (offset: number) => navigate({ search: { month: format(addMonths(current, offset), 'yyyy-MM') } })
   const maxCategory = Math.max(...(summary?.top_categories.map((item) => Number(item.amount)) ?? [0]), 1)
 
   if (summary && summary.accounts.length === 0 && canEdit) {
@@ -85,17 +88,7 @@ function Dashboard() {
         title={new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current)}
         description={ledger.name}
         actions={
-          <div className="flex items-center gap-1">
-            <Button variant="outline" size="icon" aria-label={t('Previous month')} onClick={() => goToMonth(-1)}>
-              <ChevronLeftIcon />
-            </Button>
-            <Button variant="outline" onClick={() => navigate({ search: {} })} disabled={!month}>
-              {t('This month')}
-            </Button>
-            <Button variant="outline" size="icon" aria-label={t('Next month')} onClick={() => goToMonth(1)}>
-              <ChevronRightIcon />
-            </Button>
-          </div>
+          <MonthSwitcher isCurrent={!month} onChange={(offset) => navigate({ search: offset === null ? {} : { month: shift(offset) } })} />
         }
       />
 
@@ -179,6 +172,30 @@ function Dashboard() {
               ))}
             </CardContent>
           </Card>
+
+          {bills && bills.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('Bills to pay')}</CardTitle>
+                <CardAction>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/$ledgerId/bills" params={{ ledgerId }} search={month ? { month } : {}}>
+                      {t('View all')}
+                      <ArrowRightIcon />
+                    </Link>
+                  </Button>
+                </CardAction>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {bills.map((bill) => (
+                  <div key={bill.id} className="flex items-center justify-between gap-2 text-sm">
+                    <span className="min-w-0 truncate">{bill.name}</span>
+                    <BillStatus bill={bill} today={todayIso()} />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>
