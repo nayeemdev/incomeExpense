@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import type { AccountType, AssetRole, LedgerRole, LiabilityDirection, LiabilityType, TransactionType } from './api/types'
+import type { AccountType, AutoBudgetType, Frequency, RepetitionType, WeekendHandling, AssetRole, LedgerRole, LiabilityDirection, LiabilityType, TransactionType } from './api/types'
 
 const t = (key: string) => i18n.t(key)
 
@@ -48,4 +48,34 @@ export const roleLabels = (): Record<LedgerRole, string> => ({
   owner: t('Owner'),
   editor: t('Editor'),
   viewer: t('Viewer'),
+})
+
+export const frequencyLabels = (): Record<Frequency, string> => ({
+  daily: t('Daily'),
+  weekly: t('Weekly'),
+  monthly: t('Monthly'),
+  quarterly: t('Quarterly'),
+  half_year: t('Every half year'),
+  yearly: t('Yearly'),
+})
+
+export const autoBudgetLabels = (): Record<AutoBudgetType, string> => ({
+  reset: t('Same amount every period'),
+  rollover: t('Carry over what is left'),
+  adjusted: t('Subtract overspending'),
+})
+
+export const repetitionLabels = (): Record<RepetitionType, string> => ({
+  daily: t('Every day'),
+  weekly: t('Every week'),
+  monthly: t('Every month'),
+  ndom: t('Every month on a weekday'),
+  yearly: t('Every year'),
+})
+
+export const weekendLabels = (): Record<WeekendHandling, string> => ({
+  keep: t('Keep the date'),
+  skip: t('Skip it'),
+  before: t('Move to the Friday before'),
+  after: t('Move to the Monday after'),
 })

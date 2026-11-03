@@ -4,6 +4,13 @@ import type {
   Account,
   AccountType,
   Attachment,
+  AvailableBudget,
+  Bill,
+  Budget,
+  LinkType,
+  PiggyBank,
+  Recurrence,
+  TransactionLink,
   Category,
   Currency,
   Ledger,
@@ -22,6 +29,8 @@ import type {
 
 export type TransactionFilters = {
   account_id?: number
+  budget_id?: number
+  bill_id?: number
   category_id?: number
   tag_id?: number
   type?: TransactionType[]
@@ -142,3 +151,72 @@ export const tokensQuery = queryOptions({
   queryKey: ['tokens'],
   queryFn: () => api.get<Resource<PersonalAccessToken[]>>('/tokens').then((r) => r.data),
 })
+
+export const budgetsQuery = (ledgerId: number, start: string, end: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'budgets', start, end],
+    queryFn: () => api.get<Resource<Budget[]>>(`/ledgers/${ledgerId}/budgets`, { start, end }).then((r) => r.data),
+    placeholderData: keepPreviousData,
+  })
+
+export const budgetQuery = (ledgerId: number, budgetId: number, start: string, end: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'budgets', 'detail', budgetId, start, end],
+    queryFn: () => api.get<Resource<Budget>>(`/ledgers/${ledgerId}/budgets/${budgetId}`, { start, end }).then((r) => r.data),
+  })
+
+export const activeBudgetsQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'budgets', 'active'],
+    queryFn: () => api.get<Resource<Budget[]>>(`/ledgers/${ledgerId}/budgets`, { active: 1 }).then((r) => r.data),
+  })
+
+export const availableBudgetsQuery = (ledgerId: number, start: string, end: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'available-budgets', start, end],
+    queryFn: () => api.get<Resource<AvailableBudget[]>>(`/ledgers/${ledgerId}/available-budgets`, { start, end }).then((r) => r.data),
+  })
+
+export const billsQuery = (ledgerId: number, start?: string, end?: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'bills', start, end],
+    queryFn: () => api.get<Resource<Bill[]>>(`/ledgers/${ledgerId}/bills`, { start, end }).then((r) => r.data),
+    placeholderData: keepPreviousData,
+  })
+
+export const piggyBanksQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'piggy-banks'],
+    queryFn: () => api.get<Resource<PiggyBank[]>>(`/ledgers/${ledgerId}/piggy-banks`).then((r) => r.data),
+  })
+
+export const piggyBankQuery = (ledgerId: number, piggyBankId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'piggy-banks', 'detail', piggyBankId],
+    queryFn: () => api.get<Resource<PiggyBank>>(`/ledgers/${ledgerId}/piggy-banks/${piggyBankId}`).then((r) => r.data),
+  })
+
+export const recurrencesQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'recurrences'],
+    queryFn: () => api.get<Resource<Recurrence[]>>(`/ledgers/${ledgerId}/recurrences`).then((r) => r.data),
+  })
+
+export const linkTypesQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'link-types'],
+    queryFn: () => api.get<Resource<LinkType[]>>(`/ledgers/${ledgerId}/link-types`).then((r) => r.data),
+    staleTime: Infinity,
+  })
+
+export const transactionLinksQuery = (ledgerId: number, groupId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'transactions', 'links', groupId],
+    queryFn: () => api.get<Resource<TransactionLink[]>>(`/ledgers/${ledgerId}/transactions/${groupId}/links`).then((r) => r.data),
+  })
+
+export const objectGroupsQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'object-groups'],
+    queryFn: () => api.get<Resource<Array<{ id: number; title: string; order: number }>>>(`/ledgers/${ledgerId}/object-groups`).then((r) => r.data),
+  })

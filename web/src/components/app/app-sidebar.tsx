@@ -10,6 +10,10 @@ import {
   LayoutDashboardIcon,
   LogOutIcon,
   MonitorIcon,
+  PieChartIcon,
+  PiggyBankIcon,
+  ReceiptIcon,
+  RepeatIcon,
   MoonIcon,
   PlusIcon,
   SettingsIcon,
@@ -70,6 +74,13 @@ export function AppSidebar() {
     { type: 'liability', label: accountTypes.liability, icon: CreditCardIcon },
   ] as const
 
+  const planning = [
+    { to: '/$ledgerId/budgets', label: t('Budgets'), icon: PieChartIcon },
+    { to: '/$ledgerId/bills', label: t('Bills'), icon: ReceiptIcon },
+    { to: '/$ledgerId/piggy-banks', label: t('Piggy banks'), icon: PiggyBankIcon },
+    { to: '/$ledgerId/recurring', label: t('Recurring'), icon: RepeatIcon },
+  ] as const
+
   const organise = [
     { to: '/$ledgerId/categories', label: t('Categories'), icon: FolderIcon },
     { to: '/$ledgerId/tags', label: t('Tags'), icon: TagIcon },
@@ -113,6 +124,21 @@ export function AppSidebar() {
                     activeOptions={{ includeSearch: true }}
                     activeProps={{ 'data-active': true }}
                   >
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>{t('Planning')}</SidebarGroupLabel>
+          <SidebarMenu>
+            {planning.map((item) => (
+              <SidebarMenuItem key={item.to}>
+                <SidebarMenuButton asChild tooltip={item.label}>
+                  <Link to={item.to} params={{ ledgerId }} activeProps={{ 'data-active': true }}>
                     <item.icon />
                     <span>{item.label}</span>
                   </Link>
