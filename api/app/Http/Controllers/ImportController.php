@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ImportController extends Controller
 {
@@ -64,6 +65,22 @@ class ImportController extends Controller
         ]);
 
         return response()->json(['data' => $this->present($job, withSample: true)], Response::HTTP_CREATED);
+    }
+
+    /**
+     * An empty CSV with the columns LedgerFly maps automatically. The ledger is in the
+     * signature so the route's ledger permission check receives the bound model.
+     */
+    public function template(Ledger $ledger): StreamedResponse
+    {
+        return response()->streamDownload(function () {
+            $output = fopen('php://output', 'w');
+
+            if ($output !== false) {
+                fputcsv($output, array_values(CsvReader::TEMPLATE), ',', '"', '');
+                fclose($output);
+            }
+        }, 'ledgerfly-import-template.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
     public function show(Ledger $ledger, int $import): JsonResponse

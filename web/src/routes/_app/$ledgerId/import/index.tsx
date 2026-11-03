@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { CheckCircle2Icon, FileUpIcon, LoaderIcon, Trash2Icon, TriangleAlertIcon } from 'lucide-react'
+import { CheckCircle2Icon, DownloadIcon, FileUpIcon, LoaderIcon, Trash2Icon, TriangleAlertIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Combobox } from '@/components/app/combobox'
 import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
+import { SectionCard } from '@/components/app/section-card'
 import { SelectField } from '@/components/app/select-field'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -16,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useLedger, useLocale } from '@/hooks/use-ledger'
-import { ApiError, api } from '@/lib/api/client'
+import { ApiError, api, downloadUrl } from '@/lib/api/client'
 import { useInvalidateLedger } from '@/lib/api/mutations'
 import { accountsQuery, ledgerKey } from '@/lib/api/queries'
 import type { ImportConfig, ImportJob, ImportPreviewRow, Resource } from '@/lib/api/types'
@@ -72,6 +73,7 @@ function ImportPage() {
       {jobId === undefined ? (
         <div className="space-y-6">
           <UploadCard uploading={upload.isPending} onFile={(file) => upload.mutate(file)} />
+          <TemplateCard />
           <HistoryCard jobs={overview?.data ?? []} onOpen={(id) => navigate({ search: { job: id } })} />
         </div>
       ) : !job ? (
@@ -112,6 +114,54 @@ function UploadCard({ uploading, onFile }: { uploading: boolean; onFile: (file: 
       <span className="text-muted-foreground text-sm">{t('CSV, TXT or camt.053 XML from your bank')}</span>
       <input type="file" accept=".csv,.txt,.tsv,.xml" className="sr-only" disabled={uploading} onChange={(event) => event.target.files?.[0] && onFile(event.target.files[0])} />
     </label>
+  )
+}
+
+function TemplateCard() {
+  const { t } = useTranslation()
+  const ledger = useLedger()
+  const columns: Array<[string, string]> = [
+    ['date', t('Day of the transaction as YYYY-MM-DD, for example 2026-03-15.')],
+    ['description', t('What it was for.')],
+    ['amount', t('Negative for money going out, positive for money coming in. Use a dot for decimals.')],
+    ['payee', t('Who you paid or who paid you. Optional.')],
+    ['category', t('Created if it does not exist yet. Optional.')],
+    ['tags', t('Separate several tags with commas, inside quotes. Optional.')],
+    ['notes', t('Any extra text. Optional.')],
+    ['reference', t("Your bank's ID for the transaction. Used to skip it if you import it twice. Optional.")],
+  ]
+
+  return (
+    <SectionCard
+      title={t('Import template')}
+      description={t('Your bank has no export? Fill in this template in any spreadsheet app, save it as CSV and upload it. The columns are mapped for you.')}
+      actions={
+        <Button variant="outline" asChild>
+          <a href={downloadUrl(`/ledgers/${ledger.id}/imports/template.csv`)}>
+            <DownloadIcon />
+            {t('Download template')}
+          </a>
+        </Button>
+      }
+      contentClassName="p-0"
+    >
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>{t('Column')}</TableHead>
+            <TableHead>{t('What to put in it')}</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {columns.map(([column, help]) => (
+            <TableRow key={column}>
+              <TableCell className="font-mono text-xs">{column}</TableCell>
+              <TableCell className="text-muted-foreground whitespace-normal">{help}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </SectionCard>
   )
 }
 
