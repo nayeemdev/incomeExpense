@@ -294,7 +294,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
           }}
         />
       )}
-      <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[10rem_1fr]">
         <FormField control={form.control} name={`splits.${index}.amount`} required label={t('Amount')}>
           {(field) => (
             <MoneyInput {...field} autoFocus={autoFocus} currency={currency.code} className="font-medium" />
@@ -314,7 +314,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
           )}
         </FormField>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <FormField control={form.control} name={`splits.${index}.source`} label={t('From')} required={!isCounterparty(type, 'source')}>
             {(field) => (
@@ -343,7 +343,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
         </FormField>
       )}
       {type !== 'transfer' && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <FormField control={form.control} name={`splits.${index}.category`} label={t('Category')}>
               {(field) => (
@@ -382,7 +382,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
         </div>
       )}
       {type === 'withdrawal' && (budgets.length > 0 || bills.length > 0) && (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {budgets.length > 0 && (
             <FormField control={form.control} name={`splits.${index}.budget_id`} label={t('Budget')}>
               {(field) => (

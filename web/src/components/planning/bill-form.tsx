@@ -79,7 +79,7 @@ export function BillForm({ bill, onSaved, onCancel }: BillFormProps) {
         <FormField control={form.control} name="name" required label={t('Name')}>
           {(field) => <Input autoFocus placeholder={t('e.g. Rent or Netflix')} {...field} />}
         </FormField>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="amount_min" required label={t('Lowest amount')}>
             {(field) => (
               <MoneyInput
@@ -98,7 +98,7 @@ export function BillForm({ bill, onSaved, onCancel }: BillFormProps) {
         <FormField control={form.control} name="currency_id" required label={t('Currency')}>
           {(field) => <CurrencySelect id={field.id} value={field.value} onChange={field.onChange} />}
         </FormField>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="date" required label={t('Next due date')}>
             {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
           </FormField>
@@ -106,7 +106,7 @@ export function BillForm({ bill, onSaved, onCancel }: BillFormProps) {
             {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={frequencyLabels()} />}
           </FormField>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="skip" label={t('Skip')} description={t('1 means every other period.')}>
             {(field) => <Input type="number" min={0} max={31} {...field} />}
           </FormField>

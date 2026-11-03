@@ -139,7 +139,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
         )}
 
         {type === 'liability' && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField control={form.control} name="liability_type" required label={t('Kind')}>
               {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={liabilityTypeLabels()} />}
             </FormField>
@@ -163,7 +163,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
         )}
 
         {own && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
               name="opening_balance"
@@ -195,7 +195,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
         )}
 
         {type === 'liability' && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField control={form.control} name="interest" label={t('Interest rate (%)')}>
               {(field) => <MoneyInput {...field} />}
             </FormField>
@@ -215,7 +215,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
         {own && (
           <>
             <FieldSeparator>{t('Bank details')}</FieldSeparator>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField control={form.control} name="iban" label={t('IBAN')}>
                 {(field) => <Input {...field} />}
               </FormField>

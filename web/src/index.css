@@ -213,6 +213,10 @@
   @apply rounded-xl border border-ink-900/[0.07] bg-card shadow-card dark:border-border;
 }
 
+@utility stat-grid {
+  @apply grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))];
+}
+
 @utility field-control {
   @apply h-9 w-full min-w-0 rounded-lg border border-input bg-transparent px-3 text-sm transition-colors outline-none dark:bg-input/30 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 disabled:cursor-not-allowed disabled:opacity-50;
 }

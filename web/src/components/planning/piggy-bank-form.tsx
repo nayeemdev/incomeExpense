@@ -69,7 +69,7 @@ export function PiggyBankForm({ piggyBank, onSaved, onCancel }: PiggyBankFormPro
         <FormField control={form.control} name="name" required label={t('Name')}>
           {(field) => <Input autoFocus placeholder={t('e.g. Holiday or New laptop')} {...field} />}
         </FormField>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="target_amount" label={t('Target amount')}>
             {(field) => <MoneyInput {...field} placeholder={t('Optional')} />}
           </FormField>

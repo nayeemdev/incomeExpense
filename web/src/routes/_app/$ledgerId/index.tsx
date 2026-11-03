@@ -142,7 +142,7 @@ function Dashboard() {
         }
       />
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="stat-grid">
         <StatCard label={t('Net worth')} icon={LandmarkIcon} tone="brand" value={<Amounts amounts={summary?.net_worth} total={summary?.net_worth_total} />} />
         <StatCard label={t('Spent')} icon={ArrowUpRightIcon} tone="danger" value={<Amounts amounts={summary?.spent} total={summary?.spent_total} tone="none" />} />
         <StatCard label={t('Earned')} icon={ArrowDownLeftIcon} tone="success" value={<Amounts amounts={summary?.earned} total={summary?.earned_total} tone="none" />} />
@@ -159,7 +159,7 @@ function Dashboard() {
         </Card>
       )}
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-[2fr_1fr]">
+      <div className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-[2fr_1fr]">
         {show('recent') && (
         <Card>
           <CardHeader>

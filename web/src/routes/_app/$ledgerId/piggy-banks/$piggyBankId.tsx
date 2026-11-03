@@ -95,7 +95,7 @@ function PiggyBankDetail() {
           {piggyBank.target_amount && <ProgressBar value={Number(piggyBank.saved_amount)} max={Number(piggyBank.target_amount)} className="h-3" />}
         </CardContent>
       </Card>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>{t('Saved in')}</CardTitle>

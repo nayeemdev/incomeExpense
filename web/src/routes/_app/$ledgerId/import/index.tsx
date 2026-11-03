@@ -284,7 +284,7 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
         </CardHeader>
         <CardContent>
           <FieldGroup>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field>
                 <FieldLabel>
                   {t('Import into')}
@@ -342,7 +342,7 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
                     </TableBody>
                   </Table>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <Field>
                     <FieldLabel>{t('Date format')}</FieldLabel>
                     <SelectField

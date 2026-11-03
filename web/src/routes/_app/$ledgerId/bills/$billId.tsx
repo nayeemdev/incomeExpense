@@ -80,7 +80,7 @@ function BillDetail() {
           )
         }
       />
-      <div className="mb-6 grid gap-4 sm:grid-cols-2">
+      <div className="stat-grid mb-6">
         <Card>
           <CardHeader>
             <CardDescription>{t('Expected amount')}</CardDescription>

@@ -176,7 +176,7 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
         <FormField control={form.control} name="title" required label={t('Name')}>
           {(field) => <Input autoFocus placeholder={t('e.g. Rent or Salary')} {...field} />}
         </FormField>
-        <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-[10rem_1fr]">
           <FormField control={form.control} name="amount" required label={t('Amount')}>
             {(field) => <MoneyInput {...field} />}
           </FormField>
@@ -184,7 +184,7 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
             {(field) => <Input {...field} />}
           </FormField>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="source" required label={t('From')}>
             {(field) => <AccountPicker id={field.id} type={type} side="source" accounts={accounts} value={field.value} onChange={field.onChange} />}
           </FormField>
@@ -193,7 +193,7 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
           </FormField>
         </div>
         {type !== 'transfer' && (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField control={form.control} name="category" label={t('Category')}>
               {(field) => (
                 <Combobox
@@ -225,7 +225,7 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
 
         <FieldSeparator>{t('Schedule')}</FieldSeparator>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="first_date" required label={t('Starts on')}>
             {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
           </FormField>
@@ -233,7 +233,7 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
             {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={repetitionLabels()} />}
           </FormField>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {repetitionType === 'ndom' && (
             <FormField control={form.control} name="nth" required label={t('Which one')}>
               {(field) => (
@@ -255,7 +255,7 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
             {(field) => <Input type="number" min={0} max={31} {...field} />}
           </FormField>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormField control={form.control} name="weekend" label={t('When it falls on a weekend')}>
             {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={weekendLabels()} />}
           </FormField>

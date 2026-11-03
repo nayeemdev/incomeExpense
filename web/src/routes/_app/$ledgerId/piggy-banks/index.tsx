@@ -56,7 +56,7 @@ function PiggyBanks() {
           )}
         </Empty>
       )}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,17rem),1fr))] gap-4">
         {piggyBanks?.map((piggyBank) => (
           <Card key={piggyBank.id} className="relative">
             <CardHeader>
@@ -74,7 +74,7 @@ function PiggyBanks() {
               )}
             </CardHeader>
             <CardContent className="space-y-2">
-              <div className="flex items-baseline justify-between gap-2">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2">
                 <Money amount={piggyBank.saved_amount} currency={piggyBank.currency.code} tone="none" className="text-xl font-semibold" />
                 {piggyBank.target_amount && (
                   <span className="text-muted-foreground text-sm">

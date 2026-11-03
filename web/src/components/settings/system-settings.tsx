@@ -70,7 +70,7 @@ export function SystemSettings() {
             </Field>
             {draft.mail_mailer === 'smtp' && (
               <>
-                <div className="grid gap-4 sm:grid-cols-[1fr_8rem_9rem]">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-[1fr_8rem_9rem]">
                   <TextField id="mail-host" label={t('SMTP host')} value={draft.mail_host} onChange={(value) => set({ mail_host: value })} />
                   <NumberField id="mail-port" label={t('Port')} value={draft.mail_port} onChange={(value) => set({ mail_port: value })} />
                   <Field>
@@ -83,7 +83,7 @@ export function SystemSettings() {
                     />
                   </Field>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <TextField id="mail-username" label={t('Username')} value={draft.mail_username} onChange={(value) => set({ mail_username: value })} />
                   <Field>
                     <FieldLabel htmlFor="mail-password">{t('Password')}</FieldLabel>
@@ -99,7 +99,7 @@ export function SystemSettings() {
                 </div>
               </>
             )}
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <TextField id="mail-from" label={t('From address')} type="email" value={draft.mail_from_address} onChange={(value) => set({ mail_from_address: value })} />
               <TextField id="mail-from-name" label={t('From name')} value={draft.mail_from_name} onChange={(value) => set({ mail_from_name: value })} />
             </div>
@@ -112,7 +112,7 @@ export function SystemSettings() {
         keys={['bill_reminder_days', 'budget_warning_percentage', 'ntfy_server']}
         render={(draft, set) => (
           <FieldGroup>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <NumberField
               id="bill-days"
               label={t('Remind about bills this many days before')}

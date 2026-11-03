@@ -46,7 +46,7 @@ function Settings() {
     <>
       <PageHeader title={t('Settings')} description={t('Your ledger, the people you share it with, your profile and how LedgerFly keeps you informed.')} />
       <Tabs value={tab} onValueChange={(value) => navigate({ search: { tab: value as (typeof tabs)[number] }, replace: true })}>
-        <TabsList className="mb-4 max-w-full overflow-x-auto">
+        <TabsList className="mb-4 max-w-full flex-wrap justify-start group-data-horizontal/tabs:h-auto">
           {visible.map((value) => (
             <TabsTrigger key={value} value={value}>
               {labels[value]}

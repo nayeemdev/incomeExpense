@@ -22,7 +22,7 @@ type StatCardProps = {
 
 export function StatCard({ label, value, hint, icon: Icon, tone = 'default', action, className }: StatCardProps) {
   return (
-    <div className={cn('surface-card relative p-5', className)}>
+    <div className={cn('surface-card relative min-w-0 p-5 @container', className)}>
       <div className="flex items-start justify-between gap-3">
         <p className="text-muted-foreground text-sm font-medium">{label}</p>
         {action ??
@@ -32,7 +32,7 @@ export function StatCard({ label, value, hint, icon: Icon, tone = 'default', act
             </span>
           ))}
       </div>
-      <div className="mt-2 text-[1.75rem] leading-none font-bold tracking-tight tabular-nums">{value}</div>
+      <div className="mt-2 text-[clamp(1.25rem,9cqi,1.75rem)] leading-none font-bold tracking-tight tabular-nums [overflow-wrap:anywhere]">{value}</div>
       {hint && <div className="text-muted-foreground mt-2 text-xs">{hint}</div>}
     </div>
   )
