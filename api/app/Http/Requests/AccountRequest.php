@@ -69,6 +69,7 @@ class AccountRequest extends FormRequest
             'include_net_worth' => ['sometimes', 'boolean'],
             'order' => ['sometimes', 'integer', 'min:0'],
             'notes' => ['nullable', 'string', 'max:65000'],
+            'object_group' => ['nullable', 'string', 'max:255'],
             'opening_balance' => $own ? ['nullable', Amount::signed()] : ['prohibited'],
             'opening_balance_date' => $own ? ['nullable', 'required_with:opening_balance', 'date'] : ['prohibited'],
         ];

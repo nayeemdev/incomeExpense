@@ -95,6 +95,62 @@ class Ledger extends Model
         return $this->hasMany(Attachment::class);
     }
 
+    /**
+     * @return HasMany<ObjectGroup, $this>
+     */
+    public function objectGroups(): HasMany
+    {
+        return $this->hasMany(ObjectGroup::class);
+    }
+
+    /**
+     * @return HasMany<Budget, $this>
+     */
+    public function budgets(): HasMany
+    {
+        return $this->hasMany(Budget::class);
+    }
+
+    /**
+     * @return HasMany<AvailableBudget, $this>
+     */
+    public function availableBudgets(): HasMany
+    {
+        return $this->hasMany(AvailableBudget::class);
+    }
+
+    /**
+     * @return HasMany<Bill, $this>
+     */
+    public function bills(): HasMany
+    {
+        return $this->hasMany(Bill::class);
+    }
+
+    /**
+     * @return HasMany<PiggyBank, $this>
+     */
+    public function piggyBanks(): HasMany
+    {
+        return $this->hasMany(PiggyBank::class);
+    }
+
+    /**
+     * @return HasMany<Recurrence, $this>
+     */
+    public function recurrences(): HasMany
+    {
+        return $this->hasMany(Recurrence::class);
+    }
+
+    /**
+     * @return HasMany<TransactionLink, $this>
+     */
+    public function transactionLinks(): HasMany
+    {
+        return $this->hasMany(TransactionLink::class);
+    }
+
     public function membershipOf(User $user): ?LedgerMember
     {
         if (! array_key_exists($user->id, $this->membershipCache)) {
