@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { startOfMonth, subMonths } from 'date-fns'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowRightIcon, PlusIcon } from 'lucide-react'
+import { ArrowRightIcon, PlusIcon, SlidersHorizontalIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -9,14 +10,24 @@ import { MonthSwitcher } from '@/components/app/month-switcher'
 import { PageHeader } from '@/components/app/page-header'
 import { useQuickAdd } from '@/components/app/quick-add-context'
 import { TransactionList } from '@/components/app/transaction-list'
+import { IncomeExpenseChart } from '@/components/charts/income-expense-chart'
 import { BillStatus } from '@/components/planning/bill-status'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
-import { billsQuery, summaryQuery, transactionsQuery } from '@/lib/api/queries'
-import { todayIso } from '@/lib/format'
+import { api } from '@/lib/api/client'
+import { billsQuery, overviewReportQuery, summaryQuery, transactionsQuery, userQuery } from '@/lib/api/queries'
+import { toIsoDate, todayIso } from '@/lib/format'
+import { notifyError } from '@/lib/forms'
 import type { CurrencyAmount } from '@/lib/api/types'
 import { monthRange } from '@/lib/period'
 import { assetRoleLabels } from '@/lib/labels'
@@ -29,16 +40,35 @@ export const Route = createFileRoute('/_app/$ledgerId/')({
   component: Dashboard,
 })
 
-function Amounts({ amounts, fallbackCurrency, tone }: { amounts: CurrencyAmount[] | undefined; fallbackCurrency: string; tone?: 'auto' | 'none' }) {
-  if (!amounts) return <Skeleton className="h-8 w-32" />
+function Amounts({
+  amounts,
+  total,
+  tone,
+}: {
+  amounts: CurrencyAmount[] | undefined
+  total: (CurrencyAmount & { complete: boolean }) | undefined
+  tone?: 'auto' | 'none'
+}) {
+  const { t } = useTranslation()
 
-  const list = amounts.length ? amounts : [{ currency: fallbackCurrency, amount: '0' }]
+  if (!amounts || !total) return <Skeleton className="h-8 w-32" />
+
+  const others = amounts.filter((item) => item.currency !== total.currency)
 
   return (
-    <div className="space-y-0.5">
-      {list.map((item) => (
-        <Money key={item.currency} amount={item.amount} currency={item.currency} tone={tone} className="block text-2xl font-semibold" />
-      ))}
+    <div className="space-y-1">
+      <Money amount={total.amount} currency={total.currency} tone={tone} className="block text-2xl font-semibold" />
+      {others.length > 0 && (
+        <p className="text-muted-foreground text-xs">
+          {total.complete ? t('Includes') : t('Without rates for some of')}{' '}
+          {others.map((item, index) => (
+            <span key={item.currency}>
+              {index > 0 && ', '}
+              <Money amount={item.amount} currency={item.currency} tone="none" />
+            </span>
+          ))}
+        </p>
+      )}
     </div>
   )
 }
@@ -65,6 +95,11 @@ function Dashboard() {
   const currency = ledger.primary_currency.code
 
   const { data: summary } = useQuery(summaryQuery(ledger.id, start, end))
+  const { data: user } = useQuery(userQuery)
+  const hidden = new Set(user?.preferences.dashboard_hidden ?? [])
+  const show = (widget: string) => !hidden.has(widget)
+  const trendRange = { start: toIsoDate(startOfMonth(subMonths(current, 5))), end, interval: 'month' }
+  const { data: trend } = useQuery({ ...overviewReportQuery(ledger.id, trendRange), enabled: show('trend') })
   const { data: bills } = useQuery({
     ...billsQuery(ledger.id, start, end),
     select: (items) => items.filter((bill) => bill.active && (bill.expected_dates?.length ?? 0) > (bill.payments?.length ?? 0)),
@@ -98,7 +133,10 @@ function Dashboard() {
         title={new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(current)}
         description={ledger.name}
         actions={
-          <MonthSwitcher isCurrent={!month} onChange={(offset) => navigate({ search: offset === null ? {} : { month: shift(offset) } })} />
+          <div className="flex items-center gap-2">
+            <MonthSwitcher isCurrent={!month} onChange={(offset) => navigate({ search: offset === null ? {} : { month: shift(offset) } })} />
+            <DashboardCustomizer hidden={hidden} />
+          </div>
         }
       />
 
@@ -108,7 +146,7 @@ function Dashboard() {
             <CardDescription>{t('Net worth')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Amounts amounts={summary?.net_worth} fallbackCurrency={currency} />
+            <Amounts amounts={summary?.net_worth} total={summary?.net_worth_total} />
           </CardContent>
         </Card>
         <Card>
@@ -116,7 +154,7 @@ function Dashboard() {
             <CardDescription>{t('Spent')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Amounts amounts={summary?.spent} fallbackCurrency={currency} tone="none" />
+            <Amounts amounts={summary?.spent} total={summary?.spent_total} tone="none" />
           </CardContent>
         </Card>
         <Card>
@@ -124,12 +162,24 @@ function Dashboard() {
             <CardDescription>{t('Earned')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Amounts amounts={summary?.earned} fallbackCurrency={currency} tone="none" />
+            <Amounts amounts={summary?.earned} total={summary?.earned_total} tone="none" />
           </CardContent>
         </Card>
       </div>
 
+      {show('trend') && trend && (
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle>{t('Last 6 months')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <IncomeExpenseChart data={trend.data.income_expense} currency={trend.meta.currency} interval="month" />
+          </CardContent>
+        </Card>
+      )}
+
       <div className="mt-4 grid gap-4 lg:grid-cols-[2fr_1fr]">
+        {show('recent') && (
         <Card>
           <CardHeader>
             <CardTitle>{t('Recent transactions')}</CardTitle>
@@ -158,8 +208,10 @@ function Dashboard() {
             />
           </CardContent>
         </Card>
+        )}
 
         <div className="space-y-4">
+          {show('accounts') && (
           <Card>
             <CardHeader>
               <CardTitle>{t('Accounts')}</CardTitle>
@@ -182,8 +234,9 @@ function Dashboard() {
               ))}
             </CardContent>
           </Card>
+          )}
 
-          {bills && bills.length > 0 && (
+          {show('bills') && bills && bills.length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>{t('Bills to pay')}</CardTitle>
@@ -207,6 +260,7 @@ function Dashboard() {
             </Card>
           )}
 
+          {show('top_spending') && (
           <Card>
             <CardHeader>
               <CardTitle>{t('Top spending')}</CardTitle>
@@ -228,8 +282,50 @@ function Dashboard() {
               ))}
             </CardContent>
           </Card>
+          )}
         </div>
       </div>
     </>
+  )
+}
+
+function DashboardCustomizer({ hidden }: { hidden: Set<string> }) {
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const widgets: Record<string, string> = {
+    trend: t('Last 6 months chart'),
+    recent: t('Recent transactions'),
+    accounts: t('Accounts'),
+    bills: t('Bills to pay'),
+    top_spending: t('Top spending'),
+  }
+
+  const save = useMutation({
+    mutationFn: (next: string[]) => api.patch('/user/preferences', { dashboard_hidden: next }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: userQuery.queryKey }),
+    onError: notifyError,
+  })
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon" aria-label={t('Customize dashboard')}>
+          <SlidersHorizontalIcon />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-56">
+        <DropdownMenuLabel>{t('Show on dashboard')}</DropdownMenuLabel>
+        {Object.entries(widgets).map(([key, label]) => (
+          <DropdownMenuCheckboxItem
+            key={key}
+            checked={!hidden.has(key)}
+            onSelect={(event) => event.preventDefault()}
+            onCheckedChange={(checked) => save.mutate(checked ? [...hidden].filter((item) => item !== key) : [...hidden, key])}
+          >
+            {label}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

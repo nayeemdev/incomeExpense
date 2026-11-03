@@ -3,6 +3,7 @@ import { ArrowDownLeftIcon, ArrowLeftRightIcon, ArrowUpRightIcon, MoreHorizontal
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +25,8 @@ type TransactionListProps = {
   accountId?: number
   showRunningBalance?: boolean
   empty?: React.ReactNode
+  selected?: Set<number>
+  onToggle?: (id: number) => void
 }
 
 const icons = {
@@ -41,7 +44,7 @@ function signedAmount(transaction: Transaction, accountId?: number) {
   return transaction.amount
 }
 
-export function TransactionList({ transactions, accountId, showRunningBalance, empty }: TransactionListProps) {
+export function TransactionList({ transactions, accountId, showRunningBalance, empty, selected, onToggle }: TransactionListProps) {
   const locale = useLocale()
 
   if (!transactions) {
@@ -73,6 +76,8 @@ export function TransactionList({ transactions, accountId, showRunningBalance, e
                 transaction={transaction}
                 accountId={accountId}
                 showRunningBalance={showRunningBalance}
+                selected={selected?.has(transaction.id)}
+                onToggle={onToggle}
               />
             ))}
           </ul>
@@ -86,10 +91,14 @@ function TransactionRow({
   transaction,
   accountId,
   showRunningBalance,
+  selected,
+  onToggle,
 }: {
   transaction: Transaction
   accountId?: number
   showRunningBalance?: boolean
+  selected?: boolean
+  onToggle?: (id: number) => void
 }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
@@ -103,7 +112,15 @@ function TransactionRow({
   const amount = signedAmount(transaction, accountId)
 
   return (
-    <li className="hover:bg-muted/50 group relative flex items-center gap-3 px-3 py-2.5">
+    <li className={cn('hover:bg-muted/50 group relative flex items-center gap-3 px-3 py-2.5', selected && 'bg-muted/60')}>
+      {onToggle && editable && (
+        <Checkbox
+          className="relative z-10"
+          aria-label={t('Select {{description}}', { description: transaction.description })}
+          checked={selected}
+          onCheckedChange={() => onToggle(transaction.id)}
+        />
+      )}
       <span
         className={cn(
           'grid size-8 shrink-0 place-items-center rounded-full',

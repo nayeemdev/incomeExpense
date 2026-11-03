@@ -7,6 +7,10 @@ import type {
   Attachment,
   AppNotification,
   AvailableBudget,
+  BreakdownRow,
+  ExchangeRate,
+  OverviewReport,
+  ReportMeta,
   NotificationSettings,
   RuleGroup,
   RuleOptions,
@@ -44,6 +48,7 @@ export type TransactionFilters = {
   start?: string
   end?: string
   search?: string
+  query?: string
   page?: number
 }
 
@@ -275,4 +280,46 @@ export const frequentQuery = (ledgerId: number, type: TransactionType) =>
         )
         .then((r) => r.data),
     staleTime: 60_000,
+  })
+
+export type ReportParams = { start: string; end: string; interval?: string; accounts?: number[] }
+
+export const overviewReportQuery = (ledgerId: number, params: ReportParams) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'reports', 'overview', params],
+    queryFn: () => api.get<{ data: OverviewReport; meta: ReportMeta }>(`/ledgers/${ledgerId}/reports/overview`, params),
+    placeholderData: keepPreviousData,
+  })
+
+export const breakdownReportQuery = (ledgerId: number, groupBy: string, type: string, params: ReportParams) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'reports', 'by', groupBy, type, params],
+    queryFn: () =>
+      api.get<{ data: { rows: BreakdownRow[]; buckets: Array<{ start: string; end: string }> }; meta: ReportMeta }>(
+        `/ledgers/${ledgerId}/reports/by/${groupBy}`,
+        { ...params, type },
+      ),
+    placeholderData: keepPreviousData,
+  })
+
+export const balanceHistoryQuery = (ledgerId: number, accountId: number, params: ReportParams) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'reports', 'balance', accountId, params],
+    queryFn: () =>
+      api.get<{ data: { points: Array<{ date: string; balance: string }> }; meta: ReportMeta }>(
+        `/ledgers/${ledgerId}/accounts/${accountId}/balance-history`,
+        params,
+      ),
+  })
+
+export const exchangeRatesQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'exchange-rates'],
+    queryFn: () => api.get<Resource<ExchangeRate[]>>(`/ledgers/${ledgerId}/exchange-rates`).then((r) => r.data),
+  })
+
+export const savedSearchesQuery = (ledgerId: number) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'saved-searches'],
+    queryFn: () => api.get<Resource<Array<{ id: number; name: string; query: string }>>>(`/ledgers/${ledgerId}/saved-searches`).then((r) => r.data),
   })

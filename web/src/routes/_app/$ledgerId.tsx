@@ -51,7 +51,7 @@ function LedgerLayout() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <header className="bg-background/80 sticky top-0 z-20 flex min-h-14 items-center gap-2 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur">
+          <header className="bg-background/80 sticky top-0 print:hidden z-20 flex min-h-14 items-center gap-2 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur">
             <SidebarTrigger className="-ml-1" />
             <Button
               variant="outline"

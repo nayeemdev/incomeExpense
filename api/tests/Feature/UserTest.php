@@ -21,6 +21,13 @@ it('updates preferences', function () {
         ->assertJsonPath('data.preferences.timezone', 'Asia/Dhaka');
 });
 
+it('stores which dashboard widgets are hidden', function () {
+    Sanctum::actingAs(User::factory()->create(), ['*']);
+
+    $this->patchJson('/api/v1/user/preferences', ['dashboard_hidden' => ['trend']])->assertJsonPath('data.preferences.dashboard_hidden', ['trend']);
+    $this->patchJson('/api/v1/user/preferences', ['dashboard_hidden' => ['nope']])->assertJsonValidationErrors('dashboard_hidden.0');
+});
+
 it('rejects unknown preference values', function () {
     Sanctum::actingAs(User::factory()->create(), ['*']);
 

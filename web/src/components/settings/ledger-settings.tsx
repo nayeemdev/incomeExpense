@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { DownloadIcon } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +14,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { FieldGroup } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { useLedger } from '@/hooks/use-ledger'
-import { api } from '@/lib/api/client'
+import { api, downloadUrl } from '@/lib/api/client'
 import { ledgersQuery } from '@/lib/api/queries'
 import { handleFormError, notifyError } from '@/lib/forms'
 
@@ -87,6 +88,27 @@ export function LedgerSettings() {
             </CardFooter>
           )}
         </form>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('Export')}</CardTitle>
+          <CardDescription>{t('Download your data at any time. The backup contains everything in this ledger.')}</CardDescription>
+        </CardHeader>
+        <CardFooter className="flex flex-wrap gap-2">
+          <Button variant="outline" asChild>
+            <a href={downloadUrl(`/ledgers/${ledger.id}/export/transactions.csv`)}>
+              <DownloadIcon />
+              {t('Transactions (CSV)')}
+            </a>
+          </Button>
+          <Button variant="outline" asChild>
+            <a href={downloadUrl(`/ledgers/${ledger.id}/export/backup.json`)}>
+              <DownloadIcon />
+              {t('Full backup (JSON)')}
+            </a>
+          </Button>
+        </CardFooter>
       </Card>
 
       {manage && (
