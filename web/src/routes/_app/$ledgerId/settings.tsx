@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -9,11 +10,13 @@ import { NotificationSettings } from '@/components/settings/notification-setting
 import { PreferenceSettings } from '@/components/settings/preference-settings'
 import { ProfileSettings } from '@/components/settings/profile-settings'
 import { SecuritySettings } from '@/components/settings/security-settings'
+import { SystemSettings } from '@/components/settings/system-settings'
 import { TokenSettings } from '@/components/settings/token-settings'
 import { WebhookSettings } from '@/components/settings/webhook-settings'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { userQuery } from '@/lib/api/queries'
 
-const tabs = ['ledger', 'members', 'profile', 'security', 'notifications', 'preferences', 'exchange-rates', 'tokens', 'webhooks'] as const
+const tabs = ['ledger', 'members', 'profile', 'security', 'notifications', 'preferences', 'exchange-rates', 'tokens', 'webhooks', 'system'] as const
 
 export const Route = createFileRoute('/_app/$ledgerId/settings')({
   validateSearch: z.object({ tab: z.enum(tabs).optional().catch(undefined) }),
@@ -34,14 +37,17 @@ function Settings() {
     'exchange-rates': t('Exchange rates'),
     tokens: t('Tokens'),
     webhooks: t('Webhooks'),
+    system: t('System'),
   }
+  const { data: user } = useQuery(userQuery)
+  const visible = tabs.filter((value) => value !== 'system' || user?.is_admin)
 
   return (
     <>
       <PageHeader title={t('Settings')} description={t('Your ledger, the people you share it with, your profile and how LedgerFly keeps you informed.')} />
       <Tabs value={tab} onValueChange={(value) => navigate({ search: { tab: value as (typeof tabs)[number] }, replace: true })}>
         <TabsList className="mb-4 max-w-full overflow-x-auto">
-          {tabs.map((value) => (
+          {visible.map((value) => (
             <TabsTrigger key={value} value={value}>
               {labels[value]}
             </TabsTrigger>
@@ -57,6 +63,7 @@ function Settings() {
           <TabsContent value="exchange-rates"><ExchangeRateSettings /></TabsContent>
           <TabsContent value="tokens"><TokenSettings /></TabsContent>
           <TabsContent value="webhooks"><WebhookSettings /></TabsContent>
+          {user?.is_admin && <TabsContent value="system"><SystemSettings /></TabsContent>}
         </div>
       </Tabs>
     </>

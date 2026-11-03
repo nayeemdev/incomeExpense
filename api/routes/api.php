@@ -32,6 +32,7 @@ use App\Http\Controllers\RuleController;
 use App\Http\Controllers\RuleGroupController;
 use App\Http\Controllers\SavedSearchController;
 use App\Http\Controllers\SummaryController;
+use App\Http\Controllers\SystemSettingsController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionLinkController;
@@ -78,6 +79,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('push-subscriptions', [NotificationController::class, 'subscribe']);
         Route::delete('push-subscriptions', [NotificationController::class, 'unsubscribe']);
         Route::get('rule-options', [RuleController::class, 'options']);
+
+        Route::prefix('admin')->middleware('can:admin')->group(function () {
+            Route::get('settings', [SystemSettingsController::class, 'show']);
+            Route::patch('settings', [SystemSettingsController::class, 'update']);
+            Route::post('settings/test-mail', [SystemSettingsController::class, 'testMail']);
+        });
         Route::get('category-styles', [CategoryController::class, 'styles']);
 
         Route::get('invitations/{token}', [InvitationController::class, 'show']);
