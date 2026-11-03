@@ -320,6 +320,14 @@ pre.prompt { white-space: pre-wrap; font-size: 13.5px; }
 .page-hero h1 { font-size: clamp(38px, 6vw, 66px); margin-top: 22px; max-width: 820px; }
 .page-hero .lead { color: var(--muted); font-size: 19px; margin-top: 18px; max-width: 680px; }
 .page-hero .actions { justify-content: flex-start; margin-top: 30px; }
+.store { display: inline-flex; align-items: center; gap: 12px; height: 58px; padding: 0 20px 0 16px; border-radius: 14px; background: #000; color: #fff; border: 1px solid #000; transition: transform 0.2s, box-shadow 0.2s; }
+.store:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.store svg { width: 28px; height: 28px; flex: none; }
+.store span { display: grid; line-height: 1.15; text-align: left; }
+.store small { font-size: 11px; font-weight: 500; opacity: 0.85; }
+.store b { font-size: 19px; font-weight: 650; letter-spacing: -0.01em; }
+.store-off { background: transparent; color: var(--text); border: 1px dashed var(--subtle); }
+:root[data-theme="dark"] .store:not(.store-off) { border-color: #3b4f63; }
 .store-soon { display: inline-flex; align-items: center; height: 50px; padding: 0 22px; border-radius: 14px; font-weight: 600; font-size: 15px; color: var(--muted); border: 1px dashed var(--subtle); }
 .doc { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 64px; padding: 64px 28px 120px; }
 .toc { position: sticky; top: 104px; align-self: start; display: grid; gap: 2px; font-size: 14.5px; }
