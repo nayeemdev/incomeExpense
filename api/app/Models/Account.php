@@ -9,6 +9,7 @@ use App\Enums\LiabilityDirection;
 use App\Enums\LiabilityType;
 use App\Models\Concerns\BelongsToLedger;
 use App\Models\Concerns\HasAttachments;
+use App\Models\Concerns\HasObjectGroup;
 use Carbon\CarbonInterface;
 use Database\Factories\AccountFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read ?Currency $currency
  */
 #[Fillable([
-    'type', 'name', 'currency_id', 'asset_role', 'liability_type', 'liability_direction',
+    'object_group_id', 'type', 'name', 'currency_id', 'asset_role', 'liability_type', 'liability_direction',
     'interest', 'interest_period', 'credit_card_payment_day', 'iban', 'bic', 'account_number',
     'virtual_balance', 'active', 'include_net_worth', 'order', 'notes',
 ])]
@@ -39,9 +40,10 @@ class Account extends Model
 {
     use BelongsToLedger;
     use HasAttachments;
-
     /** @use HasFactory<AccountFactory> */
     use HasFactory;
+
+    use HasObjectGroup;
 
     use SoftDeletes;
 

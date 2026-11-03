@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\Accounts\SyncOpeningBalance;
+use App\Actions\ResolveObjectGroup;
 use App\Enums\AccountType;
 use App\Enums\LiabilityDirection;
 use App\Http\Requests\AccountRequest;
@@ -22,7 +23,10 @@ use Illuminate\Validation\Rule;
 
 class AccountController extends Controller
 {
-    public function __construct(private SyncOpeningBalance $openingBalance) {}
+    public function __construct(
+        private SyncOpeningBalance $openingBalance,
+        private ResolveObjectGroup $objectGroup,
+    ) {}
 
     public function index(Request $request, Ledger $ledger): AnonymousResourceCollection
     {
@@ -36,7 +40,7 @@ class AccountController extends Controller
             $ledger->accounts()
                 ->visible()
                 ->withBalance()
-                ->with('currency')
+                ->with('currency', 'objectGroup')
                 ->when($request->filled('type'), fn ($query) => $query->whereIn('type', (array) $request->input('type')))
                 ->when($request->has('active'), fn ($query) => $query->where('active', $request->boolean('active')))
                 ->when($request->filled('search'), fn ($query) => $query->whereLike('name', '%'.$request->string('search').'%'))
@@ -49,7 +53,7 @@ class AccountController extends Controller
     public function store(AccountRequest $request, Ledger $ledger, #[CurrentUser] User $user): JsonResponse
     {
         $account = DB::transaction(function () use ($request, $ledger, $user) {
-            $account = $ledger->accounts()->create($request->accountAttributes());
+            $account = $ledger->accounts()->create($this->objectGroup->handle($ledger, $request->accountAttributes()));
 
             if ($account->type->isOwn() && $request->filled('opening_balance')) {
                 $this->openingBalance->handle(
@@ -70,7 +74,7 @@ class AccountController extends Controller
     {
         abort_if($account->type->isSystem(), 404);
 
-        $account = $ledger->accounts()->withBalance()->with('currency')->findOrFail($account->id);
+        $account = $ledger->accounts()->withBalance()->with('currency', 'objectGroup')->findOrFail($account->id);
 
         if ($account->type->isOwn()) {
             $this->attachOpeningBalance($account);
@@ -83,8 +87,8 @@ class AccountController extends Controller
     {
         abort_if($account->type->isSystem(), 404);
 
-        DB::transaction(function () use ($request, $account, $user) {
-            $account->update($request->accountAttributes());
+        DB::transaction(function () use ($request, $ledger, $account, $user) {
+            $account->update($this->objectGroup->handle($ledger, $request->accountAttributes()));
 
             if ($account->type->isOwn() && $request->has('opening_balance')) {
                 $this->openingBalance->handle(

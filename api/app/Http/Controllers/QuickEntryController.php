@@ -24,6 +24,8 @@ class QuickEntryController extends Controller
             'transactions.currency',
             'transactions.foreignCurrency',
             'transactions.category',
+            'transactions.budget',
+            'transactions.bill',
             'transactions.tags',
         ]);
 
