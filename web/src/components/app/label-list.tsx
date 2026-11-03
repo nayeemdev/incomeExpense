@@ -10,6 +10,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { categoriesQuery, tagsQuery } from '@/lib/api/queries'
+import type { Category } from '@/lib/api/types'
+import { CategoryIcon } from './category-icon'
 import { LabelFormDialog } from './label-form-dialog'
 import { PageHeader } from './page-header'
 
@@ -76,7 +78,10 @@ export function LabelList({ kind }: { kind: 'categories' | 'tags' }) {
                 params={isTags ? { ledgerId, tagId: String(item.id) } : { ledgerId, categoryId: String(item.id) }}
                 className="hover:bg-muted/50 flex items-center justify-between gap-3 surface-card px-4 py-3 transition-shadow hover:shadow-card-hover"
               >
-                <span className="truncate font-medium">{item.name}</span>
+                <span className="flex min-w-0 items-center gap-3">
+                  {!isTags && <CategoryIcon icon={(item as Category).icon} color={(item as Category).color} className="size-9" />}
+                  <span className="truncate font-medium">{item.name}</span>
+                </span>
                 <span className="text-muted-foreground shrink-0 text-xs">
                   {t('{{count}} transactions', { count: item.transactions_count ?? 0 })}
                 </span>

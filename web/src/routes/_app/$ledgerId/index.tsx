@@ -8,6 +8,7 @@ import { z } from 'zod'
 import { Money } from '@/components/app/money'
 import { MonthSwitcher } from '@/components/app/month-switcher'
 import { PageHeader } from '@/components/app/page-header'
+import { CategoryIcon } from '@/components/app/category-icon'
 import { StatCard } from '@/components/app/stat-card'
 import { useQuickAdd } from '@/components/app/quick-add-context'
 import { TransactionList } from '@/components/app/transaction-list'
@@ -251,8 +252,11 @@ function Dashboard() {
               )}
               {summary?.top_categories.map((item) => (
                 <div key={`${item.id}-${item.currency}`} className="space-y-1">
-                  <div className="flex justify-between gap-2 text-sm">
-                    <span className="truncate">{item.name ?? t('Uncategorised')}</span>
+                  <div className="flex items-center justify-between gap-2 text-sm">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <CategoryIcon icon={item.icon} color={item.color} className="size-7" />
+                      <span className="truncate">{item.name ?? t('Uncategorised')}</span>
+                    </span>
                     <Money amount={item.amount} currency={item.currency} tone="none" />
                   </div>
                   <div className="bg-muted h-1.5 overflow-hidden rounded-full">
