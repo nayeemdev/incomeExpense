@@ -1,0 +1,73 @@
+name: ledgerfly
+
+x-api: &api
+  build:
+    context: .
+    dockerfile: docker/api/Dockerfile
+  env_file: api/.env
+  environment: &api-environment
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_PORT: 3306
+    DB_DATABASE: ${DB_DATABASE:-ledgerfly}
+    DB_USERNAME: ${DB_USERNAME:-ledgerfly}
+    DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+  volumes:
+    - storage:/var/www/html/storage
+  depends_on:
+    mysql:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+    ports:
+      - "${APP_PORT:-8000}:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  api:
+    <<: *api
+    environment:
+      <<: *api-environment
+      AUTORUN_ENABLED: "true"
+
+  queue:
+    <<: *api
+    command: ["php", "/var/www/html/artisan", "queue:work", "--tries=3"]
+    stop_signal: SIGTERM
+    healthcheck:
+      test: ["CMD", "healthcheck-queue"]
+
+  scheduler:
+    <<: *api
+    command: ["php", "/var/www/html/artisan", "schedule:work"]
+    stop_signal: SIGTERM
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-ledgerfly}
+      MYSQL_USER: ${DB_USERNAME:-ledgerfly}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${DB_FORWARD_PORT:-3306}:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./docker/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  mysql:
+  storage:
