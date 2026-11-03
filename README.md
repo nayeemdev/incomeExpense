@@ -172,7 +172,7 @@ cd site
 node build.mjs                  # writes the site to site/dist
 ```
 
-It is deployed on Cloudflare Pages with `site` as the root directory, `node build.mjs` as the build command and `dist` as the output directory. Set `SITE_URL` to the site's address and, once the app is published, `PLAY_STORE_URL`. Social images are rendered from `site/og/template.html` at 1200×630.
+It is deployed as a Cloudflare Worker with static assets: `site` is the root directory, `node build.mjs` the build command and `npx wrangler deploy` the deploy command, which reads `site/wrangler.jsonc`. Set `SITE_URL` to the site's address and, once the app is published, `PLAY_STORE_URL`. Social images are rendered from `site/og/template.html` at 1200×630.
 
 </details>
 
