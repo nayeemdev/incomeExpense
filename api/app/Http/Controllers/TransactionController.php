@@ -31,6 +31,8 @@ class TransactionController extends Controller
             'account_id' => ['nullable', 'integer'],
             'category_id' => ['nullable', 'integer'],
             'tag_id' => ['nullable', 'integer'],
+            'budget_id' => ['nullable', 'integer'],
+            'bill_id' => ['nullable', 'integer'],
             'type' => ['nullable', 'array'],
             'type.*' => [Rule::enum(TransactionType::class)],
             'start' => ['nullable', 'date'],
@@ -45,11 +47,13 @@ class TransactionController extends Controller
         $query = Transaction::query()
             ->whereBelongsTo($ledger)
             ->select('transactions.*')
-            ->with(['group', 'sourceAccount.currency', 'destinationAccount.currency', 'currency', 'foreignCurrency', 'category', 'tags'])
+            ->with(['group', 'sourceAccount.currency', 'destinationAccount.currency', 'currency', 'foreignCurrency', 'category', 'budget', 'bill', 'tags'])
             ->when($account, fn (Builder $query) => $query->where(fn (Builder $query) => $query
                 ->where('source_account_id', $account?->id)
                 ->orWhere('destination_account_id', $account?->id)))
             ->when($filters['category_id'] ?? null, fn (Builder $query, int $id) => $query->where('category_id', $id))
+            ->when($filters['budget_id'] ?? null, fn (Builder $query, int $id) => $query->where('budget_id', $id))
+            ->when($filters['bill_id'] ?? null, fn (Builder $query, int $id) => $query->where('bill_id', $id))
             ->when($filters['tag_id'] ?? null, fn (Builder $query, int $id) => $query->whereHas('tags', fn (Builder $query) => $query->whereKey($id)))
             ->when($filters['type'] ?? null, fn (Builder $query, array $types) => $query->whereIn('type', $types))
             ->when($filters['start'] ?? null, fn (Builder $query, string $start) => $query->where('date', '>=', $start))
@@ -86,6 +90,8 @@ class TransactionController extends Controller
             'transactions.currency',
             'transactions.foreignCurrency',
             'transactions.category',
+            'transactions.budget',
+            'transactions.bill',
             'transactions.tags',
         ]));
     }

@@ -30,7 +30,7 @@ class AutocompleteController extends Controller
         return TransactionResource::collection(
             Transaction::query()
                 ->whereKey($latestIds)
-                ->with(['sourceAccount.currency', 'destinationAccount.currency', 'currency', 'foreignCurrency', 'category', 'tags'])
+                ->with(['sourceAccount.currency', 'destinationAccount.currency', 'currency', 'foreignCurrency', 'category', 'budget', 'bill', 'tags'])
                 ->orderByDesc('date')
                 ->get(),
         );

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['title', 'created_by'])]
+#[Fillable(['title', 'created_by', 'recurrence_id', 'recurrence_date'])]
 class TransactionGroup extends Model
 {
     use BelongsToLedger;
