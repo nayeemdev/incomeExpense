@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../api/models.dart';
 import '../../app/theme.dart';
 import '../../shared/category_style.dart';
+import '../../shared/format.dart';
 import '../../shared/widgets.dart';
 import '../ledger/ledger_data.dart';
 import '../transactions/transaction_tile.dart';
@@ -31,7 +32,7 @@ class _AnalyticsScreenState extends ConsumerState<AnalyticsScreen> {
     final history = ref.watch(transactionsProvider((query: '', type: type, accountId: null)));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Analytics'), automaticallyImplyLeading: false),
+      appBar: AppBar(title: const Text('Reports'), automaticallyImplyLeading: false),
       body: RefreshIndicator.adaptive(
         onRefresh: () => ref.refresh(reportProvider(_range).future),
         child: ListView(
@@ -143,42 +144,10 @@ class _ReportBody extends ConsumerWidget {
         ),
         if (categories.isNotEmpty) ...[
           const SectionHeader('By category'),
-          for (final row in categories.take(6))
-            Builder(
-              builder: (context) {
-                final style = row.id == null ? null : styles[row.id];
-                final value = double.tryParse(row.amount.value) ?? 0;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Row(
-                    children: [
-                      CategoryIcon(icon: style?.icon, color: style?.color, size: 42),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(child: Text(row.name ?? 'No category', style: Theme.of(context).textTheme.titleSmall)),
-                                MoneyText(
-                                  row.amount.value,
-                                  row.amount.currency,
-                                  tone: MoneyTone.none,
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            ProgressBar(value: value, max: total == 0 ? 1 : total, color: categoryColor(style?.color), height: 6),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _CategoryBreakdown(categories: categories, styles: styles, currency: report.currency, total: total),
+          ),
         ],
       ],
     );
@@ -234,6 +203,130 @@ class _Budgets extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// A donut of the biggest categories with the rows below as its legend. Tap a slice or a row to see its details.
+class _CategoryBreakdown extends StatefulWidget {
+  const _CategoryBreakdown({required this.categories, required this.styles, required this.currency, required this.total});
+
+  final List<CategoryTotal> categories;
+  final Map<int, NamedRef> styles;
+  final String currency;
+  final double total;
+
+  @override
+  State<_CategoryBreakdown> createState() => _CategoryBreakdownState();
+}
+
+class _CategoryBreakdownState extends State<_CategoryBreakdown> {
+  int? _selected;
+
+  @override
+  void didUpdateWidget(_CategoryBreakdown old) {
+    super.didUpdateWidget(old);
+    if (old.categories != widget.categories) _selected = null;
+  }
+
+  NamedRef? _style(String name) {
+    final id = widget.categories.where((row) => (row.name ?? 'No category') == name).firstOrNull?.id;
+    return id == null ? null : widget.styles[id];
+  }
+
+  void _toggle(int index) => setState(() => _selected = _selected == index ? null : index);
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Palette.of(context);
+    final text = Theme.of(context).textTheme;
+    final rows = [for (final row in widget.categories) (name: row.name ?? 'No category', value: double.tryParse(row.amount.value) ?? 0)];
+    final slices = donutSlices(context, rows);
+    final sum = slices.fold<double>(0, (value, slice) => value + slice.value);
+    final active = _selected == null || _selected! >= slices.length ? null : slices[_selected!];
+
+    return SurfaceCard(
+      padding: const EdgeInsets.fromLTRB(12, 20, 12, 8),
+      child: Column(
+        children: [
+          DonutChart(
+            slices: slices,
+            selected: active == null ? null : _selected,
+            onTap: _toggle,
+            center: SizedBox(
+              width: 120,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (active != null && active.name != 'Other') ...[
+                    CategoryIcon(icon: _style(active.name)?.icon, color: _style(active.name)?.color, size: 30),
+                    const SizedBox(height: 4),
+                  ],
+                  Text(
+                    active?.name ?? 'Total',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12.5, color: palette.muted, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 2),
+                  FittedBox(
+                    child: Text(
+                      formatMoney('${active?.value ?? widget.total}', widget.currency),
+                      style: text.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  if (active != null)
+                    Text('${(active.value / sum * 100).round()}% of total', style: TextStyle(fontSize: 12, color: palette.muted)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            active == null ? 'Tap a slice for details' : 'Tap again to see the total',
+            style: TextStyle(fontSize: 12, color: palette.subtle),
+          ),
+          const SizedBox(height: 10),
+          for (final (index, slice) in slices.indexed)
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 180),
+              opacity: active == null || _selected == index ? 1 : 0.45,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => _toggle(index),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(color: slice.color, shape: BoxShape.circle),
+                      ),
+                      const SizedBox(width: 10),
+                      if (slice.name != 'Other') ...[
+                        CategoryIcon(icon: _style(slice.name)?.icon, color: _style(slice.name)?.color, size: 30),
+                        const SizedBox(width: 10),
+                      ],
+                      Expanded(
+                        child: Text(slice.name, style: text.titleSmall, overflow: TextOverflow.ellipsis),
+                      ),
+                      Text('${(slice.value / sum * 100).round()}%', style: TextStyle(color: palette.muted, fontSize: 13)),
+                      const SizedBox(width: 12),
+                      MoneyText(
+                        '${slice.value}',
+                        widget.currency,
+                        tone: MoneyTone.none,
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

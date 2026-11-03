@@ -21,6 +21,7 @@ class Palette extends ThemeExtension<Palette> {
     required this.negativeTint,
     required this.warning,
     required this.shadow,
+    required this.chart,
   });
 
   final Color background;
@@ -42,6 +43,9 @@ class Palette extends ThemeExtension<Palette> {
   final Color negativeTint;
   final Color warning;
   final List<BoxShadow> shadow;
+
+  /// The web's categorical chart colors, used in fixed order.
+  final List<Color> chart;
 
   static Palette of(BuildContext context) => Theme.of(context).extension<Palette>()!;
 
@@ -68,6 +72,7 @@ class Palette extends ThemeExtension<Palette> {
       BoxShadow(color: Color(0x0D0F2942), blurRadius: 2, offset: Offset(0, 1)),
       BoxShadow(color: Color(0x140F2942), blurRadius: 14, spreadRadius: -4, offset: Offset(0, 4)),
     ],
+    chart: [Color(0xFF2A78D6), Color(0xFFEB6834), Color(0xFF1BAF7A), Color(0xFFEDA100), Color(0xFFE87BA4), Color(0xFF008300)],
   );
 
   static const dark = Palette(
@@ -90,6 +95,7 @@ class Palette extends ThemeExtension<Palette> {
     negativeTint: Color(0x26F97316),
     warning: Color(0xFFF5B83D),
     shadow: [],
+    chart: [Color(0xFF3987E5), Color(0xFFD95926), Color(0xFF199E70), Color(0xFFC98500), Color(0xFFD55181), Color(0xFF008300)],
   );
 
   @override

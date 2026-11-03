@@ -933,3 +933,102 @@ String bucketLabel(DateTime date, String interval) => switch (interval) {
   'month' => DateFormat('MMM').format(date),
   _ => DateFormat('y').format(date),
 };
+
+typedef DonutSlice = ({String name, double value, Color color});
+
+/// The largest [rows] in the chart palette's fixed order, with the rest folded into "Other".
+List<DonutSlice> donutSlices(BuildContext context, List<({String name, double value})> rows) {
+  final palette = Palette.of(context);
+  final sorted = rows.where((row) => row.value > 0).toList()..sort((a, b) => b.value.compareTo(a.value));
+  final shown = sorted.take(palette.chart.length).toList();
+  final rest = sorted.skip(palette.chart.length).fold<double>(0, (sum, row) => sum + row.value);
+  return [
+    for (final (index, row) in shown.indexed) (name: row.name, value: row.value, color: palette.chart[index]),
+    if (rest > 0) (name: 'Other', value: rest, color: palette.subtle),
+  ];
+}
+
+/// A ring chart. Tapping a slice reports its index through [onTap]; [selected] dims the others.
+class DonutChart extends StatelessWidget {
+  const DonutChart({super.key, required this.slices, required this.center, this.size = 200, this.selected, this.onTap});
+
+  final List<DonutSlice> slices;
+  final Widget center;
+  final double size;
+  final int? selected;
+  final ValueChanged<int>? onTap;
+
+  int? _sliceAt(Offset position) {
+    final offset = position - Offset(size / 2, size / 2);
+    if (offset.distance < size * 0.3 || offset.distance > size / 2) return null;
+    final total = slices.fold<double>(0, (sum, slice) => sum + slice.value);
+    var angle = math.atan2(offset.dy, offset.dx) + math.pi / 2;
+    if (angle < 0) angle += math.pi * 2;
+    var end = 0.0;
+    for (final (index, slice) in slices.indexed) {
+      end += slice.value / total * math.pi * 2;
+      if (angle <= end) return index;
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapUp: onTap == null
+          ? null
+          : (details) {
+              final index = _sliceAt(details.localPosition);
+              if (index == null) return;
+              HapticFeedback.selectionClick();
+              onTap!(index);
+            },
+      child: SizedBox.square(
+        dimension: size,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeOutCubic,
+          builder: (context, progress, child) => CustomPaint(painter: _DonutPainter(slices, progress, selected), child: child),
+          child: Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: KeyedSubtree(key: ValueKey(selected), child: center),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DonutPainter extends CustomPainter {
+  _DonutPainter(this.slices, this.progress, this.selected);
+
+  final List<DonutSlice> slices;
+  final double progress;
+  final int? selected;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final stroke = size.width * 0.14;
+    final rect = Rect.fromCircle(center: size.center(Offset.zero), radius: size.width / 2 - stroke * 0.6);
+    final total = slices.fold<double>(0, (sum, slice) => sum + slice.value);
+    if (total <= 0) return;
+    final paint = Paint()..style = PaintingStyle.stroke;
+    final spacing = slices.length > 1 ? 0.035 : 0.0;
+    var start = -math.pi / 2;
+    for (final (index, slice) in slices.indexed) {
+      final sweep = slice.value / total * math.pi * 2 * progress;
+      final visible = math.max(0.0, sweep - spacing);
+      paint
+        ..color = selected != null && selected != index ? slice.color.withValues(alpha: 0.25) : slice.color
+        ..strokeWidth = selected == index ? stroke * 1.18 : stroke;
+      if (visible > 0) canvas.drawArc(rect, start + spacing / 2, visible, false, paint);
+      start += sweep;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DonutPainter old) => old.progress != progress || old.slices != slices || old.selected != selected;
+}

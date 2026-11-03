@@ -4,12 +4,15 @@ import { DownloadIcon, PrinterIcon, TriangleAlertIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
+import { CategoryIcon } from '@/components/app/category-icon'
 import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
 import { ProgressBar } from '@/components/app/progress-bar'
 import { RangePicker } from '@/components/app/range-picker'
 import { BalanceChart } from '@/components/charts/balance-chart'
 import { BreakdownChart } from '@/components/charts/breakdown-chart'
+import { CategoryDonut } from '@/components/charts/category-donut'
+import { donutSlices } from '@/components/charts/donut-slices'
 import { bucketLabel } from '@/components/charts/format'
 import { IncomeExpenseChart } from '@/components/charts/income-expense-chart'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -20,8 +23,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { useLedger, useLocale } from '@/hooks/use-ledger'
+import { cn } from '@/lib/utils'
 import { downloadUrl } from '@/lib/api/client'
-import { breakdownReportQuery, overviewReportQuery } from '@/lib/api/queries'
+import { breakdownReportQuery, categoriesQuery, overviewReportQuery } from '@/lib/api/queries'
 import { rangePresets } from '@/lib/period'
 import type { BreakdownRow, ReportMeta } from '@/lib/api/types'
 
@@ -222,26 +226,52 @@ function Overview({ start, end }: { start: string; end: string }) {
 
 function CategoryList({ title, rows, currency }: { title: string; rows: BreakdownRow[]; currency: string }) {
   const { t } = useTranslation()
-  const max = Math.max(...rows.map((row) => Number(row.total)), 1)
+  const ledger = useLedger()
+  const { data: categories } = useQuery(categoriesQuery(ledger.id))
+  const styles = new Map((categories?.data ?? []).map((category) => [String(category.id), category]))
+  const slices = donutSlices(rows, t('Other'), t('Uncategorised'))
+  const [selected, setSelected] = useState<string | null>(null)
+  const total = slices.reduce((sum, slice) => sum + slice.value, 0)
 
   return (
     <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
-        {rows.length === 0 && <p className="text-muted-foreground text-sm">{t('Nothing in this period.')}</p>}
-        {rows.map((row) => (
-          <div key={row.id ?? 'none'} className="space-y-1">
-            <div className="flex justify-between gap-2 text-sm">
-              <span className="truncate">{row.name ?? t('Uncategorised')}</span>
-              <Money amount={row.total} currency={currency} tone="none" />
-            </div>
-            <div className="bg-muted h-1.5 overflow-hidden rounded-full">
-              <div className="bg-primary h-full rounded-full" style={{ width: `${(Number(row.total) / max) * 100}%` }} />
-            </div>
-          </div>
-        ))}
+      <CardContent className="space-y-5">
+        {slices.length === 0 ? (
+          <p className="text-muted-foreground text-sm">{t('Nothing in this period.')}</p>
+        ) : (
+          <>
+            <CategoryDonut slices={slices} currency={currency} selected={selected} onSelect={setSelected} />
+            <ul className="space-y-1">
+              {slices.map((slice) => (
+                <li key={slice.key}>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(selected === slice.key ? null : slice.key)}
+                    aria-pressed={selected === slice.key}
+                    className={cn(
+                      'hover:bg-muted/50 w-full space-y-1 rounded-lg px-2 py-1.5 text-left transition-opacity',
+                      selected && selected !== slice.key && 'opacity-50',
+                    )}
+                  >
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="size-2.5 shrink-0 rounded-full" style={{ background: slice.color }} aria-hidden />
+                    {slice.key !== 'other' && <CategoryIcon icon={styles.get(slice.key)?.icon} color={styles.get(slice.key)?.color} className="size-7" />}
+                    <span className="flex-1 truncate">{slice.name}</span>
+                    <span className="text-muted-foreground tabular-nums">{Math.round((slice.value / total) * 100)}%</span>
+                    <Money amount={String(slice.value)} currency={currency} tone="none" className="w-24 text-right" />
+                  </div>
+                  <div className="bg-muted h-1.5 overflow-hidden rounded-full">
+                    <div className="h-full rounded-full" style={{ width: `${(slice.value / total) * 100}%`, background: slice.color }} />
+                  </div>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </CardContent>
     </Card>
   )
