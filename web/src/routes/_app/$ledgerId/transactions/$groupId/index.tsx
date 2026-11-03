@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Attachments } from '@/components/app/attachments'
 import { TransactionLinks } from '@/components/app/transaction-links'
 import { Money } from '@/components/app/money'
+import { useQuickAdd } from '@/components/app/quick-add-context'
 import { PageHeader } from '@/components/app/page-header'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,7 @@ function TransactionDetail() {
   const ledgerId = String(ledger.id)
   const { data: group } = useQuery(transactionGroupQuery(ledger.id, groupId))
   const remove = useDeleteTransaction(ledger.id)
+  const quickAdd = useQuickAdd()
 
   if (!group) return <Skeleton className="h-64 w-full" />
 
@@ -68,11 +70,9 @@ function TransactionDetail() {
           canEdit &&
           editable && (
             <>
-              <Button variant="outline" asChild>
-                <Link to="/$ledgerId/transactions/$groupId/edit" params={{ ledgerId, groupId: String(groupId) }}>
-                  <PencilIcon />
-                  {t('Edit')}
-                </Link>
+              <Button variant="outline" onClick={() => quickAdd({ groupId })}>
+                <PencilIcon />
+                {t('Edit')}
               </Button>
               <Button
                 variant="outline"

@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
@@ -130,23 +130,15 @@ function Accounts() {
         </div>
       )}
 
-      <Sheet open={!!create} onOpenChange={(open) => setSearch({ create: open || undefined })}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>{t('New {{type}}', { type: accountTypeSingular()[type].toLowerCase() })}</SheetTitle>
-            <SheetDescription>{t('You can change everything later.')}</SheetDescription>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            <AccountForm
+      <FormDialog open={!!create} onOpenChange={(open) => setSearch({ create: open || undefined })} title={t('New {{type}}', { type: accountTypeSingular()[type].toLowerCase() })} description={t('You can change everything later.')} size="lg">
+        <AccountForm
               type={type}
               onCancel={() => setSearch({ create: undefined })}
               onSaved={(account) =>
                 navigate({ to: '/$ledgerId/accounts/$accountId', params: { ledgerId, accountId: String(account.id) } })
               }
             />
-          </div>
-        </SheetContent>
-      </Sheet>
+      </FormDialog>
     </>
   )
 }

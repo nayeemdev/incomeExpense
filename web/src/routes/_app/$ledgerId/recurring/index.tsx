@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
@@ -132,13 +132,8 @@ function RecurringTransactions() {
           })}
         </ul>
       )}
-      <Sheet open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
-          <SheetHeader>
-            <SheetTitle>{editing === 'new' ? t('New recurring transaction') : t('Edit recurring transaction')}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            {editing !== null && (
+      <FormDialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)} title={editing === 'new' ? t('New recurring transaction') : t('Edit recurring transaction')} size="xl">
+        {editing !== null && (
               <RecurrenceForm
                 key={editing === 'new' ? 'new' : editing.id}
                 recurrence={editing === 'new' ? undefined : editing}
@@ -146,9 +141,7 @@ function RecurringTransactions() {
                 onSaved={() => setEditing(null)}
               />
             )}
-          </div>
-        </SheetContent>
-      </Sheet>
+      </FormDialog>
     </>
   )
 }

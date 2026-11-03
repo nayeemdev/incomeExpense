@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { ArrowDownLeftIcon, ArrowLeftRightIcon, ArrowUpRightIcon, MoreHorizontalIcon, ScaleIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
@@ -19,6 +19,7 @@ import { notifyError } from '@/lib/forms'
 import { accountDisplayName } from '@/lib/transactions'
 import { cn } from '@/lib/utils'
 import { Money } from './money'
+import { useQuickAdd } from './quick-add-context'
 
 type TransactionListProps = {
   transactions: Transaction[] | undefined
@@ -101,7 +102,7 @@ function TransactionRow({
   onToggle?: (id: number) => void
 }) {
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  const quickAdd = useQuickAdd()
   const ledger = useLedger()
   const canEdit = useCanEdit()
   const remove = useDeleteTransaction(ledger.id)
@@ -173,7 +174,7 @@ function TransactionRow({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onSelect={() => navigate({ to: '/$ledgerId/transactions/$groupId/edit', params: { ledgerId, groupId } })}
+              onSelect={() => quickAdd({ groupId: transaction.group_id })}
             >
               {t('Edit')}
             </DropdownMenuItem>

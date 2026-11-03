@@ -40,9 +40,7 @@ import { Route as AppLedgerIdRulesIndexRouteImport } from './routes/_app/$ledger
 import { Route as AppLedgerIdTagsIndexRouteImport } from './routes/_app/$ledgerId/tags/index'
 import { Route as AppLedgerIdTagsTagIdRouteImport } from './routes/_app/$ledgerId/tags/$tagId'
 import { Route as AppLedgerIdTransactionsIndexRouteImport } from './routes/_app/$ledgerId/transactions/index'
-import { Route as AppLedgerIdTransactionsNewRouteImport } from './routes/_app/$ledgerId/transactions/new'
 import { Route as AppLedgerIdTransactionsGroupIdIndexRouteImport } from './routes/_app/$ledgerId/transactions/$groupId/index'
-import { Route as AppLedgerIdTransactionsGroupIdEditRouteImport } from './routes/_app/$ledgerId/transactions/$groupId/edit'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -206,22 +204,10 @@ const AppLedgerIdTransactionsIndexRoute =
     path: '/transactions/',
     getParentRoute: () => AppLedgerIdRoute,
   } as any)
-const AppLedgerIdTransactionsNewRoute =
-  AppLedgerIdTransactionsNewRouteImport.update({
-    id: '/transactions/new',
-    path: '/transactions/new',
-    getParentRoute: () => AppLedgerIdRoute,
-  } as any)
 const AppLedgerIdTransactionsGroupIdIndexRoute =
   AppLedgerIdTransactionsGroupIdIndexRouteImport.update({
     id: '/transactions/$groupId/',
     path: '/transactions/$groupId/',
-    getParentRoute: () => AppLedgerIdRoute,
-  } as any)
-const AppLedgerIdTransactionsGroupIdEditRoute =
-  AppLedgerIdTransactionsGroupIdEditRouteImport.update({
-    id: '/transactions/$groupId/edit',
-    path: '/transactions/$groupId/edit',
     getParentRoute: () => AppLedgerIdRoute,
   } as any)
 
@@ -244,7 +230,6 @@ export interface FileRoutesByFullPath {
   '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
   '/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
-  '/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
   '/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
   '/$ledgerId/bills/': typeof AppLedgerIdBillsIndexRoute
   '/$ledgerId/budgets/': typeof AppLedgerIdBudgetsIndexRoute
@@ -256,7 +241,6 @@ export interface FileRoutesByFullPath {
   '/$ledgerId/rules/': typeof AppLedgerIdRulesIndexRoute
   '/$ledgerId/tags/': typeof AppLedgerIdTagsIndexRoute
   '/$ledgerId/transactions/': typeof AppLedgerIdTransactionsIndexRoute
-  '/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
   '/$ledgerId/transactions/$groupId/': typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -277,7 +261,6 @@ export interface FileRoutesByTo {
   '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
   '/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
-  '/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
   '/$ledgerId/accounts': typeof AppLedgerIdAccountsIndexRoute
   '/$ledgerId/bills': typeof AppLedgerIdBillsIndexRoute
   '/$ledgerId/budgets': typeof AppLedgerIdBudgetsIndexRoute
@@ -289,7 +272,6 @@ export interface FileRoutesByTo {
   '/$ledgerId/rules': typeof AppLedgerIdRulesIndexRoute
   '/$ledgerId/tags': typeof AppLedgerIdTagsIndexRoute
   '/$ledgerId/transactions': typeof AppLedgerIdTransactionsIndexRoute
-  '/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
   '/$ledgerId/transactions/$groupId': typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 export interface FileRoutesById {
@@ -314,7 +296,6 @@ export interface FileRoutesById {
   '/_app/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
   '/_app/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/_app/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
-  '/_app/$ledgerId/transactions/new': typeof AppLedgerIdTransactionsNewRoute
   '/_app/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
   '/_app/$ledgerId/bills/': typeof AppLedgerIdBillsIndexRoute
   '/_app/$ledgerId/budgets/': typeof AppLedgerIdBudgetsIndexRoute
@@ -326,7 +307,6 @@ export interface FileRoutesById {
   '/_app/$ledgerId/rules/': typeof AppLedgerIdRulesIndexRoute
   '/_app/$ledgerId/tags/': typeof AppLedgerIdTagsIndexRoute
   '/_app/$ledgerId/transactions/': typeof AppLedgerIdTransactionsIndexRoute
-  '/_app/$ledgerId/transactions/$groupId/edit': typeof AppLedgerIdTransactionsGroupIdEditRoute
   '/_app/$ledgerId/transactions/$groupId/': typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -350,7 +330,6 @@ export interface FileRouteTypes {
     | '/$ledgerId/categories/$categoryId'
     | '/$ledgerId/piggy-banks/$piggyBankId'
     | '/$ledgerId/tags/$tagId'
-    | '/$ledgerId/transactions/new'
     | '/$ledgerId/accounts/'
     | '/$ledgerId/bills/'
     | '/$ledgerId/budgets/'
@@ -362,7 +341,6 @@ export interface FileRouteTypes {
     | '/$ledgerId/rules/'
     | '/$ledgerId/tags/'
     | '/$ledgerId/transactions/'
-    | '/$ledgerId/transactions/$groupId/edit'
     | '/$ledgerId/transactions/$groupId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -383,7 +361,6 @@ export interface FileRouteTypes {
     | '/$ledgerId/categories/$categoryId'
     | '/$ledgerId/piggy-banks/$piggyBankId'
     | '/$ledgerId/tags/$tagId'
-    | '/$ledgerId/transactions/new'
     | '/$ledgerId/accounts'
     | '/$ledgerId/bills'
     | '/$ledgerId/budgets'
@@ -395,7 +372,6 @@ export interface FileRouteTypes {
     | '/$ledgerId/rules'
     | '/$ledgerId/tags'
     | '/$ledgerId/transactions'
-    | '/$ledgerId/transactions/$groupId/edit'
     | '/$ledgerId/transactions/$groupId'
   id:
     | '__root__'
@@ -419,7 +395,6 @@ export interface FileRouteTypes {
     | '/_app/$ledgerId/categories/$categoryId'
     | '/_app/$ledgerId/piggy-banks/$piggyBankId'
     | '/_app/$ledgerId/tags/$tagId'
-    | '/_app/$ledgerId/transactions/new'
     | '/_app/$ledgerId/accounts/'
     | '/_app/$ledgerId/bills/'
     | '/_app/$ledgerId/budgets/'
@@ -431,7 +406,6 @@ export interface FileRouteTypes {
     | '/_app/$ledgerId/rules/'
     | '/_app/$ledgerId/tags/'
     | '/_app/$ledgerId/transactions/'
-    | '/_app/$ledgerId/transactions/$groupId/edit'
     | '/_app/$ledgerId/transactions/$groupId/'
   fileRoutesById: FileRoutesById
 }
@@ -659,25 +633,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLedgerIdTransactionsIndexRouteImport
       parentRoute: typeof AppLedgerIdRoute
     }
-    '/_app/$ledgerId/transactions/new': {
-      id: '/_app/$ledgerId/transactions/new'
-      path: '/transactions/new'
-      fullPath: '/$ledgerId/transactions/new'
-      preLoaderRoute: typeof AppLedgerIdTransactionsNewRouteImport
-      parentRoute: typeof AppLedgerIdRoute
-    }
     '/_app/$ledgerId/transactions/$groupId/': {
       id: '/_app/$ledgerId/transactions/$groupId/'
       path: '/transactions/$groupId'
       fullPath: '/$ledgerId/transactions/$groupId/'
       preLoaderRoute: typeof AppLedgerIdTransactionsGroupIdIndexRouteImport
-      parentRoute: typeof AppLedgerIdRoute
-    }
-    '/_app/$ledgerId/transactions/$groupId/edit': {
-      id: '/_app/$ledgerId/transactions/$groupId/edit'
-      path: '/transactions/$groupId/edit'
-      fullPath: '/$ledgerId/transactions/$groupId/edit'
-      preLoaderRoute: typeof AppLedgerIdTransactionsGroupIdEditRouteImport
       parentRoute: typeof AppLedgerIdRoute
     }
   }
@@ -692,7 +652,6 @@ interface AppLedgerIdRouteChildren {
   AppLedgerIdCategoriesCategoryIdRoute: typeof AppLedgerIdCategoriesCategoryIdRoute
   AppLedgerIdPiggyBanksPiggyBankIdRoute: typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   AppLedgerIdTagsTagIdRoute: typeof AppLedgerIdTagsTagIdRoute
-  AppLedgerIdTransactionsNewRoute: typeof AppLedgerIdTransactionsNewRoute
   AppLedgerIdAccountsIndexRoute: typeof AppLedgerIdAccountsIndexRoute
   AppLedgerIdBillsIndexRoute: typeof AppLedgerIdBillsIndexRoute
   AppLedgerIdBudgetsIndexRoute: typeof AppLedgerIdBudgetsIndexRoute
@@ -704,7 +663,6 @@ interface AppLedgerIdRouteChildren {
   AppLedgerIdRulesIndexRoute: typeof AppLedgerIdRulesIndexRoute
   AppLedgerIdTagsIndexRoute: typeof AppLedgerIdTagsIndexRoute
   AppLedgerIdTransactionsIndexRoute: typeof AppLedgerIdTransactionsIndexRoute
-  AppLedgerIdTransactionsGroupIdEditRoute: typeof AppLedgerIdTransactionsGroupIdEditRoute
   AppLedgerIdTransactionsGroupIdIndexRoute: typeof AppLedgerIdTransactionsGroupIdIndexRoute
 }
 
@@ -717,7 +675,6 @@ const AppLedgerIdRouteChildren: AppLedgerIdRouteChildren = {
   AppLedgerIdCategoriesCategoryIdRoute: AppLedgerIdCategoriesCategoryIdRoute,
   AppLedgerIdPiggyBanksPiggyBankIdRoute: AppLedgerIdPiggyBanksPiggyBankIdRoute,
   AppLedgerIdTagsTagIdRoute: AppLedgerIdTagsTagIdRoute,
-  AppLedgerIdTransactionsNewRoute: AppLedgerIdTransactionsNewRoute,
   AppLedgerIdAccountsIndexRoute: AppLedgerIdAccountsIndexRoute,
   AppLedgerIdBillsIndexRoute: AppLedgerIdBillsIndexRoute,
   AppLedgerIdBudgetsIndexRoute: AppLedgerIdBudgetsIndexRoute,
@@ -729,8 +686,6 @@ const AppLedgerIdRouteChildren: AppLedgerIdRouteChildren = {
   AppLedgerIdRulesIndexRoute: AppLedgerIdRulesIndexRoute,
   AppLedgerIdTagsIndexRoute: AppLedgerIdTagsIndexRoute,
   AppLedgerIdTransactionsIndexRoute: AppLedgerIdTransactionsIndexRoute,
-  AppLedgerIdTransactionsGroupIdEditRoute:
-    AppLedgerIdTransactionsGroupIdEditRoute,
   AppLedgerIdTransactionsGroupIdIndexRoute:
     AppLedgerIdTransactionsGroupIdIndexRoute,
 }

@@ -19,7 +19,7 @@ import { TransactionList } from '@/components/app/transaction-list'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
@@ -195,16 +195,9 @@ function AccountDetail() {
         <DatePicker value={reconcileDate} onChange={(date) => setReconcileDate(date ?? todayIso())} />
       </AmountDialog>
 
-      <Sheet open={editing} onOpenChange={setEditing}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>{t('Edit {{name}}', { name: account.name })}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            <AccountForm type={account.type} account={account} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <FormDialog open={editing} onOpenChange={setEditing} title={t('Edit {{name}}', { name: account.name })} size="lg">
+        <AccountForm type={account.type} account={account} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
+      </FormDialog>
     </>
   )
 }

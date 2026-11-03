@@ -10,7 +10,7 @@ import { PiggyBankForm } from '@/components/planning/piggy-bank-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
 import { piggyBanksQuery } from '@/lib/api/queries'
@@ -87,16 +87,9 @@ function PiggyBanks() {
           </Card>
         ))}
       </div>
-      <Sheet open={creating} onOpenChange={setCreating}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>{t('New piggy bank')}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            <PiggyBankForm onCancel={() => setCreating(false)} onSaved={() => setCreating(false)} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <FormDialog open={creating} onOpenChange={setCreating} title={t('New piggy bank')} size="lg">
+        <PiggyBankForm onCancel={() => setCreating(false)} onSaved={() => setCreating(false)} />
+      </FormDialog>
     </>
   )
 }

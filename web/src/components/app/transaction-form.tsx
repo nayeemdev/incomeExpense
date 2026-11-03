@@ -296,7 +296,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
       <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
         <FormField control={form.control} name={`splits.${index}.amount`} label={t('Amount')}>
           {(field) => (
-            <MoneyInput {...field} autoFocus={autoFocus} currency={currency.code} className="h-11 text-lg font-medium" />
+            <MoneyInput {...field} autoFocus={autoFocus} currency={currency.code} className="font-medium" />
           )}
         </FormField>
         <FormField control={form.control} name={`splits.${index}.description`} label={t('Description')}>
