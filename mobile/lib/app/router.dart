@@ -221,7 +221,7 @@ class _BottomBar extends StatelessWidget {
                             width: 56,
                             height: 56,
                             decoration: BoxDecoration(
-                              gradient: palette.brandGradient,
+                              color: palette.primary,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(color: palette.accent.withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 6)),

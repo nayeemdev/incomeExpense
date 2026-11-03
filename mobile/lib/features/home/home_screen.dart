@@ -278,8 +278,7 @@ class _AccountCard extends ConsumerWidget {
         width: 168,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          gradient: highlighted ? palette.brandGradient : null,
-          color: highlighted ? null : palette.surface,
+          color: highlighted ? palette.primary : palette.surface,
           borderRadius: BorderRadius.circular(22),
           boxShadow: highlighted
               ? [BoxShadow(color: palette.accent.withValues(alpha: 0.3), blurRadius: 18, offset: const Offset(0, 8))]
