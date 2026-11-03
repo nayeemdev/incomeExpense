@@ -836,6 +836,7 @@ Future<void> showSuccess(BuildContext context, {required String title, required 
 Future<T?> showAppSheet<T>(BuildContext context, {required String title, required WidgetBuilder builder}) {
   return showModalBottomSheet<T>(
     context: context,
+    useRootNavigator: true,
     showDragHandle: true,
     isScrollControlled: true,
     useSafeArea: true,

@@ -12,6 +12,17 @@ Flutter app for iOS and Android. It talks to the same `/api/v1` as the web app a
 - Categories have an icon and color, suggested from their name and editable from a predefined set.
 - Settings: switch ledger, accounts, categories, budgets and bills, notifications, light, dark or system theme, Face ID lock and logout.
 
+## Phone alerts with ntfy
+
+LedgerFly can send alerts to [ntfy](https://ntfy.sh), a free open source notification app, so they arrive instantly on iPhone and Android without any push setup on the server.
+
+1. Install the ntfy app.
+2. In LedgerFly, open Settings, Phone alerts with ntfy. Keep `https://ntfy.sh` or enter your own ntfy server, tap Generate for a random topic, and save.
+3. In the ntfy app, subscribe to the same server and topic.
+4. Tap Send test in LedgerFly.
+
+Choose which alerts go to ntfy under Notifications on the web. With Hide amounts and details on (the default), alerts only say what happened, since anyone who knows a topic name can read it on a public server. A self-hosted ntfy server needs `upstream-base-url: "https://ntfy.sh"` for instant alerts on iPhone.
+
 ## Widgets and Siri
 
 - A home screen widget in small and medium sizes, plus lock screen versions, shows what you have spent this month, the budget left and the next bill due. Its + button opens quick add.
