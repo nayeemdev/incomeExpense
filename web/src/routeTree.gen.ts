@@ -14,6 +14,7 @@ import { Route as GuestRouteImport } from './routes/_guest'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppLedgerIdRouteImport } from './routes/_app/$ledgerId'
 import { Route as AppOnboardingRouteImport } from './routes/_app/onboarding'
+import { Route as AppQuickAddRouteImport } from './routes/_app/quick-add'
 import { Route as GuestForgotPasswordRouteImport } from './routes/_guest/forgot-password'
 import { Route as GuestLoginRouteImport } from './routes/_guest/login'
 import { Route as GuestRegisterRouteImport } from './routes/_guest/register'
@@ -62,6 +63,11 @@ const AppLedgerIdRoute = AppLedgerIdRouteImport.update({
 const AppOnboardingRoute = AppOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppQuickAddRoute = AppQuickAddRouteImport.update({
+  id: '/quick-add',
+  path: '/quick-add',
   getParentRoute: () => AppRoute,
 } as any)
 const GuestForgotPasswordRoute = GuestForgotPasswordRouteImport.update({
@@ -211,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/$ledgerId': typeof AppLedgerIdRouteWithChildren
   '/onboarding': typeof AppOnboardingRoute
+  '/quick-add': typeof AppQuickAddRoute
   '/forgot-password': typeof GuestForgotPasswordRoute
   '/login': typeof GuestLoginRoute
   '/register': typeof GuestRegisterRoute
@@ -241,6 +248,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/onboarding': typeof AppOnboardingRoute
+  '/quick-add': typeof AppQuickAddRoute
   '/forgot-password': typeof GuestForgotPasswordRoute
   '/login': typeof GuestLoginRoute
   '/register': typeof GuestRegisterRoute
@@ -274,6 +282,7 @@ export interface FileRoutesById {
   '/_guest': typeof GuestRouteWithChildren
   '/_app/$ledgerId': typeof AppLedgerIdRouteWithChildren
   '/_app/onboarding': typeof AppOnboardingRoute
+  '/_app/quick-add': typeof AppQuickAddRoute
   '/_guest/forgot-password': typeof GuestForgotPasswordRoute
   '/_guest/login': typeof GuestLoginRoute
   '/_guest/register': typeof GuestRegisterRoute
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$ledgerId'
     | '/onboarding'
+    | '/quick-add'
     | '/forgot-password'
     | '/login'
     | '/register'
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/onboarding'
+    | '/quick-add'
     | '/forgot-password'
     | '/login'
     | '/register'
@@ -370,6 +381,7 @@ export interface FileRouteTypes {
     | '/_guest'
     | '/_app/$ledgerId'
     | '/_app/onboarding'
+    | '/_app/quick-add'
     | '/_guest/forgot-password'
     | '/_guest/login'
     | '/_guest/register'
@@ -439,6 +451,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/quick-add': {
+      id: '/_app/quick-add'
+      path: '/quick-add'
+      fullPath: '/quick-add'
+      preLoaderRoute: typeof AppQuickAddRouteImport
       parentRoute: typeof AppRoute
     }
     '/_guest/forgot-password': {
@@ -681,6 +700,7 @@ const AppLedgerIdRouteWithChildren = AppLedgerIdRoute._addFileChildren(
 interface AppRouteChildren {
   AppLedgerIdRoute: typeof AppLedgerIdRouteWithChildren
   AppOnboardingRoute: typeof AppOnboardingRoute
+  AppQuickAddRoute: typeof AppQuickAddRoute
   AppIndexRoute: typeof AppIndexRoute
   AppInvitationsTokenRoute: typeof AppInvitationsTokenRoute
 }
@@ -688,6 +708,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppLedgerIdRoute: AppLedgerIdRouteWithChildren,
   AppOnboardingRoute: AppOnboardingRoute,
+  AppQuickAddRoute: AppQuickAddRoute,
   AppIndexRoute: AppIndexRoute,
   AppInvitationsTokenRoute: AppInvitationsTokenRoute,
 }

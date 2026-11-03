@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { ArrowRightIcon, PlusIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Money } from '@/components/app/money'
@@ -22,7 +22,10 @@ import { monthRange } from '@/lib/period'
 import { assetRoleLabels } from '@/lib/labels'
 
 export const Route = createFileRoute('/_app/$ledgerId/')({
-  validateSearch: z.object({ month: z.string().regex(/^\d{4}-\d{2}$/).optional().catch(undefined) }),
+  validateSearch: z.object({
+    month: z.string().regex(/^\d{4}-\d{2}$/).optional().catch(undefined),
+    add: z.boolean().optional().catch(undefined),
+  }),
   component: Dashboard,
 })
 
@@ -48,7 +51,14 @@ function Dashboard() {
   const canEdit = useCanEdit()
   const quickAdd = useQuickAdd()
   const roles = assetRoleLabels()
-  const { month } = Route.useSearch()
+  const { month, add } = Route.useSearch()
+
+  useEffect(() => {
+    if (!add) return
+
+    quickAdd()
+    void navigate({ search: (previous) => ({ ...previous, add: undefined }), replace: true })
+  }, [add, quickAdd, navigate])
   const [today] = useState(() => new Date())
   const { current, start, end, shift } = monthRange(month, today)
   const ledgerId = String(ledger.id)

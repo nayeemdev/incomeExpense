@@ -24,8 +24,8 @@ export async function enablePush(publicKey: string) {
 
   if (permission !== 'granted') throw new Error('Notifications are blocked for this site in your browser settings.')
 
-  const registration = await navigator.serviceWorker.register('/sw.js')
-  await navigator.serviceWorker.ready
+  await navigator.serviceWorker.register('/sw.js')
+  const registration = await navigator.serviceWorker.ready
   const subscription = await registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: decodeKey(publicKey) })
   const json = subscription.toJSON()
 
