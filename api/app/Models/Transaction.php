@@ -29,7 +29,7 @@ use Illuminate\Support\Carbon;
  */
 #[Fillable([
     'ledger_id', 'type', 'date', 'description', 'source_account_id', 'destination_account_id',
-    'currency_id', 'amount', 'foreign_currency_id', 'foreign_amount', 'category_id', 'budget_id', 'bill_id', 'notes', 'order',
+    'currency_id', 'amount', 'foreign_currency_id', 'foreign_amount', 'category_id', 'budget_id', 'bill_id', 'import_job_id', 'external_id', 'notes', 'order',
 ])]
 class Transaction extends Model
 {

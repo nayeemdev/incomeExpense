@@ -178,6 +178,22 @@ class Ledger extends Model
         return $this->hasMany(Webhook::class);
     }
 
+    /**
+     * @return HasMany<ImportJob, $this>
+     */
+    public function importJobs(): HasMany
+    {
+        return $this->hasMany(ImportJob::class);
+    }
+
+    /**
+     * @return HasMany<ImportProfile, $this>
+     */
+    public function importProfiles(): HasMany
+    {
+        return $this->hasMany(ImportProfile::class);
+    }
+
     public function membershipOf(User $user): ?LedgerMember
     {
         if (! array_key_exists($user->id, $this->membershipCache)) {

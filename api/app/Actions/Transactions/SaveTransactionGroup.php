@@ -22,7 +22,7 @@ class SaveTransactionGroup
      * @param  array{title?: ?string, transactions: list<array<string, mixed>>}  $data
      * @param  array<string, mixed>  $groupAttributes
      */
-    public function handle(Ledger $ledger, ?User $user, array $data, ?TransactionGroup $group = null, array $groupAttributes = [], bool $applyRules = true): TransactionGroup
+    public function handle(Ledger $ledger, ?User $user, array $data, ?TransactionGroup $group = null, array $groupAttributes = [], bool $applyRules = true, bool $notify = true): TransactionGroup
     {
         $created = $group === null;
 
@@ -71,7 +71,9 @@ class SaveTransactionGroup
             $this->rules->applyToGroup($group, $created);
         }
 
-        TransactionGroupSaved::dispatch($group, $created);
+        if ($notify) {
+            TransactionGroupSaved::dispatch($group, $created);
+        }
 
         return $group;
     }
