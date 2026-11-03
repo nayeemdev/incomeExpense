@@ -2,8 +2,10 @@
 
 namespace App\Actions\Fortify;
 
+use App\Models\LedgerInvitation;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -21,7 +23,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         $isFirstUser = User::query()->doesntExist();
 
-        if (! $isFirstUser && ! config('ledgerfly.registration_enabled')) {
+        if (! self::isOpenFor($input['email'] ?? null)) {
             throw ValidationException::withMessages([
                 'email' => __('Registration is closed on this instance.'),
             ]);
@@ -39,5 +41,21 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $input['password'],
             'is_admin' => $isFirstUser,
         ]);
+    }
+
+    /**
+     * Sign-up is always open for the very first user (the owner of the instance) and for
+     * people with a pending invitation; anyone else only when the instance allows it.
+     */
+    public static function isOpenFor(?string $email): bool
+    {
+        if (config('ledgerfly.registration_enabled') || User::query()->doesntExist()) {
+            return true;
+        }
+
+        return $email !== null && LedgerInvitation::query()
+            ->where('email', Str::lower(trim($email)))
+            ->where('expires_at', '>', now())
+            ->exists();
     }
 }

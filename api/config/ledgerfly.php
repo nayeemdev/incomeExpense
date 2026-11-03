@@ -2,7 +2,7 @@
 
 return [
 
-    'registration_enabled' => (bool) env('REGISTRATION_ENABLED', true),
+    'registration_enabled' => (bool) env('REGISTRATION_ENABLED', false),
 
     'invitation_expiry_days' => (int) env('INVITATION_EXPIRY_DAYS', 7),
 
@@ -57,6 +57,7 @@ return [
     'demo' => [
         'email' => env('DEMO_EMAIL', 'demo@ledgerfly.test'),
         'currency' => env('DEMO_CURRENCY', 'USD'),
+        'password' => env('DEMO_PASSWORD'),
     ],
 
     'dashboard_widgets' => ['trend', 'recent', 'accounts', 'bills', 'top_spending'],

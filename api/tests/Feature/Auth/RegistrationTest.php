@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Ledger;
 use App\Models\User;
 
 it('makes the first registered user an admin', function () {
@@ -14,6 +15,7 @@ it('makes the first registered user an admin', function () {
 });
 
 it('does not make later users admins', function () {
+    config(['ledgerfly.registration_enabled' => true]);
     User::factory()->create();
 
     $this->postJson('/api/v1/auth/register', [
@@ -47,4 +49,19 @@ it('allows the first user to register when registration is closed', function () 
         'password' => 'a-long-password-1',
         'password_confirmation' => 'a-long-password-1',
     ])->assertCreated();
+});
+
+it('lets invited people sign up while registration is closed', function () {
+    $ledger = Ledger::factory()->create();
+    $owner = User::factory()->create();
+    $ledger->invitations()->create(['email' => 'friend@example.com', 'role' => 'editor', 'token' => hash('sha256', 'x'), 'expires_at' => now()->addDay(), 'invited_by' => $owner->id]);
+
+    $this->getJson('/api/v1/auth/config')->assertJsonPath('data.registration_open', false);
+    $this->postJson('/api/v1/auth/register', [
+        'name' => 'Friend', 'email' => 'Friend@Example.com', 'password' => 'a-long-password-1', 'password_confirmation' => 'a-long-password-1',
+    ])->assertCreated();
+});
+
+it('reports open registration before the first user exists', function () {
+    $this->getJson('/api/v1/auth/config')->assertJsonPath('data.registration_open', true);
 });
