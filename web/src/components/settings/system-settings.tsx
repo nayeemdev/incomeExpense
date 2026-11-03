@@ -109,8 +109,9 @@ export function SystemSettings() {
       <Section
         title={t('Alerts')}
         initial={data}
-        keys={['bill_reminder_days', 'budget_warning_percentage']}
+        keys={['bill_reminder_days', 'budget_warning_percentage', 'ntfy_server']}
         render={(draft, set) => (
+          <FieldGroup>
           <div className="grid gap-4 sm:grid-cols-2">
             <NumberField
               id="bill-days"
@@ -125,6 +126,12 @@ export function SystemSettings() {
               onChange={(value) => set({ budget_warning_percentage: value })}
             />
           </div>
+          <Field>
+            <FieldLabel htmlFor="ntfy-server">{t('Suggested ntfy server')}</FieldLabel>
+            <Input id="ntfy-server" type="url" value={draft.ntfy_server} onChange={(event) => set({ ntfy_server: event.target.value })} />
+            <FieldDescription>{t('Filled in for people setting up phone alerts. Point it at your own ntfy server if you run one.')}</FieldDescription>
+          </Field>
+          </FieldGroup>
         )}
       />
       <Section
@@ -143,7 +150,7 @@ export function SystemSettings() {
               <Field>
                 <FieldLabel htmlFor="rates-url">{t('Rates source')}</FieldLabel>
                 <Input id="rates-url" value={draft.exchange_rates_url} onChange={(event) => set({ exchange_rates_url: event.target.value })} />
-                <FieldDescription>{t('{base} is replaced with each ledger currency code.')}</FieldDescription>
+                <FieldDescription>{t('{{placeholder}} is replaced with each ledger currency code.', { placeholder: '{base}' })}</FieldDescription>
               </Field>
             )}
             <NumberField

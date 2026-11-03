@@ -330,6 +330,7 @@ export type SystemSettings = {
   exchange_rates_url: string
   bill_reminder_days: number
   budget_warning_percentage: number
+  ntfy_server: string
   attachments_max_size_kb: number
   mail_mailer: 'smtp' | 'log'
   mail_host: string | null

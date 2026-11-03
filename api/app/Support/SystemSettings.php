@@ -31,6 +31,7 @@ final class SystemSettings
             'exchange_rates_url' => ['config' => 'ledgerfly.exchange_rates.url', 'rules' => ['url:http,https', 'max:255', 'regex:/\{base\}/']],
             'bill_reminder_days' => ['config' => 'ledgerfly.notifications.bill_reminder_days', 'rules' => ['integer', 'between:0,30']],
             'budget_warning_percentage' => ['config' => 'ledgerfly.notifications.budget_warning_percentage', 'rules' => ['integer', 'between:1,100']],
+            'ntfy_server' => ['config' => 'ledgerfly.notifications.ntfy_server', 'rules' => ['url:http,https', 'max:255']],
             'attachments_max_size_kb' => ['config' => 'ledgerfly.attachments.max_size_kb', 'rules' => ['integer', 'between:100,102400']],
             'mail_mailer' => ['config' => 'mail.default', 'rules' => ['in:smtp,log']],
             'mail_host' => ['config' => 'mail.mailers.smtp.host', 'rules' => ['nullable', 'string', 'max:255']],
