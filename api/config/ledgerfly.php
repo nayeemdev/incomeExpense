@@ -20,6 +20,11 @@ return [
         'limit' => 10,
     ],
 
+    'exchange_rates' => [
+        'enabled' => (bool) env('EXCHANGE_RATES_ENABLED', true),
+        'url' => env('EXCHANGE_RATES_URL', 'https://open.er-api.com/v6/latest/{base}'),
+    ],
+
     'notifications' => [
         'channels' => ['database', 'mail', 'webpush'],
         'push_channels' => ['webpush'],

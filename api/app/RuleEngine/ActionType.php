@@ -41,7 +41,7 @@ enum ActionType: string
     /**
      * Applies the action. Returns false when the transaction no longer exists afterwards.
      */
-    public function apply(Transaction $transaction, ?string $value, Rule $rule): bool
+    public function apply(Transaction $transaction, ?string $value, ?Rule $rule = null): bool
     {
         $value = trim((string) $value);
         $ledger = $transaction->ledger;
@@ -68,7 +68,7 @@ enum ActionType: string
             self::SetDestinationAccount => $this->moveCounterparty($transaction, $value, 'destination'),
             self::SetSourceAccount => $this->moveCounterparty($transaction, $value, 'source'),
             self::DeleteTransaction => $transaction->group->deleteWithTransactions(),
-            self::Notify => Notification::send(
+            self::Notify => $rule && Notification::send(
                 $ledger->members()->get(),
                 new RuleMatchedNotification($rule, $transaction),
             ),

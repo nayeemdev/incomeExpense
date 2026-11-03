@@ -16,6 +16,7 @@ use App\Models\Transaction;
 use App\Models\TransactionGroup;
 use App\Models\User;
 use App\Rules\Amount;
+use App\Search\TransactionSearch;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -25,7 +26,10 @@ use Illuminate\Validation\Rule;
 
 class TransactionController extends Controller
 {
-    public function __construct(private SaveTransactionGroup $saveGroup) {}
+    public function __construct(
+        private SaveTransactionGroup $saveGroup,
+        private TransactionSearch $search,
+    ) {}
 
     public function index(Request $request, Ledger $ledger): AnonymousResourceCollection
     {
@@ -42,7 +46,9 @@ class TransactionController extends Controller
             'search' => ['nullable', 'string', 'max:255'],
             'min_amount' => ['nullable', Amount::positive()],
             'max_amount' => ['nullable', Amount::positive()],
+            'query' => ['nullable', 'string', 'max:1000'],
         ]);
+        $tokens = $this->search->parse($filters['query'] ?? '');
 
         $account = isset($filters['account_id']) ? $ledger->accounts()->findOrFail((int) $filters['account_id']) : null;
 
@@ -68,11 +74,14 @@ class TransactionController extends Controller
             ->orderByDesc('date')
             ->orderByDesc('transactions.id');
 
+        $this->search->apply($query, $tokens);
+
         if ($account?->type->isOwn()) {
             $this->withRunningBalance($query, $account);
         }
 
-        return TransactionResource::collection($query->paginate($this->perPage($request)));
+        return TransactionResource::collection($query->paginate($this->perPage($request)))
+            ->additional(['meta' => ['tokens' => array_map(fn ($token) => $token->toArray(), $tokens)]]);
     }
 
     public function store(TransactionGroupRequest $request, Ledger $ledger, #[CurrentUser] User $user): TransactionGroupResource
