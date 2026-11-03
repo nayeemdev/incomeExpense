@@ -2,7 +2,6 @@ import { parseISO } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useLocale } from '@/hooks/use-ledger'
@@ -26,16 +25,15 @@ export function DatePicker({ id, value, onChange, placeholder, className, ...pro
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
+        <button
           id={id}
           type="button"
-          variant="outline"
           aria-invalid={props['aria-invalid']}
-          className={cn('w-full justify-start font-normal', !value && 'text-muted-foreground', className)}
+          className={cn('field-control flex items-center gap-2 text-left', !value && 'text-muted-foreground', className)}
         >
-          <CalendarIcon />
-          {value ? formatDate(value, locale) : (placeholder ?? t('Pick a date'))}
-        </Button>
+          <CalendarIcon className="text-muted-foreground size-4 shrink-0" />
+          <span className="truncate">{value ? formatDate(value, locale) : (placeholder ?? t('Pick a date'))}</span>
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar

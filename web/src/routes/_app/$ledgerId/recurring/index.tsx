@@ -67,7 +67,7 @@ function RecurringTransactions() {
       />
       {!recurrences && <Skeleton className="h-48 w-full" />}
       {recurrences?.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{t('Nothing repeats yet')}</EmptyTitle>
             <EmptyDescription>{t('Set it up once and LedgerFly records it every time it is due.')}</EmptyDescription>
@@ -80,7 +80,7 @@ function RecurringTransactions() {
         </Empty>
       )}
       {recurrences && recurrences.length > 0 && (
-        <ul className="divide-y rounded-lg border">
+        <ul className="surface-card divide-y overflow-hidden">
           {recurrences.map((recurrence) => {
             const split = recurrence.transactions[0]
 

@@ -27,7 +27,7 @@ export function TagInput({ id, value, onChange, suggestions = [], className }: T
   return (
     <div
       className={cn(
-        'border-input focus-within:border-ring focus-within:ring-ring/50 flex min-h-9 w-full flex-wrap items-center gap-1 rounded-md border bg-transparent px-2 py-1 shadow-xs focus-within:ring-[3px] dark:bg-input/30',
+        'border-input focus-within:border-ring focus-within:ring-ring/50 flex min-h-9 w-full flex-wrap items-center gap-1 rounded-lg border bg-transparent px-3 py-1 transition-colors focus-within:ring-3 dark:bg-input/30',
         className,
       )}
     >

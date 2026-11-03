@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Controller, type Control, type FieldPath, type FieldValues } from 'react-hook-form'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
+import { cn } from '@/lib/utils'
 
 export type FieldProps = {
   id: string
@@ -35,7 +36,11 @@ export function FormField<T extends FieldValues>({
       control={control}
       name={name}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className={className} orientation={orientation}>
+        <Field
+          data-invalid={fieldState.invalid}
+          className={cn(orientation === 'horizontal' && 'rounded-lg border p-3', className)}
+          orientation={orientation}
+        >
           {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
           {children({
             id: name,

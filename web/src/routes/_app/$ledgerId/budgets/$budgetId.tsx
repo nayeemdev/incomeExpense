@@ -101,7 +101,7 @@ function BudgetDetail() {
 
       <TransactionList
         transactions={transactions?.data}
-        empty={<p className="text-muted-foreground rounded-lg border py-10 text-center text-sm">{t('Nothing spent from this budget in this month.')}</p>}
+        empty={<p className="text-muted-foreground surface-card py-10 text-center text-sm">{t('Nothing spent from this budget in this month.')}</p>}
       />
 
       <BudgetDialog open={editing} onOpenChange={setEditing} budget={budget} />

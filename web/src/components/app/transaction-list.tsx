@@ -69,7 +69,7 @@ export function TransactionList({ transactions, accountId, showRunningBalance, e
           <h3 className="text-muted-foreground mb-1 px-2 text-xs font-medium tracking-wide uppercase">
             {formatDate(date, locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
           </h3>
-          <ul className="divide-y rounded-lg border">
+          <ul className="surface-card divide-y overflow-hidden">
             {items.map((transaction) => (
               <TransactionRow
                 key={transaction.id}

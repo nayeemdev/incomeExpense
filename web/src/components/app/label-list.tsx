@@ -54,7 +54,7 @@ export function LabelList({ kind }: { kind: 'categories' | 'tags' }) {
       {!data && <Skeleton className="h-48 w-full" />}
 
       {data?.data.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{search ? t('Nothing matches your search') : isTags ? t('No tags yet') : t('No categories yet')}</EmptyTitle>
             <EmptyDescription>{t('You can also create them while adding a transaction.')}</EmptyDescription>
@@ -74,7 +74,7 @@ export function LabelList({ kind }: { kind: 'categories' | 'tags' }) {
               <Link
                 to={isTags ? '/$ledgerId/tags/$tagId' : '/$ledgerId/categories/$categoryId'}
                 params={isTags ? { ledgerId, tagId: String(item.id) } : { ledgerId, categoryId: String(item.id) }}
-                className="hover:bg-muted/50 flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+                className="hover:bg-muted/50 flex items-center justify-between gap-3 surface-card px-4 py-3 transition-shadow hover:shadow-card-hover"
               >
                 <span className="truncate font-medium">{item.name}</span>
                 <span className="text-muted-foreground shrink-0 text-xs">

@@ -163,7 +163,7 @@ function AccountDetail() {
             transactions={transactions?.data}
             accountId={account.id}
             showRunningBalance={own}
-            empty={<p className="text-muted-foreground rounded-lg border py-10 text-center text-sm">{t('No transactions yet.')}</p>}
+            empty={<p className="text-muted-foreground surface-card py-10 text-center text-sm">{t('No transactions yet.')}</p>}
           />
           {transactions && (
             <Pagination

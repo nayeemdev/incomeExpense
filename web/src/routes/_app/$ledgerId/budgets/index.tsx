@@ -119,7 +119,7 @@ function Budgets() {
 
       {!budgets && <Skeleton className="h-48 w-full" />}
       {budgets?.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{t('No budgets yet')}</EmptyTitle>
             <EmptyDescription>{t('Budgets cap what you spend on things like groceries or eating out each month.')}</EmptyDescription>
@@ -133,7 +133,7 @@ function Budgets() {
       )}
 
       {budgets && budgets.length > 0 && (
-        <ul className="divide-y rounded-lg border">
+        <ul className="surface-card divide-y overflow-hidden">
           {budgets.map((budget) => {
             const limit = limitOf(budget)
             const budgetSpent = Number(budget.spent?.find((item) => item.currency === currency.code)?.amount ?? 0)

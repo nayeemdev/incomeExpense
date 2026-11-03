@@ -100,7 +100,7 @@ function Rules() {
       />
       {!groups && <Skeleton className="h-48 w-full" />}
       {groups?.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{t('No rules yet')}</EmptyTitle>
             <EmptyDescription>{t('For example: when the description contains "Uber", set the category to Transport.')}</EmptyDescription>

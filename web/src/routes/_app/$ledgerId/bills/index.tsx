@@ -83,7 +83,7 @@ function Bills() {
 
       {!bills && <Skeleton className="h-48 w-full" />}
       {bills?.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{t('No bills yet')}</EmptyTitle>
             <EmptyDescription>{t('Add rent, subscriptions and other regular payments to see what is due and get reminded.')}</EmptyDescription>
@@ -100,7 +100,7 @@ function Bills() {
         {[...groups.entries()].map(([group, items]) => (
           <section key={group}>
             {group && <h2 className="text-muted-foreground mb-2 text-sm font-medium">{group}</h2>}
-            <ul className="divide-y rounded-lg border">
+            <ul className="surface-card divide-y overflow-hidden">
               {items.map((bill) => (
                 <li key={bill.id} className="hover:bg-muted/50 relative flex flex-wrap items-center gap-3 px-4 py-3">
                   <div className="min-w-0 flex-1">
