@@ -12,6 +12,13 @@ Flutter app for iOS and Android. It talks to the same `/api/v1` as the web app a
 - Categories have an icon and color, suggested from their name and editable from a predefined set.
 - Settings: switch ledger, accounts, categories, budgets and bills, notifications, light, dark or system theme, Face ID lock and logout.
 
+## Widgets and Siri (iOS)
+
+- A home screen widget in small and medium sizes, plus lock screen versions, shows what you have spent this month, the budget left and the next bill due. Its + button opens quick add.
+- "Add an expense in LedgerFly" works from Siri, Spotlight, Shortcuts and the Action Button. It opens quick add with the amount and title filled in.
+- The app copies these numbers to the `group.com.nayeemdev.ledgerfly` App Group whenever it refreshes, and the widget reads them from there. For a device build, register that App Group for the app and the widget in your Apple developer account.
+- Links of the form `ledgerfly://app/new?type=withdrawal&amount=60&title=Rickshaw` open quick add from anywhere.
+
 ## Running locally
 
 Requirements: Flutter (stable), Xcode for iOS, Android Studio for Android.

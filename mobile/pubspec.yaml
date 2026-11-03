@@ -18,6 +18,7 @@ dependencies:
   local_auth: ^3.0.2
   intl: ^0.20.3
   lucide_icons_flutter: ^4.0.1
+  home_widget: ^0.10.0
 
 dev_dependencies:
   flutter_test:
