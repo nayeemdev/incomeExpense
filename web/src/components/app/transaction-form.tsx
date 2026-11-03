@@ -16,7 +16,7 @@ import { accountsQuery, activeBudgetsQuery, billsQuery, categoriesQuery, frequen
 import type { Account, Transaction, TransactionGroupInput } from '@/lib/api/types'
 import { notifyError } from '@/lib/forms'
 import { transactionTypeLabels } from '@/lib/labels'
-import { allowedAccountTypes, type AccountChoice } from '@/lib/transactions'
+import { allowedAccountTypes, isCounterparty, type AccountChoice } from '@/lib/transactions'
 import { AccountPicker } from './account-picker'
 import { Combobox } from './combobox'
 import { DatePicker } from './date-picker'
@@ -295,12 +295,12 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
         />
       )}
       <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
-        <FormField control={form.control} name={`splits.${index}.amount`} label={t('Amount')}>
+        <FormField control={form.control} name={`splits.${index}.amount`} required label={t('Amount')}>
           {(field) => (
             <MoneyInput {...field} autoFocus={autoFocus} currency={currency.code} className="font-medium" />
           )}
         </FormField>
-        <FormField control={form.control} name={`splits.${index}.description`} label={t('Description')}>
+        <FormField control={form.control} name={`splits.${index}.description`} required label={t('Description')}>
           {(field) => (
             <DescriptionInput
               id={field.id}
@@ -316,7 +316,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <FormField control={form.control} name={`splits.${index}.source`} label={t('From')}>
+          <FormField control={form.control} name={`splits.${index}.source`} label={t('From')} required={!isCounterparty(type, 'source')}>
             {(field) => (
               <AccountPicker id={field.id} type={type} side="source" accounts={accounts} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />
             )}
@@ -324,7 +324,7 @@ function SplitFields({ form, index, accounts, autoFocus, showQuickPicks }: Split
           {payeePicks('source')}
         </div>
         <div className="space-y-2">
-          <FormField control={form.control} name={`splits.${index}.destination`} label={t('To')}>
+          <FormField control={form.control} name={`splits.${index}.destination`} label={t('To')} required={!isCounterparty(type, 'destination')}>
             {(field) => (
               <AccountPicker id={field.id} type={type} side="destination" accounts={accounts} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />
             )}

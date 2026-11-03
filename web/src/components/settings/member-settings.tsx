@@ -142,7 +142,7 @@ export function MemberSettings() {
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={form.handleSubmit((values) => invite.mutate(values))} className="flex flex-col gap-2 sm:flex-row sm:items-start">
-              <FormField control={form.control} name="email" className="flex-1">
+              <FormField control={form.control} name="email" required className="flex-1">
                 {(field) => <Input type="email" placeholder={t('Email address')} {...field} />}
               </FormField>
               <FormField control={form.control} name="role" className="sm:w-auto">

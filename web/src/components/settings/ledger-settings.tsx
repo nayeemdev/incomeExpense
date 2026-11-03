@@ -64,15 +64,15 @@ export function LedgerSettings() {
         <form onSubmit={form.handleSubmit((values) => save.mutate(values))}>
           <CardContent>
             <FieldGroup>
-              <FormField control={form.control} name="name" label={t('Name')}>
+              <FormField control={form.control} name="name" required label={t('Name')}>
                 {(field) => <Input disabled={!manage} {...field} />}
               </FormField>
-              <FormField control={form.control} name="primary_currency_id" label={t('Primary currency')}>
+              <FormField control={form.control} name="primary_currency_id" required label={t('Primary currency')}>
                 {(field) => <CurrencySelect id={field.id} value={field.value} onChange={field.onChange} />}
               </FormField>
               <FormField
                 control={form.control}
-                name="fiscal_year_start"
+                name="fiscal_year_start" required
                 label={t('Fiscal year starts on')}
                 description={t('Month and day, for example 07-01 for 1 July.')}
               >

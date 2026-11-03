@@ -73,7 +73,7 @@ export function BudgetDialog({ open, onOpenChange, budget }: BudgetDialogProps) 
     <FormDialog open={open} onOpenChange={onOpenChange} title={budget ? t('Edit {{name}}', { name: budget.name }) : t('New budget')}>
         <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
           <FieldGroup>
-            <FormField control={form.control} name="name" label={t('Name')}>
+            <FormField control={form.control} name="name" required label={t('Name')}>
               {(field) => <Input autoFocus placeholder={t('e.g. Groceries')} {...field} />}
             </FormField>
             <FormField
@@ -88,13 +88,13 @@ export function BudgetDialog({ open, onOpenChange, budget }: BudgetDialogProps) 
             </FormField>
             {auto !== 'none' && (
               <div className="grid gap-4 sm:grid-cols-2">
-                <FormField control={form.control} name="auto_budget_amount" label={t('Amount')}>
+                <FormField control={form.control} name="auto_budget_amount" required label={t('Amount')}>
                   {(field) => <MoneyInput {...field} />}
                 </FormField>
-                <FormField control={form.control} name="auto_budget_period" label={t('Every')}>
+                <FormField control={form.control} name="auto_budget_period" required label={t('Every')}>
                   {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={frequencyLabels()} />}
                 </FormField>
-                <FormField control={form.control} name="auto_budget_currency_id" label={t('Currency')} className="sm:col-span-2">
+                <FormField control={form.control} name="auto_budget_currency_id" required label={t('Currency')} className="sm:col-span-2">
                   {(field) => <CurrencySelect id={field.id} value={field.value} onChange={field.onChange} />}
                 </FormField>
               </div>

@@ -3,6 +3,7 @@ import { PlusIcon, Trash2Icon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SelectField } from '@/components/app/select-field'
+import { RequiredMark } from '@/components/app/required-mark'
 import { Button } from '@/components/ui/button'
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -67,7 +68,9 @@ export function RuleEditor({ groups, groupId, rule, onDone }: RuleEditorProps) {
     >
       <FieldGroup>
         <Field data-invalid={!!errors.title}>
-          <FieldLabel htmlFor="rule-title">{t('Name')}</FieldLabel>
+          <FieldLabel htmlFor="rule-title">{t('Name')}
+            <RequiredMark />
+          </FieldLabel>
           <Input id="rule-title" autoFocus value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} />
           {errors.title && <FieldError>{errors.title[0]}</FieldError>}
         </Field>

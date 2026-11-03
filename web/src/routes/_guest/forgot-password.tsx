@@ -37,7 +37,7 @@ function ForgotPassword() {
       {!send.isSuccess && (
         <form onSubmit={form.handleSubmit((values) => send.mutate(values))}>
           <CardContent>
-            <FormField control={form.control} name="email" label={t('Email')}>
+            <FormField control={form.control} name="email" required label={t('Email')}>
               {(field) => <Input type="email" autoComplete="email" autoFocus {...field} />}
             </FormField>
           </CardContent>

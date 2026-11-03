@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Controller, type Control, type FieldPath, type FieldValues } from 'react-hook-form'
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field'
 import { cn } from '@/lib/utils'
+import { RequiredMark } from './required-mark'
 
 export type FieldProps = {
   id: string
@@ -19,6 +20,7 @@ type FormFieldProps<T extends FieldValues> = {
   description?: ReactNode
   className?: string
   orientation?: 'vertical' | 'horizontal'
+  required?: boolean
   children: (field: FieldProps) => ReactNode
 }
 
@@ -29,6 +31,7 @@ export function FormField<T extends FieldValues>({
   description,
   className,
   orientation,
+  required,
   children,
 }: FormFieldProps<T>) {
   return (
@@ -41,7 +44,12 @@ export function FormField<T extends FieldValues>({
           className={cn(orientation === 'horizontal' && 'rounded-lg border p-3', className)}
           orientation={orientation}
         >
-          {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
+          {label && (
+            <FieldLabel htmlFor={name}>
+              {label}
+              {required && <RequiredMark />}
+            </FieldLabel>
+          )}
           {children({
             id: name,
             name: field.name,

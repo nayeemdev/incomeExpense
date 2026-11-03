@@ -66,7 +66,7 @@ export function LabelFormDialog({ kind, open, onOpenChange, item, onSaved }: Lab
     <FormDialog open={open} onOpenChange={onOpenChange} title={title}>
         <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
           <FieldGroup>
-            <FormField control={form.control} name="name" label={t('Name')}>
+            <FormField control={form.control} name="name" required label={t('Name')}>
               {(field) => <Input autoFocus {...field} />}
             </FormField>
             <FormField control={form.control} name="notes" label={kind === 'tags' ? t('Description') : t('Notes')}>

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import type { Account, SplitInput, Transaction, TransactionGroup, TransactionGroupInput } from '@/lib/api/types'
 import { todayIso } from '@/lib/format'
-import type { AccountChoice } from '@/lib/transactions'
+import { isCounterparty, type AccountChoice } from '@/lib/transactions'
 
 const amount = z.string().regex(/^\d+(\.\d{1,12})?$/, 'Enter an amount').refine((value) => Number(value) > 0, 'Enter an amount')
 const accountChoice = z.union([z.object({ id: z.number() }), z.object({ name: z.string().min(1) })]).nullable()
@@ -25,13 +25,16 @@ export const transactionSchema = z.object({
           notes: z.string(),
           foreign_amount: z.string(),
         })
-        .superRefine((split, context) => {
-          for (const side of ['source', 'destination'] as const) {
-            if (!split[side]) context.addIssue({ code: 'custom', path: [side], message: 'Choose an account' })
-          }
-        }),
     )
     .min(1),
+}).superRefine((values, context) => {
+  values.splits.forEach((split, index) => {
+    for (const side of ['source', 'destination'] as const) {
+      if (!split[side] && !isCounterparty(values.type, side)) {
+        context.addIssue({ code: 'custom', path: ['splits', index, side], message: 'Choose an account' })
+      }
+    }
+  })
 })
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>
@@ -108,9 +111,14 @@ export function toInput(values: TransactionFormValues, accounts: Account[]): Tra
         description: split.description.trim(),
         amount: split.amount,
         source_id: split.source && 'id' in split.source ? split.source.id : null,
-        source_name: split.source && 'name' in split.source ? split.source.name : null,
+        source_name: split.source && 'name' in split.source ? split.source.name : !split.source && values.type === 'deposit' ? split.description.trim() : null,
         destination_id: split.destination && 'id' in split.destination ? split.destination.id : null,
-        destination_name: split.destination && 'name' in split.destination ? split.destination.name : null,
+        destination_name:
+          split.destination && 'name' in split.destination
+            ? split.destination.name
+            : !split.destination && values.type === 'withdrawal'
+              ? split.description.trim()
+              : null,
         foreign_amount: needsForeign ? split.foreign_amount : null,
         foreign_currency_id: needsForeign ? (destination?.currency?.id ?? null) : null,
         category_id: split.category?.id ?? null,

@@ -1,17 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { FormField } from '@/components/app/form-field'
+import { RequiredMark } from '@/components/app/required-mark'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FieldGroup } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { api } from '@/lib/api/client'
-import { userQuery } from '@/lib/api/queries'
+import { authConfigQuery, userQuery } from '@/lib/api/queries'
 import { handleFormError } from '@/lib/forms'
 
 export const Route = createFileRoute('/_guest/login')({
@@ -30,6 +31,7 @@ function Login() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { redirect } = Route.useSearch()
+  const { data: config } = useQuery(authConfigQuery)
   const form = useForm({ resolver: zodResolver(schema), defaultValues: { email: '', password: '', remember: true } })
 
   const login = useMutation({
@@ -56,7 +58,7 @@ function Login() {
       <form onSubmit={form.handleSubmit((values) => login.mutate(values))}>
         <CardContent>
           <FieldGroup>
-            <FormField control={form.control} name="email" label={t('Email')}>
+            <FormField control={form.control} name="email" required label={t('Email')}>
               {(field) => <Input type="email" autoComplete="email" autoFocus {...field} />}
             </FormField>
             <FormField
@@ -64,7 +66,10 @@ function Login() {
               name="password"
               label={
                 <span className="flex w-full items-center justify-between">
-                  {t('Password')}
+                  <span>
+                    {t('Password')}
+                    <RequiredMark />
+                  </span>
                   <Link to="/forgot-password" className="text-muted-foreground text-sm font-normal hover:underline">
                     {t('Forgot password?')}
                   </Link>
@@ -82,12 +87,14 @@ function Login() {
           <Button type="submit" className="w-full" disabled={login.isPending}>
             {t('Sign in')}
           </Button>
-          <p className="text-muted-foreground text-sm">
-            {t('No account yet?')}{' '}
-            <Link to="/register" className="text-foreground underline-offset-4 hover:underline">
-              {t('Create one')}
-            </Link>
-          </p>
+          {(config?.registration_open || redirect?.startsWith('/invitations/')) && (
+            <p className="text-muted-foreground text-sm">
+              {t('No account yet?')}{' '}
+              <Link to="/register" search={{ redirect }} className="text-foreground underline-offset-4 hover:underline">
+                {t('Create one')}
+              </Link>
+            </p>
+          )}
         </CardFooter>
       </form>
     </Card>

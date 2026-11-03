@@ -58,10 +58,10 @@ export function ProfileSettings() {
         <form onSubmit={profile.handleSubmit((values) => saveProfile.mutate(values))}>
           <CardContent>
             <FieldGroup>
-              <FormField control={profile.control} name="name" label={t('Name')}>
+              <FormField control={profile.control} name="name" required label={t('Name')}>
                 {(field) => <Input autoComplete="name" {...field} />}
               </FormField>
-              <FormField control={profile.control} name="email" label={t('Email')}>
+              <FormField control={profile.control} name="email" required label={t('Email')}>
                 {(field) => <Input type="email" autoComplete="email" {...field} />}
               </FormField>
             </FieldGroup>
@@ -81,13 +81,13 @@ export function ProfileSettings() {
         <form onSubmit={password.handleSubmit((values) => savePassword.mutate(values))}>
           <CardContent>
             <FieldGroup>
-              <FormField control={password.control} name="current_password" label={t('Current password')}>
+              <FormField control={password.control} name="current_password" required label={t('Current password')}>
                 {(field) => <Input type="password" autoComplete="current-password" {...field} />}
               </FormField>
-              <FormField control={password.control} name="password" label={t('New password')}>
+              <FormField control={password.control} name="password" required label={t('New password')}>
                 {(field) => <Input type="password" autoComplete="new-password" {...field} />}
               </FormField>
-              <FormField control={password.control} name="password_confirmation" label={t('Confirm new password')}>
+              <FormField control={password.control} name="password_confirmation" required label={t('Confirm new password')}>
                 {(field) => <Input type="password" autoComplete="new-password" {...field} />}
               </FormField>
             </FieldGroup>
