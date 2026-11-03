@@ -34,11 +34,11 @@ class TransactionController extends Controller
     public function index(Request $request, Ledger $ledger): AnonymousResourceCollection
     {
         $filters = $request->validate([
-            'account_id' => ['nullable', 'integer'],
-            'category_id' => ['nullable', 'integer'],
-            'tag_id' => ['nullable', 'integer'],
-            'budget_id' => ['nullable', 'integer'],
-            'bill_id' => ['nullable', 'integer'],
+            'account_id' => ['nullable', 'ulid'],
+            'category_id' => ['nullable', 'ulid'],
+            'tag_id' => ['nullable', 'ulid'],
+            'budget_id' => ['nullable', 'ulid'],
+            'bill_id' => ['nullable', 'ulid'],
             'type' => ['nullable', 'array'],
             'type.*' => [Rule::enum(TransactionType::class)],
             'start' => ['nullable', 'date'],
@@ -50,7 +50,7 @@ class TransactionController extends Controller
         ]);
         $tokens = $this->search->parse($filters['query'] ?? '');
 
-        $account = isset($filters['account_id']) ? $ledger->accounts()->findOrFail((int) $filters['account_id']) : null;
+        $account = isset($filters['account_id']) ? $ledger->accounts()->findOrFail((string) $filters['account_id']) : null;
 
         $query = Transaction::query()
             ->whereBelongsTo($ledger)
@@ -59,10 +59,10 @@ class TransactionController extends Controller
             ->when($account, fn (Builder $query) => $query->where(fn (Builder $query) => $query
                 ->where('source_account_id', $account?->id)
                 ->orWhere('destination_account_id', $account?->id)))
-            ->when($filters['category_id'] ?? null, fn (Builder $query, int $id) => $query->where('category_id', $id))
-            ->when($filters['budget_id'] ?? null, fn (Builder $query, int $id) => $query->where('budget_id', $id))
-            ->when($filters['bill_id'] ?? null, fn (Builder $query, int $id) => $query->where('bill_id', $id))
-            ->when($filters['tag_id'] ?? null, fn (Builder $query, int $id) => $query->whereHas('tags', fn (Builder $query) => $query->whereKey($id)))
+            ->when($filters['category_id'] ?? null, fn (Builder $query, string $id) => $query->where('category_id', $id))
+            ->when($filters['budget_id'] ?? null, fn (Builder $query, string $id) => $query->where('budget_id', $id))
+            ->when($filters['bill_id'] ?? null, fn (Builder $query, string $id) => $query->where('bill_id', $id))
+            ->when($filters['tag_id'] ?? null, fn (Builder $query, string $id) => $query->whereHas('tags', fn (Builder $query) => $query->whereKey($id)))
             ->when($filters['type'] ?? null, fn (Builder $query, array $types) => $query->whereIn('type', $types))
             ->when($filters['start'] ?? null, fn (Builder $query, string $start) => $query->where('date', '>=', $start))
             ->when($filters['end'] ?? null, fn (Builder $query, string $end) => $query->where('date', '<=', $end))
@@ -128,7 +128,7 @@ class TransactionController extends Controller
         return response()->noContent();
     }
 
-    public function restore(Ledger $ledger, int $group): TransactionGroupResource
+    public function restore(Ledger $ledger, string $group): TransactionGroupResource
     {
         $transactionGroup = $ledger->transactionGroups()->onlyTrashed()->findOrFail($group);
         $transactionGroup->restoreWithTransactions();

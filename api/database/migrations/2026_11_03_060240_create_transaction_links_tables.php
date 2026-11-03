@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('link_types', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('outward');
             $table->string('inward');
@@ -20,11 +20,11 @@ return new class extends Migration
         });
 
         Schema::create('transaction_links', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('link_type_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('outward_group_id')->constrained('transaction_groups')->cascadeOnDelete();
-            $table->foreignId('inward_group_id')->constrained('transaction_groups')->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('link_type_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('outward_group_id')->constrained('transaction_groups')->cascadeOnDelete();
+            $table->foreignUlid('inward_group_id')->constrained('transaction_groups')->cascadeOnDelete();
             $table->text('notes')->nullable();
             $table->timestamps();
 

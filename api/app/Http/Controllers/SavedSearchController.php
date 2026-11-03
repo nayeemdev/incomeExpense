@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SavedSearchController extends Controller
 {
@@ -28,8 +29,11 @@ class SavedSearchController extends Controller
             'query' => ['required', 'string', 'max:1000'],
         ]);
 
-        $id = DB::table('saved_searches')->insertGetId([
+        $id = (string) Str::ulid();
+
+        DB::table('saved_searches')->insert([
             ...$validated,
+            'id' => $id,
             'ledger_id' => $ledger->id,
             'user_id' => $user->id,
             'created_at' => now(),
@@ -39,7 +43,7 @@ class SavedSearchController extends Controller
         return response()->json(['data' => ['id' => $id, ...$validated]], Response::HTTP_CREATED);
     }
 
-    public function destroy(Ledger $ledger, #[CurrentUser] User $user, int $savedSearch): Response
+    public function destroy(Ledger $ledger, #[CurrentUser] User $user, string $savedSearch): Response
     {
         abort_unless(
             DB::table('saved_searches')->where('ledger_id', $ledger->id)->where('user_id', $user->id)->where('id', $savedSearch)->delete() > 0,

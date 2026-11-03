@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToLedger;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 #[Fillable(['name', 'config'])]
 class ImportProfile extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
 
     /**
      * @return array<string, string>

@@ -14,7 +14,7 @@ class RuleMatchedNotification extends LedgerNotification
         return 'rule_matched';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->rule->ledger_id;
     }

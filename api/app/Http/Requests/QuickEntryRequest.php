@@ -18,7 +18,7 @@ class QuickEntryRequest extends FormRequest
             'amount' => ['required', Amount::positive()],
             'description' => ['required', 'string', 'max:255'],
             'type' => ['nullable', Rule::in([TransactionType::Withdrawal->value, TransactionType::Deposit->value])],
-            'account_id' => ['nullable', 'integer'],
+            'account_id' => ['nullable', 'ulid'],
             'counterparty' => ['nullable', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:255'],
             'date' => ['nullable', 'date'],

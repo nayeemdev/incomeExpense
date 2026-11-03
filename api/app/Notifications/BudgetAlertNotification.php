@@ -14,7 +14,7 @@ class BudgetAlertNotification extends LedgerNotification
         return $this->exceeded ? 'budget_exceeded' : 'budget_warning';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->limit->budget->ledger_id;
     }

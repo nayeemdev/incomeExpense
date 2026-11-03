@@ -64,7 +64,7 @@ class TransactionResource extends JsonResource
 
     private function runningBalance(Request $request): string
     {
-        $accountId = $request->integer('account_id');
+        $accountId = $request->string('account_id')->toString();
         $account = $this->source_account_id === $accountId ? $this->sourceAccount : $this->destinationAccount;
 
         return Money::round((string) $this->running_balance, $account->currency->decimal_places ?? Money::SCALE);

@@ -23,7 +23,7 @@ class RecordQuickEntry
     public function __construct(private SaveTransactionGroup $saveGroup) {}
 
     /**
-     * @param  array{amount: string, description: string, type?: ?string, account_id?: ?int, counterparty?: ?string, category?: ?string, date?: ?string, notes?: ?string}  $input
+     * @param  array{amount: string, description: string, type?: ?string, account_id?: ?string, counterparty?: ?string, category?: ?string, date?: ?string, notes?: ?string}  $input
      */
     public function handle(Ledger $ledger, User $user, array $input): TransactionGroup
     {
@@ -64,7 +64,7 @@ class RecordQuickEntry
             ->first();
     }
 
-    private function ownAccount(Ledger $ledger, User $user, ?int $accountId, ?Transaction $previous, bool $deposit): Account
+    private function ownAccount(Ledger $ledger, User $user, ?string $accountId, ?Transaction $previous, bool $deposit): Account
     {
         $accounts = $ledger->accounts()->where('type', AccountType::Asset)->where('active', true);
 

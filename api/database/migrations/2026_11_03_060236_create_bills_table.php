@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bills', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('object_group_id')->nullable()->constrained()->nullOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('object_group_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->foreignId('currency_id')->constrained('currencies');
             $table->decimal('amount_min', 32, 12);
@@ -30,7 +30,7 @@ return new class extends Migration
         });
 
         Schema::table('transactions', function (Blueprint $table) {
-            $table->foreignId('bill_id')->nullable()->after('budget_id')->constrained()->nullOnDelete();
+            $table->foreignUlid('bill_id')->nullable()->after('budget_id')->constrained()->nullOnDelete();
         });
     }
 

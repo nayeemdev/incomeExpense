@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable(['name', 'outward', 'inward'])]
 final class LinkType extends Model
 {
+    use HasUlids;
+
     /**
      * Built-in types (no ledger) plus the ledger's own.
      *

@@ -15,7 +15,7 @@ class CurrencyConverter
      * The most recent rate on or before $date, preferring the ledger's own rates and
      * falling back to the inverse of the opposite pair.
      */
-    public function rate(int $fromId, int $toId, CarbonInterface $date, ?int $ledgerId = null): ?string
+    public function rate(int $fromId, int $toId, CarbonInterface $date, ?string $ledgerId = null): ?string
     {
         if ($fromId === $toId) {
             return '1';
@@ -38,20 +38,20 @@ class CurrencyConverter
         return $this->rates[$key] = $rate;
     }
 
-    public function convert(string $amount, int $fromId, int $toId, CarbonInterface $date, ?int $ledgerId = null): ?string
+    public function convert(string $amount, int $fromId, int $toId, CarbonInterface $date, ?string $ledgerId = null): ?string
     {
         $rate = $this->rate($fromId, $toId, $date, $ledgerId);
 
         return $rate === null ? null : Money::of($amount)->mul(Money::of($rate), Money::SCALE)->value;
     }
 
-    private function find(int $fromId, int $toId, CarbonInterface $date, ?int $ledgerId): ?string
+    private function find(int $fromId, int $toId, CarbonInterface $date, ?string $ledgerId): ?string
     {
         $rate = ExchangeRate::query()
             ->where('from_currency_id', $fromId)
             ->where('to_currency_id', $toId)
             ->whereDate('date', '<=', $date)
-            ->where(fn (Builder $query) => $query->whereNull('ledger_id')->when($ledgerId, fn (Builder $query, int $id) => $query->orWhere('ledger_id', $id)))
+            ->where(fn (Builder $query) => $query->whereNull('ledger_id')->when($ledgerId, fn (Builder $query, string $id) => $query->orWhere('ledger_id', $id)))
             ->orderByRaw('ledger_id IS NULL')
             ->orderByDesc('date')
             ->value('rate');

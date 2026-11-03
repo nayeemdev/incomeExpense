@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Concerns\BelongsToLedger;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['rule_group_id', 'title', 'description', 'trigger_on', 'strict', 'stop_processing', 'active', 'order'])]
 class Rule extends Model
 {
-    use BelongsToLedger;
+    use BelongsToLedger, HasUlids;
 
     /**
      * @return array<string, string>

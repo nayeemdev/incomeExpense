@@ -88,7 +88,7 @@ class CheckTransactionAlerts implements ShouldQueue
     {
         $budgetId = $transaction->getAttribute('budget_id');
 
-        if (! is_int($budgetId)) {
+        if (! is_string($budgetId)) {
             return;
         }
 

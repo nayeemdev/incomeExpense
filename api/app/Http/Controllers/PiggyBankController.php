@@ -84,7 +84,7 @@ class PiggyBankController extends Controller
     public function move(Request $request, Ledger $ledger, PiggyBank $piggyBank): PiggyBankResource
     {
         $validated = $request->validate([
-            'account_id' => ['required', 'integer'],
+            'account_id' => ['required', 'ulid'],
             'amount' => ['required', Amount::signed()],
             'date' => ['nullable', 'date'],
         ]);
@@ -174,7 +174,7 @@ class PiggyBankController extends Controller
             'notes' => ['nullable', 'string', 'max:65000'],
             'object_group' => ['nullable', 'string', 'max:255'],
             'account_ids' => [$required, 'array', 'min:1'],
-            'account_ids.*' => ['integer', Rule::exists('accounts', 'id')
+            'account_ids.*' => ['ulid', Rule::exists('accounts', 'id')
                 ->where('ledger_id', $ledger->id)
                 ->where('type', AccountType::Asset->value)
                 ->whereNull('deleted_at')],

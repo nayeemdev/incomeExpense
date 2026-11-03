@@ -12,7 +12,7 @@ class BudgetSpending
     /**
      * Amount spent per budget and currency between two dates, as [budget_id][currency_id] => total.
      *
-     * @param  list<int>  $budgetIds
+     * @param  list<string>  $budgetIds
      * @return array<int, array<int, string>>
      */
     public function between(array $budgetIds, CarbonInterface $start, CarbonInterface $end): array

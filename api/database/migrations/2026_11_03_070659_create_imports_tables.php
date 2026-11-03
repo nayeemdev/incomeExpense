@@ -9,17 +9,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('import_profiles', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->json('config');
             $table->timestamps();
         });
 
         Schema::create('import_jobs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('format', 10);
             $table->string('filename');
             $table->string('path');
@@ -32,7 +32,7 @@ return new class extends Migration
         });
 
         Schema::table('transactions', function (Blueprint $table) {
-            $table->foreignId('import_job_id')->nullable()->after('bill_id')->constrained()->nullOnDelete();
+            $table->foreignUlid('import_job_id')->nullable()->after('bill_id')->constrained()->nullOnDelete();
             $table->string('external_id')->nullable()->after('notes');
         });
     }

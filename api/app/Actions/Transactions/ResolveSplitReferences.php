@@ -25,7 +25,7 @@ class ResolveSplitReferences
         $name = isset($split["{$side}_name"]) ? trim((string) $split["{$side}_name"]) : '';
 
         if ($id !== null) {
-            $account = $ledger->accounts()->whereIn('type', $allowed)->find((int) $id);
+            $account = $ledger->accounts()->whereIn('type', $allowed)->find((string) $id);
 
             if ($account === null) {
                 throw ValidationException::withMessages([
@@ -55,10 +55,10 @@ class ResolveSplitReferences
     /**
      * @param  array<string, mixed>  $split
      */
-    public function categoryId(Ledger $ledger, array $split): ?int
+    public function categoryId(Ledger $ledger, array $split): ?string
     {
         if (isset($split['category_id'])) {
-            return $ledger->categories()->findOrFail((int) $split['category_id'])->id;
+            return $ledger->categories()->findOrFail((string) $split['category_id'])->id;
         }
 
         $name = trim((string) ($split['category_name'] ?? ''));
@@ -69,22 +69,22 @@ class ResolveSplitReferences
     /**
      * @param  HasMany<covariant Model, Ledger>  $relation
      */
-    public function ownedId(HasMany $relation, mixed $id, string $errorKey): ?int
+    public function ownedId(HasMany $relation, mixed $id, string $errorKey): ?string
     {
         if ($id === null) {
             return null;
         }
 
-        if (! $relation->whereKey((int) $id)->exists()) {
+        if (! $relation->whereKey((string) $id)->exists()) {
             throw ValidationException::withMessages([$errorKey => __('This item does not belong to the ledger.')]);
         }
 
-        return (int) $id;
+        return (string) $id;
     }
 
     /**
      * @param  list<?string>  $names
-     * @return list<int>
+     * @return list<string>
      */
     public function tagIds(Ledger $ledger, array $names): array
     {

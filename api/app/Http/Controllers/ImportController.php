@@ -83,16 +83,16 @@ class ImportController extends Controller
         }, 'ledgerfly-import-template.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    public function show(Ledger $ledger, int $import): JsonResponse
+    public function show(Ledger $ledger, string $import): JsonResponse
     {
         return response()->json(['data' => $this->present($this->find($ledger, $import), withSample: true)]);
     }
 
-    public function preview(Request $request, Ledger $ledger, int $import): JsonResponse
+    public function preview(Request $request, Ledger $ledger, string $import): JsonResponse
     {
         $job = $this->find($ledger, $import);
         $config = $this->config($request, $ledger, $job);
-        $account = $ledger->accounts()->with('currency')->findOrFail((int) $config['account_id']);
+        $account = $ledger->accounts()->with('currency')->findOrFail((string) $config['account_id']);
         $rows = $this->planner->plan($job, $account, $config);
 
         return response()->json([
@@ -105,7 +105,7 @@ class ImportController extends Controller
         ]);
     }
 
-    public function run(Request $request, Ledger $ledger, int $import): JsonResponse
+    public function run(Request $request, Ledger $ledger, string $import): JsonResponse
     {
         $job = $this->find($ledger, $import);
         abort_unless(in_array($job->status, ['uploaded', 'failed'], true), 409, __('This import already ran.'));
@@ -125,7 +125,7 @@ class ImportController extends Controller
         return response()->json(['data' => $this->present($job->refresh())]);
     }
 
-    public function destroy(Ledger $ledger, int $import): Response
+    public function destroy(Ledger $ledger, string $import): Response
     {
         $job = $this->find($ledger, $import);
         Storage::disk(config()->string('ledgerfly.attachments.disk'))->delete($job->path);
@@ -134,14 +134,14 @@ class ImportController extends Controller
         return response()->noContent();
     }
 
-    public function destroyProfile(Ledger $ledger, int $profile): Response
+    public function destroyProfile(Ledger $ledger, string $profile): Response
     {
         $ledger->importProfiles()->findOrFail($profile)->delete();
 
         return response()->noContent();
     }
 
-    private function find(Ledger $ledger, int $id): ImportJob
+    private function find(Ledger $ledger, string $id): ImportJob
     {
         return $ledger->importJobs()->findOrFail($id);
     }
@@ -154,7 +154,7 @@ class ImportController extends Controller
         $csv = $job->format === 'csv';
 
         $validated = $request->validate([
-            'account_id' => ['required', 'integer', Rule::exists('accounts', 'id')
+            'account_id' => ['required', 'ulid', Rule::exists('accounts', 'id')
                 ->where('ledger_id', $ledger->id)
                 ->whereIn('type', ['asset', 'liability'])
                 ->whereNull('deleted_at')],

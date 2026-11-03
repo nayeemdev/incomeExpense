@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -16,6 +17,8 @@ use Illuminate\Support\Carbon;
 #[Fillable(['event', 'payload', 'status_code', 'response', 'attempts', 'delivered_at', 'failed_at'])]
 class WebhookDelivery extends Model
 {
+    use HasUlids;
+
     /**
      * @return array<string, string>
      */

@@ -37,7 +37,7 @@ abstract class LedgerNotification extends Notification implements ShouldQueue
         return $this->title();
     }
 
-    public function ledgerId(): ?int
+    public function ledgerId(): ?string
     {
         return null;
     }

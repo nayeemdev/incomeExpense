@@ -13,7 +13,7 @@ class WebhookFailingNotification extends LedgerNotification
         return 'webhook_failing';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->webhook->ledger_id;
     }

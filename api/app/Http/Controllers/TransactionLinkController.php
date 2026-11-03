@@ -40,7 +40,7 @@ class TransactionLinkController extends Controller
         return response()->json(['data' => ['id' => $type->id, ...$validated, 'custom' => true]], Response::HTTP_CREATED);
     }
 
-    public function destroyLinkType(Ledger $ledger, int $linkType): Response
+    public function destroyLinkType(Ledger $ledger, string $linkType): Response
     {
         LinkType::query()->where('ledger_id', $ledger->id)->findOrFail($linkType)->delete();
 
@@ -60,14 +60,14 @@ class TransactionLinkController extends Controller
     public function store(Request $request, Ledger $ledger, TransactionGroup $transactionGroup): JsonResponse
     {
         $validated = $request->validate([
-            'link_type_id' => ['required', 'integer'],
-            'group_id' => ['required', 'integer', Rule::notIn([$transactionGroup->id])],
+            'link_type_id' => ['required', 'ulid'],
+            'group_id' => ['required', 'ulid', Rule::notIn([$transactionGroup->id])],
             'direction' => ['sometimes', Rule::in(['outward', 'inward'])],
             'notes' => ['nullable', 'string', 'max:65000'],
         ]);
 
-        $type = LinkType::availableTo($ledger)->find((int) $validated['link_type_id']) ?? throw ValidationException::withMessages(['link_type_id' => __('Unknown link type.')]);
-        $other = $ledger->transactionGroups()->findOrFail((int) $validated['group_id']);
+        $type = LinkType::availableTo($ledger)->find((string) $validated['link_type_id']) ?? throw ValidationException::withMessages(['link_type_id' => __('Unknown link type.')]);
+        $other = $ledger->transactionGroups()->findOrFail((string) $validated['group_id']);
         $outward = ($validated['direction'] ?? 'outward') === 'outward';
 
         $link = $ledger->transactionLinks()->firstOrCreate([

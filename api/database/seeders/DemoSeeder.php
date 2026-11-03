@@ -350,8 +350,8 @@ class DemoSeeder extends Seeder
     private function createExtras(): void
     {
         DB::table('saved_searches')->insert([
-            ['ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Weekend fun', 'query' => 'tag:weekend', 'created_at' => now(), 'updated_at' => now()],
-            ['ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Big card spending', 'query' => 'account:Visa amount_more:'.$this->money('100').' type:withdrawal', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => (string) Str::ulid(), 'ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Weekend fun', 'query' => 'tag:weekend', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => (string) Str::ulid(), 'ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Big card spending', 'query' => 'account:Visa amount_more:'.$this->money('100').' type:withdrawal', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $preferences = $this->owner->preferences ?? [];
@@ -362,7 +362,7 @@ class DemoSeeder extends Seeder
     /**
      * @param  list<string>  $tags
      */
-    private function spend(CarbonImmutable $date, string $description, string $amount, string $payee, string $category, string $from, array $tags = [], ?int $budget = null, ?int $bill = null): TransactionGroup
+    private function spend(CarbonImmutable $date, string $description, string $amount, string $payee, string $category, string $from, array $tags = [], ?string $budget = null, ?string $bill = null): TransactionGroup
     {
         return $this->save([
             'type' => 'withdrawal', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $from),
@@ -392,7 +392,7 @@ class DemoSeeder extends Seeder
     /**
      * @return array<string, mixed>
      */
-    private function split(CarbonImmutable $date, string $description, string $amount, string $from, string $payee, string $category, ?int $budget = null): array
+    private function split(CarbonImmutable $date, string $description, string $amount, string $from, string $payee, string $category, ?string $budget = null): array
     {
         return [
             'type' => 'withdrawal', 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $from),

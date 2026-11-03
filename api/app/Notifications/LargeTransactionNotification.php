@@ -14,7 +14,7 @@ class LargeTransactionNotification extends LedgerNotification
         return 'large_transaction';
     }
 
-    public function ledgerId(): int
+    public function ledgerId(): string
     {
         return $this->transaction->ledger_id;
     }

@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('budgets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->boolean('active')->default(true);
             $table->unsignedInteger('order')->default(0);
@@ -25,8 +25,8 @@ return new class extends Migration
         });
 
         Schema::create('budget_limits', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('budget_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('budget_id')->constrained()->cascadeOnDelete();
             $table->foreignId('currency_id')->constrained('currencies');
             $table->date('start_date');
             $table->date('end_date');
@@ -38,8 +38,8 @@ return new class extends Migration
         });
 
         Schema::create('available_budgets', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ledger_id')->constrained()->cascadeOnDelete();
+            $table->ulid('id')->primary();
+            $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->foreignId('currency_id')->constrained('currencies');
             $table->date('start_date');
             $table->date('end_date');
@@ -50,7 +50,7 @@ return new class extends Migration
         });
 
         Schema::table('transactions', function (Blueprint $table) {
-            $table->foreignId('budget_id')->nullable()->after('category_id')->constrained()->nullOnDelete();
+            $table->foreignUlid('budget_id')->nullable()->after('category_id')->constrained()->nullOnDelete();
         });
     }
 

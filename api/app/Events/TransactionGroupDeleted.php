@@ -11,5 +11,5 @@ class TransactionGroupDeleted
     /**
      * @param  array<string, mixed>  $snapshot
      */
-    public function __construct(public int $ledgerId, public int $groupId, public array $snapshot) {}
+    public function __construct(public string $ledgerId, public string $groupId, public array $snapshot) {}
 }

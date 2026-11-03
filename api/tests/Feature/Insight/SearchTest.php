@@ -5,7 +5,7 @@ use App\Models\Ledger;
 use App\Models\Transaction;
 use App\Search\TransactionSearch;
 
-function record(Ledger $ledger, Account $from, array $overrides): int
+function record(Ledger $ledger, Account $from, array $overrides): string
 {
     return test()->postJson("/api/v1/ledgers/{$ledger->id}/transactions", ['transactions' => [[
         'type' => 'withdrawal', 'date' => '2026-03-10', 'description' => 'Thing', 'amount' => '10',

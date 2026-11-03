@@ -21,7 +21,7 @@ return new class extends Migration
 
         Schema::connection($connection)->create($tableName, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->morphs('subscribable', 'push_subscriptions_subscribable_morph_idx');
+            $table->ulidMorphs('subscribable', 'push_subscriptions_subscribable_morph_idx');
             $table->string('endpoint', PushSubscription::ENDPOINT_MAX_LENGTH)
                 ->charset('ascii')
                 ->unique();

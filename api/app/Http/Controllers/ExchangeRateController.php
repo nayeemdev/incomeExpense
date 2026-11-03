@@ -53,7 +53,7 @@ class ExchangeRateController extends Controller
         return response()->json(['data' => $this->present($rate->load('from', 'to'))], Response::HTTP_CREATED);
     }
 
-    public function destroy(Ledger $ledger, int $exchangeRate): Response
+    public function destroy(Ledger $ledger, string $exchangeRate): Response
     {
         ExchangeRate::query()->where('ledger_id', $ledger->id)->findOrFail($exchangeRate)->delete();
 
