@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../api/models.dart';
 import '../../app/theme.dart';
+import '../../shared/category_style.dart';
 import '../../shared/format.dart';
 import '../../shared/widgets.dart';
 import '../accounts/accounts_screen.dart';
@@ -76,7 +77,8 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     if (_loaded) return;
     _loaded = true;
     if (group == null) {
-      _splits.add(_SplitDraft()..sourceId = ref.read(currentLedgerProvider).defaultAccountId);
+      final account = ref.read(currentLedgerProvider).defaultAccountId;
+      _splits.addAll([_SplitDraft()..sourceId = account, _SplitDraft()..sourceId = account]);
       return;
     }
     final first = group.splits.first;
@@ -186,7 +188,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(LucideIcons.x, size: 20), tooltip: 'Close', onPressed: () => context.pop()),
-        title: Text(_editing ? 'Edit transaction' : 'New transaction'),
+        title: Text(_editing ? 'Edit transaction' : 'Split transaction'),
       ),
       body: AsyncView(
         value: own,
@@ -226,7 +228,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
                   QuickPicks(
                     items: [
                       for (final pick in picks)
-                        (label: pick.description, hint: formatMoney(pick.amount, pick.currency.code), active: false),
+                        (label: pick.description, hint: formatMoney(pick.amount, pick.currency.code), active: false, leading: null),
                     ],
                     onPick: (index) => _applyPick(picks[index]),
                   ),
@@ -508,7 +510,10 @@ class _SplitFields extends ConsumerWidget {
         if (type != 'transfer' && payeeChips.isNotEmpty) ...[
           const SizedBox(height: 8),
           QuickPicks(
-            items: [for (final payee in payeeChips) (label: payee.name, hint: null, active: draft.counterparty.text.trim() == payee.name)],
+            items: [
+              for (final payee in payeeChips)
+                (label: payee.name, hint: null, active: draft.counterparty.text.trim() == payee.name, leading: null),
+            ],
             onPick: (index) {
               draft.counterparty.text = payeeChips[index].name;
               onChanged();
@@ -524,7 +529,7 @@ class _SplitFields extends ConsumerWidget {
             QuickPicks(
               items: [
                 for (final category in categoryChips)
-                  (label: category.name, hint: null, active: draft.category.text.trim() == category.name),
+                  (label: category.name, hint: null, active: draft.category.text.trim() == category.name, leading: null),
               ],
               onPick: (index) {
                 final name = categoryChips[index].name;
@@ -546,7 +551,10 @@ class _SplitFields extends ConsumerWidget {
                       const SizedBox(height: 14),
                       const FieldLabel('Budget'),
                       QuickPicks(
-                        items: [for (final budget in budgets) (label: budget.name, hint: null, active: draft.budgetId == budget.id)],
+                        items: [
+                          for (final budget in budgets)
+                            (label: budget.name, hint: null, active: draft.budgetId == budget.id, leading: null),
+                        ],
                         onPick: (index) {
                           draft.budgetId = draft.budgetId == budgets[index].id ? null : budgets[index].id;
                           onChanged();
@@ -660,7 +668,7 @@ class _AccountSheet extends StatelessWidget {
                   for (final account in accounts)
                     ListTile(
                       onTap: () => Navigator.pop(context, account.id),
-                      leading: IconTile(accountIcon(account), tone: account.id == selected ? Tone.brand : Tone.neutral, size: 36),
+                      leading: CategoryIcon(glyph: accountIcon(account), color: account.id == selected ? 'blue' : 'slate', size: 40),
                       title: Text(account.name, style: text.titleSmall),
                       subtitle: roleLabel(account) == null
                           ? null

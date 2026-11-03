@@ -27,7 +27,7 @@ class TransactionList extends ConsumerWidget {
         },
         child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 110),
+          padding: const EdgeInsets.only(bottom: 40),
           children: [
             ...header,
             ...switch (feed) {
@@ -49,12 +49,7 @@ class TransactionList extends ConsumerWidget {
                   builder: (_) => const SizedBox(),
                 ),
               ],
-              _ => [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: SurfaceCard(child: Column(children: [SkeletonRow(), SkeletonRow(), SkeletonRow(), SkeletonRow(), SkeletonRow()])),
-                ),
-              ],
+              _ => [const SkeletonList(rows: 6)],
             },
           ],
         ),

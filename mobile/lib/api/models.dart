@@ -106,13 +106,17 @@ class AccountRef {
   final String type;
 }
 
+/// A reference by id and name. Categories also carry their icon and color.
 class NamedRef {
-  const NamedRef(this.id, this.name);
+  const NamedRef(this.id, this.name, {this.icon, this.color});
 
-  factory NamedRef.fromJson(Json json) => NamedRef(json['id'] as int, json['name'] as String);
+  factory NamedRef.fromJson(Json json) =>
+      NamedRef(json['id'] as int, json['name'] as String, icon: json['icon'] as String?, color: json['color'] as String?);
 
   final int id;
   final String name;
+  final String? icon;
+  final String? color;
 }
 
 class Transaction {
@@ -181,13 +185,6 @@ class TransactionGroup {
   final int id;
   final String? title;
   final List<Transaction> splits;
-}
-
-class Page<T> {
-  const Page(this.items, this.lastPage);
-
-  final List<T> items;
-  final int lastPage;
 }
 
 class BudgetLimit {
@@ -281,10 +278,13 @@ class Notice {
 }
 
 class CategoryTotal {
-  const CategoryTotal(this.name, this.amount);
+  const CategoryTotal(this.name, this.amount, {this.id, this.icon, this.color});
 
+  final int? id;
   final String? name;
   final Amount amount;
+  final String? icon;
+  final String? color;
 }
 
 class Summary {
@@ -294,7 +294,16 @@ class Summary {
     netWorth: Amount.fromJson(json['net_worth_total'] as Json),
     spent: Amount.fromJson(json['spent_total'] as Json),
     earned: Amount.fromJson(json['earned_total'] as Json),
-    topCategories: _list(json['top_categories'], (row) => CategoryTotal(row['name'] as String?, Amount.fromJson(row))),
+    topCategories: _list(
+      json['top_categories'],
+      (row) => CategoryTotal(
+        row['name'] as String?,
+        Amount.fromJson(row),
+        id: row['id'] as int?,
+        icon: row['icon'] as String?,
+        color: row['color'] as String?,
+      ),
+    ),
     accounts: _list(json['accounts'], Account.fromJson),
   );
 
@@ -303,4 +312,73 @@ class Summary {
   final Amount earned;
   final List<CategoryTotal> topCategories;
   final List<Account> accounts;
+}
+
+class Goal {
+  const Goal({
+    required this.id,
+    required this.name,
+    required this.currency,
+    required this.saved,
+    required this.accounts,
+    this.target,
+    this.targetDate,
+  });
+
+  factory Goal.fromJson(Json json) => Goal(
+    id: json['id'] as int,
+    name: json['name'] as String,
+    currency: Currency.fromJson(json['currency'] as Json),
+    saved: double.tryParse(json['saved_amount'].toString()) ?? 0,
+    target: double.tryParse(json['target_amount']?.toString() ?? ''),
+    targetDate: _date(json['target_date']),
+    accounts: _list(json['accounts'], (account) => NamedRef(account['id'] as int, account['name'] as String)),
+  );
+
+  final int id;
+  final String name;
+  final Currency currency;
+  final double saved;
+  final double? target;
+  final DateTime? targetDate;
+  final List<NamedRef> accounts;
+
+  double get progress => target == null || target == 0 ? 0 : (saved / target!).clamp(0, 1).toDouble();
+}
+
+class Bucket {
+  const Bucket(this.start, this.income, this.expense);
+
+  final DateTime start;
+  final double income;
+  final double expense;
+}
+
+class Report {
+  const Report({required this.currency, required this.buckets, required this.expenseCategories, required this.incomeCategories});
+
+  factory Report.fromJson(Json json) {
+    final data = json['data'] as Json;
+    CategoryTotal total(Json row, String currency) =>
+        CategoryTotal(row['name'] as String?, Amount(currency, row['total'].toString()), id: row['id'] as int?);
+    final currency = (json['meta'] as Json)['currency'] as String;
+    return Report(
+      currency: currency,
+      buckets: _list(
+        data['income_expense'],
+        (row) => Bucket(
+          DateTime.parse(row['start'] as String),
+          double.tryParse(row['income'].toString()) ?? 0,
+          double.tryParse(row['expense'].toString()) ?? 0,
+        ),
+      ),
+      expenseCategories: _list(data['expense_categories'], (row) => total(row, currency)),
+      incomeCategories: _list(data['income_categories'], (row) => total(row, currency)),
+    );
+  }
+
+  final String currency;
+  final List<Bucket> buckets;
+  final List<CategoryTotal> expenseCategories;
+  final List<CategoryTotal> incomeCategories;
 }
