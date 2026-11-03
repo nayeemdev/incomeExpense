@@ -19,11 +19,7 @@
         "image": "{{url}}/og/home.png",
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
       },
-      {
-        "@type": "WebSite",
-        "name": "LedgerFly",
-        "url": "{{url}}/"
-      },
+      { "@type": "WebSite", "name": "LedgerFly", "url": "{{url}}/" },
       {
         "@type": "FAQPage",
         "mainEntity": [
@@ -40,237 +36,364 @@
 }
 -->
 <section class="hero">
+  <span class="float-chip chip-c" data-speed="-0.12"><svg class="i cursor"><use href="#i-cursor"/></svg>Budgets</span>
+  <span class="float-chip chip-a" data-speed="-0.2"><svg class="i cursor"><use href="#i-cursor"/></svg>Bills</span>
+  <span class="float-chip chip-b" data-speed="-0.16"><svg class="i cursor"><use href="#i-cursor"/></svg>Goals</span>
   <div class="wrap">
-    <span class="eyebrow">Open source · Self-hosted · Free</span>
-    <h1>Your money, on your own server.</h1>
-    <p class="lead">LedgerFly tracks accounts, budgets, bills and goals with real double-entry bookkeeping. Run it with Docker, then use it from the web, Android or iPhone.</p>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="/self-hosting/">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
-        Self-host it
-      </a>
-      <a class="btn btn-secondary" href="{{repo}}" rel="noopener">
-        <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
-        View on GitHub
-      </a>
+    <span class="tag" data-reveal>Open source · Self-hosted · Free forever</span>
+    <h1 data-reveal style="--d:.08s">Your money, on your <span>own server.</span></h1>
+    <p class="lead" data-reveal style="--d:.18s">LedgerFly tracks accounts, budgets, bills and goals with real double-entry bookkeeping. Run it with Docker, then use it from the web, Android or iPhone.</p>
+    <div class="actions" data-reveal style="--d:.26s">
+      <a class="btn btn-primary" href="/self-hosting/">Get started free <svg class="i arrow"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-soft" href="{{repo}}" rel="noopener"><svg class="i"><use href="#i-github"/></svg>Star on GitHub</a>
     </div>
-    <p class="hero-note">AGPL-3.0 licensed. No accounts with us, no tracking.</p>
+    <div class="proof" data-reveal style="--d:.34s">
+      <div><span class="ic"><svg class="i"><use href="#i-code"/></svg></span><span><b>Open source</b><small>AGPL-3.0 licensed</small></span></div>
+      <div><span class="ic"><svg class="i"><use href="#i-box"/></svg></span><span><b>One command</b><small>Docker Compose stack</small></span></div>
+      <div><span class="ic"><svg class="i"><use href="#i-phone"/></svg></span><span><b>Web and mobile</b><small>Android and iOS apps</small></span></div>
+    </div>
   </div>
-  <div class="hero-shots">
-    <div class="frame">
-      <div class="frame-bar" aria-hidden="true"><span></span><span></span><span></span></div>
-      <img src="/images/web-dashboard-light-1600.webp" srcset="/images/web-dashboard-light-800.webp 800w, /images/web-dashboard-light-1600.webp 1600w" sizes="(max-width: 1100px) 100vw, 1032px" width="1600" height="1000" alt="LedgerFly web dashboard with net worth, monthly spending and income, a six month chart and recent transactions" fetchpriority="high">
+  <div class="showcase" data-tilt>
+    <div class="window">
+      <div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+      <img src="/images/web-dashboard-light-1600.webp" srcset="/images/web-dashboard-light-800.webp 800w, /images/web-dashboard-light-1600.webp 1600w" sizes="(max-width: 1120px) 100vw, 1064px" width="1600" height="1000" alt="LedgerFly web dashboard with net worth, monthly spending and income, a six month chart and recent transactions" fetchpriority="high">
     </div>
-    <div class="phone hero-phone">
-      <img src="/images/m-dashboard-light.webp" width="600" height="1304" alt="LedgerFly mobile app home screen with total balance and accounts" fetchpriority="high">
+    <div class="phone" data-speed="0.08">
+      <img src="/images/m-dashboard-light.webp" width="600" height="1304" alt="LedgerFly mobile home screen with total balance and accounts" fetchpriority="high">
+    </div>
+    <div class="ui" data-speed="-0.1" data-reveal style="--d:.5s">
+      <div class="ui-row">
+        <span class="ui-dot" style="--c:#16a34a"><svg class="i"><use href="#i-cart"/></svg></span>
+        <span class="grow"><b>Groceries</b><small>Monthly budget</small></span>
+        <span class="pill" style="--c:#16a34a">On track</span>
+      </div>
+      <div class="ui-value">৳<span data-count="50400">50,400</span> <small class="ui-label">of ৳70,000</small></div>
+      <div class="bar" style="--w:72%;--c:#16a34a"><i></i></div>
     </div>
   </div>
 </section>
 
-<section class="strip" aria-label="Highlights">
+<section class="section" id="why">
   <div class="wrap">
-    <ul>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Your data stays with you</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Double-entry accounting</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4m8.71 3.88.7.71-2.82 2.82"/></svg>Multi-currency</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Shared ledgers</li>
-      <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>Web, Android and iOS</li>
-    </ul>
+    <div class="head" data-reveal>
+      <span class="tag">Why LedgerFly</span>
+      <h2>Built for the way you actually spend</h2>
+      <p>Not another spreadsheet. A calm place for every account, bill and goal, that keeps up without asking much of you.</p>
+    </div>
+
+    <div class="benefit">
+      <div class="benefit-art" data-reveal>
+        <div class="phone" data-speed="-0.06"><img src="/images/m-reports-light.webp" width="600" height="1304" alt="Mobile reports with monthly bars and a category donut chart" loading="lazy" decoding="async"></div>
+        <div class="ui art-tl" data-speed="0.04" data-reveal style="--d:.2s">
+          <div class="ui-label">Spending this year</div>
+          <div class="ui-row" style="margin-top:8px">
+            <svg class="donut" viewBox="0 0 42 42" aria-hidden="true">
+              <circle cx="21" cy="21" r="15.9" stroke="var(--panel-strong)"/>
+              <circle class="arc" cx="21" cy="21" r="15.9" stroke="#2a78d6" stroke-dasharray="36 64" stroke-dashoffset="25"/>
+              <circle class="arc" cx="21" cy="21" r="15.9" stroke="#eb6834" stroke-dasharray="22 78" stroke-dashoffset="89"/>
+              <circle class="arc" cx="21" cy="21" r="15.9" stroke="#1baf7a" stroke-dasharray="14 86" stroke-dashoffset="67"/>
+              <circle class="arc" cx="21" cy="21" r="15.9" stroke="#eda100" stroke-dasharray="9 91" stroke-dashoffset="53"/>
+            </svg>
+            <span class="grow legend"><small><i style="--c:#2a78d6"></i>Housing 36%</small><small><i style="--c:#eb6834"></i>Groceries 22%</small><small><i style="--c:#1baf7a"></i>Car 14%</small><small><i style="--c:#eda100"></i>Eating out 9%</small></span>
+          </div>
+        </div>
+        <div class="ui art-br" data-speed="0.08" data-reveal style="--d:.35s">
+          <div class="ui-row">
+            <span class="ui-dot" style="--c:#2a78d6"><svg class="i"><use href="#i-home"/></svg></span>
+            <span class="grow"><b>Housing</b><small>Top category</small></span>
+            <span class="ui-amt">৳<span data-count="1045000">1,045,000</span></span>
+          </div>
+        </div>
+      </div>
+      <div data-reveal style="--d:.1s">
+        <span class="tag">Insight</span>
+        <h2>Know where every taka goes</h2>
+        <p>See spending by category, payee or tag for any period, with every currency converted to yours. Reports that make the next decision obvious.</p>
+        <a class="btn btn-soft" href="#features">See the reports <svg class="i arrow"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+
+    <div class="benefit flip">
+      <div class="benefit-art" data-reveal>
+        <div class="phone" data-speed="-0.06"><img src="/images/m-add-light.webp" width="600" height="1304" alt="Quick add screen with an amount keypad and category options" loading="lazy" decoding="async"></div>
+        <div class="ui art-tr" data-speed="0.06" data-reveal style="--d:.2s">
+          <div class="ui-row">
+            <span class="ui-dot" style="--c:#ea580c"><svg class="i"><use href="#i-cup"/></svg></span>
+            <span class="grow"><b>Coffee</b><small>Eating out · Visa Card</small></span>
+            <span class="ui-amt">৳409</span>
+          </div>
+          <div class="saved"><svg class="i"><use href="#i-check"/></svg>Saved</div>
+        </div>
+        <div class="ui art-bl" data-speed="0.09" data-reveal style="--d:.35s">
+          <div class="ui-row">
+            <span class="ui-dot" style="--c:#64748b"><svg class="i"><use href="#i-offline"/></svg></span>
+            <span class="grow"><b>No signal?</b><small>2 waiting, will sync on their own</small></span>
+          </div>
+        </div>
+      </div>
+      <div data-reveal style="--d:.1s">
+        <span class="tag">Quick add</span>
+        <h2>Log a purchase before you forget it</h2>
+        <p>Open the app, type the amount, tap a category. Recent payees fill themselves in, receipts are one photo away, and it works offline.</p>
+        <a class="btn btn-soft" href="/apps/">Meet the apps <svg class="i arrow"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+
+    <div class="benefit">
+      <div class="benefit-art" data-reveal>
+        <div class="phone" data-speed="-0.06"><img src="/images/m-goals-light.webp" width="600" height="1304" alt="Goals screen with an overall progress gauge and two savings goals" loading="lazy" decoding="async"></div>
+        <div class="ui art-tl" data-speed="0.04" data-reveal style="--d:.2s">
+          <div class="ui-row">
+            <span class="ui-dot" style="--c:#0d9488"><svg class="i"><use href="#i-plane"/></svg></span>
+            <span class="grow"><b>Summer holiday</b><small>Due in 5 months</small></span>
+            <span class="ui-amt">46%</span>
+          </div>
+          <div class="bar" style="--w:46%;--c:#0d9488"><i></i></div>
+        </div>
+        <div class="ui art-br" data-speed="0.08" data-reveal style="--d:.35s">
+          <div class="ui-label">Saved so far</div>
+          <div class="ui-value">৳<span data-count="179000">179,000</span></div>
+          <div class="bar" style="--w:44%"><i></i></div>
+        </div>
+      </div>
+      <div data-reveal style="--d:.1s">
+        <span class="tag">Goals</span>
+        <h2>Save for what matters next</h2>
+        <p>Set a target and a date, add money when you can, and watch the progress fill up. Budgets that roll over keep the rest of the month honest.</p>
+        <a class="btn btn-soft" href="#features">Plan ahead <svg class="i arrow"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+
+    <div class="benefit flip">
+      <div class="benefit-art" data-reveal>
+        <div class="terminal" data-speed="-0.05">
+          <span class="c"># on your own server</span><br>
+          <span class="p">$</span> docker compose up -d<br>
+          <span class="ok">✔</span> mysql&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;started<br>
+          <span class="ok">✔</span> api&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;started<br>
+          <span class="ok">✔</span> queue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;started<br>
+          <span class="ok">✔</span> scheduler started<br>
+          <span class="ok">✔</span> web&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;started
+        </div>
+        <div class="ui art-br" data-speed="0.07" data-reveal style="--d:.3s">
+          <div class="ui-row">
+            <span class="ui-dot" style="--c:#0076a8"><svg class="i"><use href="#i-lock"/></svg></span>
+            <span class="grow"><b>Stored on your server</b><small>No tracking, no third parties</small></span>
+          </div>
+        </div>
+      </div>
+      <div data-reveal style="--d:.1s">
+        <span class="tag">Privacy</span>
+        <h2>Your data never leaves home</h2>
+        <p>Everything lives in a database you own. No accounts with us, no analytics, no ads. Outside services are only contacted when you turn them on.</p>
+        <a class="btn btn-soft" href="/self-hosting/">How to self-host <svg class="i arrow"><use href="#i-arrow"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="band band-dark" data-reveal>
+    <h2>Money admin, done in minutes a week</h2>
+    <p>Rules file your transactions, bills remind you before they are due, and recurring payments record themselves.</p>
+    <div class="actions"><a class="btn btn-primary" href="/self-hosting/">Get started <svg class="i arrow"><use href="#i-arrow"/></svg></a></div>
+    <div class="ui peek-l" data-speed="-0.05">
+      <div class="ui-label">Bills this month</div>
+      <div class="ui-row" style="margin-top:10px"><span class="ui-dot" style="--c:#ca8a04"><svg class="i"><use href="#i-zap"/></svg></span><span class="grow"><b>Electricity</b><small>Due Nov 12</small></span><span class="ui-amt">৳8,500</span></div>
+      <div class="ui-row"><span class="ui-dot" style="--c:#0891b2"><svg class="i"><use href="#i-wifi"/></svg></span><span class="grow"><b>Internet</b><small>Due Nov 18</small></span><span class="ui-amt">৳4,500</span></div>
+      <div class="ui-row"><span class="ui-dot" style="--c:#4f46e5"><svg class="i"><use href="#i-home"/></svg></span><span class="grow"><b>Rent</b><small>Nov 1</small></span><span class="pill" style="--c:#16a34a">Paid</span></div>
+    </div>
+    <div class="ui peek-r" data-speed="-0.08">
+      <div class="ui-row"><span class="ui-dot" style="--c:#dc2626"><svg class="i"><use href="#i-zap"/></svg></span><span class="grow"><b>Rule matched</b><small>“ride” → Transport</small></span></div>
+      <div class="ui-row"><span class="ui-dot" style="--c:#7c3aed"><svg class="i"><use href="#i-repeat"/></svg></span><span class="grow"><b>Gym membership</b><small>Recorded on the 5th</small></span></div>
+      <div class="ui-row"><span class="ui-dot" style="--c:#ea580c"><svg class="i"><use href="#i-bell"/></svg></span><span class="grow"><b>Eating out at 80%</b><small>Budget warning</small></span></div>
+    </div>
   </div>
 </section>
 
 <section class="section" id="features">
   <div class="wrap">
-    <div class="section-head">
-      <span class="eyebrow">Features</span>
-      <h2>Everything a household needs to stay on top of money</h2>
-      <p>Built as a modern take on Firefly III, with the same solid accounting underneath and a much faster way to use it day to day.</p>
+    <div class="head" data-reveal>
+      <span class="tag">Everything included</span>
+      <h2>One app for the whole household</h2>
+      <p>The solid accounting of Firefly III, rebuilt to be fast and pleasant every day.</p>
     </div>
-    <div class="grid">
-      <article class="card">
-        <div class="tile" style="--tint:#3b82f6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></div>
-        <h3>Accounts and balances</h3>
-        <p>Checking, savings, cash, credit cards, loans and money you lent, each with a running balance and reconciliation against your statement.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#10b981"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg></div>
-        <h3>Budgets and goals</h3>
-        <p>Monthly budgets that reset or roll over, savings goals with progress, and a warning before you overspend.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#f59e0b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"/></svg></div>
-        <h3>Bills and subscriptions</h3>
-        <p>Know what is due and what is already paid this period, with a reminder before each due date.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#8b5cf6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></div>
-        <h3>Recurring transactions</h3>
-        <p>Salary, rent and memberships are recorded for you on schedule, daily to yearly, with skips and end dates.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#ef4444"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></div>
-        <h3>Rules that do the filing</h3>
-        <p>Set categories, tags and budgets from the description, amount or account. Test a rule first, then apply it to past transactions.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#0ea5e9"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg></div>
-        <h3>Reports and search</h3>
-        <p>Income against expenses, net worth over time and spending by category, tag or payee. Search with filters and save the ones you reuse.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#14b8a6"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4m8.71 3.88.7.71-2.82 2.82"/></svg></div>
-        <h3>Multi-currency</h3>
-        <p>Accounts in any currency, foreign amounts on transactions, and exchange rates fetched on a schedule so totals add up in your main currency.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#ec4899"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M12 12v6m3-3-3-3-3 3"/></svg></div>
-        <h3>Import, export and receipts</h3>
-        <p>Import CSV or camt.053 bank statements, attach receipt photos, and export everything to a JSON backup whenever you like.</p>
-      </article>
-      <article class="card">
-        <div class="tile" style="--tint:#f97316"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
-        <h3>Alerts that reach you</h3>
-        <p>Budget, bill, balance and large spending alerts by email, browser push, ntfy or the mobile app, with quiet hours.</p>
-      </article>
-    </div>
-  </div>
-</section>
 
-<section class="section section-alt">
-  <div class="wrap">
-    <div class="split">
+    <article class="panel" data-reveal>
       <div>
-        <span class="eyebrow">Insight</span>
-        <h2>See where every taka, dollar or euro went</h2>
-        <p>Reports cover any period and convert everything to your main currency, so the picture stays honest even with accounts abroad.</p>
+        <h3>Accounts and transactions</h3>
+        <p>Every account you have, with running balances that always add up.</p>
         <ul class="checks">
-          <li>Income and expenses side by side, month by month</li>
-          <li>Net worth over time, including loans and debts</li>
-          <li>Spending by category, tag, payee or budget</li>
+          <li>Checking, savings, cash, credit cards, loans and debts</li>
+          <li>Split one payment across categories and budgets</li>
+          <li>Reconcile against your bank statement</li>
+          <li>Receipts and attachments on any transaction</li>
+        </ul>
+      </div>
+      <div class="panel-art">
+        <div class="window"><div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div><img src="/images/web-transactions-light-1600.webp" srcset="/images/web-transactions-light-800.webp 800w, /images/web-transactions-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 720px" width="1600" height="1000" alt="Transactions grouped by day with categories and accounts" loading="lazy" decoding="async"></div>
+        <div class="ui" data-speed="0.1"><div class="ui-row"><span class="ui-dot" style="--c:#16a34a"><svg class="i"><use href="#i-check"/></svg></span><span class="grow"><b>Reconciled</b><small>Everyday Checking</small></span></div></div>
+      </div>
+    </article>
+
+    <article class="panel" data-reveal>
+      <div>
+        <h3>Budgets, bills and goals</h3>
+        <p>Plan the month and see what is left at a glance.</p>
+        <ul class="checks">
+          <li>Budgets that reset or roll over, with warnings</li>
+          <li>Bills with expected amounts and due dates</li>
+          <li>Recurring transactions on any schedule</li>
+          <li>Savings goals with targets and dates</li>
+        </ul>
+      </div>
+      <div class="panel-art">
+        <div class="window"><div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div><img src="/images/web-bills-light-1600.webp" srcset="/images/web-bills-light-800.webp 800w, /images/web-bills-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 720px" width="1600" height="1000" alt="Bills page with expected and paid amounts and due dates" loading="lazy" decoding="async"></div>
+        <div class="ui" data-speed="0.1"><div class="ui-label">Eating out</div><div class="ui-value">৳<span data-count="20000">20,000</span> <small class="ui-label">of ৳25,000</small></div><div class="bar" style="--w:80%;--c:#ea580c"><i></i></div></div>
+      </div>
+    </article>
+
+    <article class="panel" data-reveal>
+      <div>
+        <h3>Rules and automation</h3>
+        <p>Teach it once, and it files every matching transaction for you.</p>
+        <ul class="checks">
+          <li>Match on description, amount, account and more</li>
+          <li>Set category, budget, tags and notes automatically</li>
+          <li>Test a rule, then apply it to past transactions</li>
+          <li>Import CSV or camt.053 and let rules do the rest</li>
+        </ul>
+      </div>
+      <div class="panel-art">
+        <div class="window"><div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div><img src="/images/web-rules-light-1600.webp" srcset="/images/web-rules-light-800.webp 800w, /images/web-rules-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 720px" width="1600" height="1000" alt="Rules page with a rule group and two rules" loading="lazy" decoding="async"></div>
+        <div class="ui" data-speed="0.1"><div class="ui-row"><span class="ui-dot" style="--c:#2563eb"><svg class="i"><use href="#i-bus"/></svg></span><span class="grow"><b>Ride home</b><small>Filed under Transport</small></span><span class="ui-amt">৳1,200</span></div></div>
+      </div>
+    </article>
+
+    <article class="panel" data-reveal>
+      <div>
+        <h3>Reports and insight</h3>
+        <p>The full picture, for any period you choose.</p>
+        <ul class="checks">
+          <li>Income against expenses, month by month</li>
+          <li>Net worth over time, including loans</li>
+          <li>Breakdowns by category, tag, payee and budget</li>
           <li>Print or export any report</li>
         </ul>
       </div>
-      <div class="frame">
-        <img src="/images/web-reports-dark-1600.webp" srcset="/images/web-reports-dark-800.webp 800w, /images/web-reports-dark-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 640px" width="1600" height="1000" alt="Reports page in dark mode with income and expense bars and a net worth line" loading="lazy" decoding="async">
+      <div class="panel-art">
+        <div class="window"><div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div><img src="/images/web-reports-light-1600.webp" srcset="/images/web-reports-light-800.webp 800w, /images/web-reports-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 720px" width="1600" height="1000" alt="Reports with income and expense bars and a net worth line" loading="lazy" decoding="async"></div>
+        <div class="ui" data-speed="0.1"><div class="ui-label">Saved this year</div><div class="ui-value">৳<span data-count="2019054">2,019,054</span></div><div class="bar" style="--w:41%;--c:#16a34a"><i></i></div></div>
       </div>
-    </div>
-    <div class="split reverse">
-      <div>
-        <span class="eyebrow">Day to day</span>
-        <h2>Fast to keep up to date</h2>
-        <p>Add a transaction in seconds with smart suggestions from what you entered before, then let rules and recurring transactions handle the rest.</p>
-        <ul class="checks">
-          <li>Quick add from anywhere with <code>N</code>, and a command palette on <code>⌘K</code></li>
-          <li>Split one payment across categories and budgets</li>
-          <li>Bulk edit many transactions at once</li>
-          <li>Webhooks and a REST API for your own tools</li>
-        </ul>
-      </div>
-      <div class="frame">
-        <img src="/images/web-transactions-light-1600.webp" srcset="/images/web-transactions-light-800.webp 800w, /images/web-transactions-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 640px" width="1600" height="1000" alt="Transactions list grouped by day with categories and accounts" loading="lazy" decoding="async">
-      </div>
+    </article>
+
+    <div class="cards more-cards">
+      <article class="card" data-reveal><span class="tile" style="--c:#0d9488"><svg class="i"><use href="#i-coins"/></svg></span><h3>Multi-currency</h3><p>Accounts in any currency, with exchange rates fetched on a schedule.</p></article>
+      <article class="card" data-reveal style="--d:.08s"><span class="tile" style="--c:#7c3aed"><svg class="i"><use href="#i-users"/></svg></span><h3>Shared ledgers</h3><p>Invite family as owner, editor or viewer, each with their own sign in.</p></article>
+      <article class="card" data-reveal style="--d:.16s"><span class="tile" style="--c:#ea580c"><svg class="i"><use href="#i-bell"/></svg></span><h3>Alerts that reach you</h3><p>Email, browser push, ntfy or the mobile app, with quiet hours.</p></article>
+      <article class="card" data-reveal><span class="tile" style="--c:#db2777"><svg class="i"><use href="#i-file"/></svg></span><h3>Import and backup</h3><p>Bring in bank statements and export a full JSON backup any time.</p></article>
+      <article class="card" data-reveal style="--d:.08s"><span class="tile" style="--c:#2563eb"><svg class="i"><use href="#i-hook"/></svg></span><h3>Webhooks and API</h3><p>Connect your own tools to a REST API and signed webhooks.</p></article>
+      <article class="card" data-reveal style="--d:.16s"><span class="tile" style="--c:#0076a8"><svg class="i"><use href="#i-shield"/></svg></span><h3>Two-factor sign in</h3><p>Authenticator codes and recovery codes keep accounts safe.</p></article>
     </div>
   </div>
 </section>
 
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="eyebrow">Mobile apps</span>
-      <h2>Your ledger in your pocket</h2>
-      <p>Native apps that talk to your own server. Add expenses with a keypad, snap receipts, keep working offline and see your month on a home screen widget.</p>
-    </div>
-    <div class="phones">
-      <figure>
-        <div class="phone"><img src="/images/m-add-light.webp" width="600" height="1304" alt="Quick add screen with an amount keypad and category options" loading="lazy" decoding="async"></div>
-        <figcaption>Quick add with a keypad</figcaption>
-      </figure>
-      <figure>
-        <div class="phone"><img src="/images/m-reports-light.webp" width="600" height="1304" alt="Mobile reports with monthly bars and a category donut chart" loading="lazy" decoding="async"></div>
-        <figcaption>Reports by category</figcaption>
-      </figure>
-      <figure>
-        <div class="phone"><img src="/images/m-goals-light.webp" width="600" height="1304" alt="Goals screen with an overall progress gauge and two savings goals" loading="lazy" decoding="async"></div>
-        <figcaption>Savings goals</figcaption>
-      </figure>
-    </div>
-    <div class="hero-actions">
-      <a class="btn btn-secondary" href="/apps/">About the apps</a>
-    </div>
-  </div>
-</section>
-
-<section class="section section-alt">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="eyebrow">Self-hosting</span>
+<section class="section section-panel" id="how">
+  <div class="wrap steps-wrap">
+    <div class="steps-intro" data-reveal>
+      <span class="tag">How it works</span>
       <h2>Running in about ten minutes</h2>
-      <p>One Docker Compose stack with the web app, API, database, queue worker and scheduler. The first account you create becomes the admin.</p>
+      <p>One Docker Compose stack with the web app, API, database, queue worker and scheduler. Follow along, no experience with servers needed.</p>
+      <a class="btn btn-primary" href="/self-hosting/">Read the full guide <svg class="i arrow"><use href="#i-arrow"/></svg></a>
     </div>
     <div class="steps">
-      <div class="card step">
-        <h3>Get a server</h3>
-        <p>Any Linux machine with Docker. A small VPS with 2 GB of RAM is plenty for a household.</p>
-      </div>
-      <div class="card step">
-        <h3>Start the stack</h3>
-        <p>Clone the repository, fill in two <code>.env</code> files and run <code>docker compose up -d</code>.</p>
-      </div>
-      <div class="card step">
-        <h3>Sign up and configure</h3>
-        <p>Create the admin account, then set email, sign-ups and alerts from Settings in the app.</p>
-      </div>
-    </div>
-    <div class="hero-actions">
-      <a class="btn btn-primary" href="/self-hosting/">Read the full guide</a>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="eyebrow">FAQ</span>
-      <h2>Questions people ask</h2>
-    </div>
-    <div class="faq">
-      <details>
-        <summary>Is LedgerFly free?</summary>
-        <p>Yes. LedgerFly is open source under the AGPL-3.0 license. There is no paid tier and no account with us; you run it on your own server.</p>
-      </details>
-      <details>
-        <summary>Where is my financial data stored?</summary>
-        <p>Only in the database on your server. LedgerFly has no tracking or telemetry, and it only contacts outside services you turn on, such as exchange rates, email or ntfy.</p>
-      </details>
-      <details>
-        <summary>What kind of server do I need?</summary>
-        <p>Any Linux machine that runs Docker. A small VPS with 2 GB of RAM is plenty for a household, and a home server works too.</p>
-      </details>
-      <details>
-        <summary>Can I share a ledger with my family?</summary>
-        <p>Yes. Invite people to a ledger as an owner, editor or viewer. Everyone signs in with their own account.</p>
-      </details>
-      <details>
-        <summary>Can I import my bank statements?</summary>
-        <p>Yes. Import CSV files with column mapping and saved profiles, or camt.053 statements. Duplicates are detected and your rules run on imported transactions.</p>
-      </details>
-      <details>
-        <summary>Is there a mobile app?</summary>
-        <p>Yes. The Android app is coming to Google Play, and the iOS app can be built from source with Xcode. The web app also works on phones. See <a href="/apps/">the apps page</a>.</p>
-      </details>
+      <article class="step" data-reveal>
+        <div><div class="step-num">01</div><h3>Get a small server</h3><p>Any Linux machine with Docker. A VPS with 2 GB of RAM is plenty for a household.</p></div>
+        <pre><span class="c"># install Docker</span>
+curl -fsSL \
+  https://get.docker.com \
+  | sudo sh</pre>
+      </article>
+      <article class="step" data-reveal>
+        <div><div class="step-num">02</div><h3>Download and configure</h3><p>Clone the repository and fill in two short settings files.</p></div>
+        <pre>git clone …/ledgerfly.git
+cd ledgerfly
+cp .env.example .env</pre>
+      </article>
+      <article class="step" data-reveal>
+        <div><div class="step-num">03</div><h3>Start everything</h3><p>One command starts the whole stack. Add Caddy in front for HTTPS.</p></div>
+        <pre>docker compose up -d
+<span class="c"># migrations run on start</span></pre>
+      </article>
+      <article class="step" data-reveal>
+        <div><div class="step-num">04</div><h3>Create your account</h3><p>The first sign up becomes the admin. Set up email, sign-ups and alerts from Settings.</p></div>
+        <pre><span class="c"># open your domain</span>
+https://money.example.com</pre>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="section cta">
+<section class="section-sm">
+  <div class="head" data-reveal>
+    <span class="tag">Works with</span>
+    <h2>Fits the tools you already use</h2>
+  </div>
+  <div class="marquee" data-reveal>
+    <div class="marquee-track">
+      <span class="chip"><svg class="i"><use href="#i-box"/></svg>Docker</span>
+      <span class="chip"><svg class="i"><use href="#i-db"/></svg>MySQL</span>
+      <span class="chip"><svg class="i"><use href="#i-db"/></svg>MariaDB</span>
+      <span class="chip"><svg class="i"><use href="#i-lock"/></svg>Caddy</span>
+      <span class="chip"><svg class="i"><use href="#i-cloud"/></svg>Cloudflare Tunnel</span>
+      <span class="chip"><svg class="i"><use href="#i-bell"/></svg>ntfy</span>
+      <span class="chip"><svg class="i"><use href="#i-term"/></svg>REST API</span>
+    </div>
+    <div class="marquee-track rev">
+      <span class="chip"><svg class="i"><use href="#i-file"/></svg>CSV import</span>
+      <span class="chip"><svg class="i"><use href="#i-file"/></svg>camt.053</span>
+      <span class="chip"><svg class="i"><use href="#i-hook"/></svg>Webhooks</span>
+      <span class="chip"><svg class="i"><use href="#i-phone"/></svg>Android</span>
+      <span class="chip"><svg class="i"><use href="#i-phone"/></svg>iOS widgets</span>
+      <span class="chip"><svg class="i"><use href="#i-globe"/></svg>Any browser</span>
+      <span class="chip"><svg class="i"><use href="#i-coins"/></svg>Any currency</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="faq">
   <div class="wrap">
-    <div class="card">
-      <h2>Take your finances home</h2>
-      <p>Set up LedgerFly on your own server and keep every number where it belongs.</p>
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="/self-hosting/">Get started</a>
-        <a class="btn btn-secondary" href="{{repo}}" rel="noopener">Star on GitHub</a>
-      </div>
+    <div class="head" data-reveal>
+      <span class="tag">FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+    <div class="faq" data-reveal>
+      <details><summary>Is LedgerFly free?</summary><p>Yes. LedgerFly is open source under the AGPL-3.0 license. There is no paid tier and no account with us; you run it on your own server.</p></details>
+      <details><summary>Where is my financial data stored?</summary><p>Only in the database on your server. LedgerFly has no tracking or telemetry, and it only contacts outside services you turn on, such as exchange rates, email or ntfy.</p></details>
+      <details><summary>What kind of server do I need?</summary><p>Any Linux machine that runs Docker. A small VPS with 2 GB of RAM is plenty for a household, and a home server works too.</p></details>
+      <details><summary>Can I share a ledger with my family?</summary><p>Yes. Invite people to a ledger as an owner, editor or viewer. Everyone signs in with their own account.</p></details>
+      <details><summary>Can I import my bank statements?</summary><p>Yes. Import CSV files with column mapping and saved profiles, or camt.053 statements. Duplicates are detected and your rules run on imported transactions.</p></details>
+      <details><summary>Is there a mobile app?</summary><p>Yes. The Android app is coming to Google Play, and the iOS app can be built from source with Xcode. The web app also works on phones. See <a href="/apps/">the apps page</a>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="band" data-reveal>
+    <h2>Take your finances home</h2>
+    <p>Set up LedgerFly on your own server and keep every number where it belongs.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="/self-hosting/">Get started free <svg class="i arrow"><use href="#i-arrow"/></svg></a>
+      <a class="btn btn-soft" href="{{repo}}" rel="noopener"><svg class="i"><use href="#i-github"/></svg>View on GitHub</a>
+    </div>
+    <div class="ui peek-l" data-speed="-0.05">
+      <div class="ui-label">Net worth</div>
+      <div class="ui-value">৳<span data-count="2810722">2,810,722</span></div>
+      <div class="bar" style="--w:68%"><i></i></div>
+    </div>
+    <div class="ui peek-r" data-speed="-0.08">
+      <div class="ui-row"><span class="ui-dot" style="--c:#16a34a"><svg class="i"><use href="#i-coins"/></svg></span><span class="grow"><b>Salary</b><small>Acme Corp</small></span><span class="ui-amt" style="color:#16a34a">+৳425,000</span></div>
+      <div class="ui-row"><span class="ui-dot" style="--c:#7c3aed"><svg class="i"><use href="#i-target"/></svg></span><span class="grow"><b>New laptop</b><small>Goal</small></span><span class="ui-amt">40%</span></div>
     </div>
   </div>
 </section>

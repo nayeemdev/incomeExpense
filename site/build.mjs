@@ -21,8 +21,8 @@ const js = read('script.js').trim();
 const layout = read('layout.html');
 
 const playStoreButton = site.playStore
-  ? `<a class="store" href="${site.playStore}" rel="noopener">Get it on Google Play</a>`
-  : '<span class="store store-soon" aria-disabled="true">Google Play, coming soon</span>';
+  ? `<a class="btn btn-primary" href="${site.playStore}" rel="noopener">Get it on Google Play</a>`
+  : '<span class="store-soon" aria-disabled="true">Google Play, coming soon</span>';
 
 rmSync(out, { recursive: true, force: true });
 cpSync(join(src, 'static'), out, { recursive: true });
