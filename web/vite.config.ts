@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
       : undefined,
     test: {
       environment: 'jsdom',
-      passWithNoTests: true,
+      globals: true,
       setupFiles: ['./src/test/setup.ts'],
     },
   }
