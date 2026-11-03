@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Auth\TokenController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LedgerInvitationController;
 use App\Http\Controllers\LedgerMemberController;
 use App\Http\Controllers\PersonalAccessTokenController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +39,19 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [LedgerController::class, 'show']);
             Route::get('members', [LedgerMemberController::class, 'index']);
             Route::delete('members/{member}', [LedgerMemberController::class, 'destroy']);
+
+            Route::apiResource('accounts', AccountController::class)->only(['index', 'show']);
+            Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+            Route::apiResource('tags', TagController::class)->only(['index', 'show']);
+            Route::apiResource('transactions', TransactionController::class)->only(['index', 'show'])->parameters(['transactions' => 'transactionGroup']);
+
+            Route::middleware('can:edit,ledger')->group(function () {
+                Route::apiResource('accounts', AccountController::class)->only(['store', 'update', 'destroy']);
+                Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+                Route::apiResource('tags', TagController::class)->only(['store', 'update', 'destroy']);
+                Route::apiResource('transactions', TransactionController::class)->only(['store', 'update', 'destroy'])->parameters(['transactions' => 'transactionGroup']);
+                Route::post('transactions/{group}/restore', [TransactionController::class, 'restore']);
+            });
 
             Route::middleware('can:manage,ledger')->group(function () {
                 Route::patch('/', [LedgerController::class, 'update']);
