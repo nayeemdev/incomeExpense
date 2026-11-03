@@ -8,7 +8,8 @@ import { FormField } from '@/components/app/form-field'
 import { MoneyInput } from '@/components/app/money-input'
 import { SelectField } from '@/components/app/select-field'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DialogFooter } from '@/components/ui/dialog'
+import { FormDialog } from '@/components/app/form-dialog'
 import { FieldGroup } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -69,11 +70,7 @@ export function BudgetDialog({ open, onOpenChange, budget }: BudgetDialogProps) 
   })
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{budget ? t('Edit {{name}}', { name: budget.name }) : t('New budget')}</DialogTitle>
-        </DialogHeader>
+    <FormDialog open={open} onOpenChange={onOpenChange} title={budget ? t('Edit {{name}}', { name: budget.name }) : t('New budget')}>
         <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
           <FieldGroup>
             <FormField control={form.control} name="name" label={t('Name')}>
@@ -117,7 +114,6 @@ export function BudgetDialog({ open, onOpenChange, budget }: BudgetDialogProps) 
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+    </FormDialog>
   )
 }

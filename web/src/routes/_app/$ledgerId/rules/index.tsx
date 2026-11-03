@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Switch } from '@/components/ui/switch'
 import { useCanEdit, useLedger } from '@/hooks/use-ledger'
@@ -186,18 +186,11 @@ function Rules() {
         ))}
       </div>
 
-      <Sheet open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-2xl">
-          <SheetHeader>
-            <SheetTitle>{editing?.rule ? t('Edit rule') : t('New rule')}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            {editing && groups && (
+      <FormDialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)} title={editing?.rule ? t('Edit rule') : t('New rule')} size="xl">
+        {editing && groups && (
               <RuleEditor key={editing.rule?.id ?? 'new'} groups={groups} groupId={editing.groupId} rule={editing.rule} onDone={() => setEditing(null)} />
             )}
-          </div>
-        </SheetContent>
-      </Sheet>
+      </FormDialog>
 
       {testing && <RuleTestDialog rule={testing} onClose={() => setTesting(null)} />}
 

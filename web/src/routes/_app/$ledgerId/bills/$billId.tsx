@@ -11,7 +11,7 @@ import { TransactionList } from '@/components/app/transaction-list'
 import { BillForm } from '@/components/planning/bill-form'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
@@ -110,16 +110,9 @@ function BillDetail() {
         empty={<p className="text-muted-foreground surface-card py-10 text-center text-sm">{t('Link a payment to this bill when you record it.')}</p>}
       />
       {transactions && <Pagination page={transactions.meta.current_page} lastPage={transactions.meta.last_page} onChange={setPage} />}
-      <Sheet open={editing} onOpenChange={setEditing}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>{t('Edit {{name}}', { name: bill.name })}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            <BillForm bill={bill} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <FormDialog open={editing} onOpenChange={setEditing} title={t('Edit {{name}}', { name: bill.name })} size="lg">
+        <BillForm bill={bill} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
+      </FormDialog>
     </>
   )
 }

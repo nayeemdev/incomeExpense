@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { DialogFooter } from '@/components/ui/dialog'
+import { FormDialog } from '@/components/app/form-dialog'
 import { FieldGroup } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -62,11 +63,7 @@ export function LabelFormDialog({ kind, open, onOpenChange, item, onSaved }: Lab
       : t('New category')
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
+    <FormDialog open={open} onOpenChange={onOpenChange} title={title}>
         <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
           <FieldGroup>
             <FormField control={form.control} name="name" label={t('Name')}>
@@ -85,7 +82,6 @@ export function LabelFormDialog({ kind, open, onOpenChange, item, onSaved }: Lab
             </Button>
           </DialogFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+    </FormDialog>
   )
 }

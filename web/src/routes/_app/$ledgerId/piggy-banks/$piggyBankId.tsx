@@ -11,7 +11,7 @@ import { PiggyBankForm } from '@/components/planning/piggy-bank-form'
 import { PiggyBankMoveDialog } from '@/components/planning/piggy-bank-move-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
 import { api } from '@/lib/api/client'
@@ -134,16 +134,9 @@ function PiggyBankDetail() {
         </Card>
       </div>
       <PiggyBankMoveDialog piggyBank={piggyBank} direction={direction} onClose={() => setDirection(null)} />
-      <Sheet open={editing} onOpenChange={setEditing}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>{t('Edit {{name}}', { name: piggyBank.name })}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            <PiggyBankForm piggyBank={piggyBank} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <FormDialog open={editing} onOpenChange={setEditing} title={t('Edit {{name}}', { name: piggyBank.name })} size="lg">
+        <PiggyBankForm piggyBank={piggyBank} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
+      </FormDialog>
     </>
   )
 }

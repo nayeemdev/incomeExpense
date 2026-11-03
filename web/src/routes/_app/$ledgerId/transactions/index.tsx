@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { BookmarkIcon, BookmarkPlusIcon, DownloadIcon, PlusIcon, SearchIcon, XIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -77,10 +77,8 @@ function Transactions() {
         actions={
           canEdit && (
             <>
-              <Button variant="outline" asChild>
-                <Link to="/$ledgerId/transactions/new" params={{ ledgerId: String(ledger.id) }}>
-                  {t('Split transaction')}
-                </Link>
+              <Button variant="outline" onClick={() => quickAdd({ split: true })}>
+                {t('Split transaction')}
               </Button>
               <Button onClick={() => quickAdd()}>
                 <PlusIcon />

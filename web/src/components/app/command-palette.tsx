@@ -72,7 +72,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
               <ArrowLeftRightIcon />
               {t('New transfer')}
             </CommandItem>
-            <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/transactions/new', params: { ledgerId } }))}>
+            <CommandItem onSelect={() => run(() => quickAdd({ split: true }))}>
               <ArrowLeftRightIcon />
               {t('New split transaction')}
             </CommandItem>

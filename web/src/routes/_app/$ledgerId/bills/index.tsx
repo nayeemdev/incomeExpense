@@ -12,7 +12,7 @@ import { BillStatus } from '@/components/planning/bill-status'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { FormDialog } from '@/components/app/form-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
 import { billsQuery } from '@/lib/api/queries'
@@ -133,16 +133,9 @@ function Bills() {
         ))}
       </div>
 
-      <Sheet open={creating} onOpenChange={setCreating}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>{t('New bill')}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-4">
-            <BillForm onCancel={() => setCreating(false)} onSaved={() => setCreating(false)} />
-          </div>
-        </SheetContent>
-      </Sheet>
+      <FormDialog open={creating} onOpenChange={setCreating} title={t('New bill')} size="lg">
+        <BillForm onCancel={() => setCreating(false)} onSaved={() => setCreating(false)} />
+      </FormDialog>
     </>
   )
 }

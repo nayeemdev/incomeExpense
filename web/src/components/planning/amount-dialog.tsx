@@ -66,7 +66,7 @@ export function AmountDialog({ open, onOpenChange, title, description, currency,
           </DialogHeader>
           {children}
           <Field data-invalid={!!error}>
-            <MoneyInput autoFocus value={amount} onChange={setAmount} currency={currency} allowNegative={allowNegative} className="h-11 text-lg" />
+            <MoneyInput autoFocus value={amount} onChange={setAmount} currency={currency} allowNegative={allowNegative} />
             {error && <FieldError>{error}</FieldError>}
           </Field>
           <DialogFooter>
