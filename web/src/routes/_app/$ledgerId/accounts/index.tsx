@@ -69,7 +69,7 @@ function Accounts() {
       {!data && <Skeleton className="h-48 w-full" />}
 
       {data?.data.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{search ? t('No accounts match your search') : t('No accounts yet')}</EmptyTitle>
             <EmptyDescription>
@@ -87,7 +87,7 @@ function Accounts() {
       )}
 
       {data && data.data.length > 0 && (
-        <div className="rounded-lg border">
+        <div className="surface-card overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>

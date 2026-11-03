@@ -1,7 +1,6 @@
-import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from 'lucide-react'
+import { CheckIcon, ChevronDownIcon, PlusIcon } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Button } from '@/components/ui/button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
@@ -60,19 +59,18 @@ export function Combobox({
   return (
     <Popover open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
       <PopoverTrigger asChild>
-        <Button
+        <button
           id={id}
           type="button"
-          variant="outline"
           role="combobox"
           aria-expanded={open}
           aria-invalid={props['aria-invalid']}
           disabled={disabled}
-          className={cn('w-full justify-between font-normal', !selected && !displayValue && 'text-muted-foreground', className)}
+          className={cn('field-control flex items-center justify-between gap-2 text-left', !selected && !displayValue && 'text-muted-foreground', className)}
         >
           <span className="truncate">{selected?.label ?? displayValue ?? placeholder ?? t('Select…')}</span>
-          <ChevronsUpDownIcon className="opacity-50" />
-        </Button>
+          <ChevronDownIcon className="text-muted-foreground size-4 shrink-0" />
+        </button>
       </PopoverTrigger>
       <PopoverContent className="w-(--radix-popover-trigger-width) min-w-64 p-0" align="start">
         <Command>

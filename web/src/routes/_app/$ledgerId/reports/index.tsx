@@ -267,7 +267,7 @@ function Breakdown({ groupBy, start, end, type, onTypeChange }: { groupBy: strin
         <>
           <Incomplete meta={data.meta} />
           {data.data.rows.length === 0 ? (
-            <p className="text-muted-foreground rounded-lg border py-10 text-center text-sm">{t('Nothing in this period.')}</p>
+            <p className="text-muted-foreground surface-card py-10 text-center text-sm">{t('Nothing in this period.')}</p>
           ) : (
             <>
               <Card>

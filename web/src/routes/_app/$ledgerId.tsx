@@ -50,8 +50,8 @@ function LedgerLayout() {
     <QuickAddContext.Provider value={openQuickAdd}>
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset>
-          <header className="bg-background/80 sticky top-0 print:hidden z-20 flex min-h-14 items-center gap-2 border-b px-4 pt-[env(safe-area-inset-top)] backdrop-blur">
+        <SidebarInset className="bg-surface min-w-0">
+          <header className="bg-background/85 supports-[backdrop-filter]:bg-background/70 sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b px-3 pt-[env(safe-area-inset-top)] backdrop-blur sm:px-5 print:hidden">
             <SidebarTrigger className="-ml-1" />
             <Button
               variant="outline"
@@ -77,7 +77,7 @@ function LedgerLayout() {
               {t('You are offline. Changes cannot be saved until the connection is back.')}
             </div>
           )}
-          <div className="mx-auto w-full max-w-6xl flex-1 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] md:p-6">
+          <div id="main" className="animate-page-in mx-auto w-full max-w-7xl flex-1 px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-8 lg:px-8">
             <Outlet />
           </div>
         </SidebarInset>

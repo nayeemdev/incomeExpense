@@ -107,7 +107,7 @@ function BillDetail() {
       <h2 className="mb-3 font-medium">{t('Payments')}</h2>
       <TransactionList
         transactions={transactions?.data}
-        empty={<p className="text-muted-foreground rounded-lg border py-10 text-center text-sm">{t('Link a payment to this bill when you record it.')}</p>}
+        empty={<p className="text-muted-foreground surface-card py-10 text-center text-sm">{t('Link a payment to this bill when you record it.')}</p>}
       />
       {transactions && <Pagination page={transactions.meta.current_page} lastPage={transactions.meta.last_page} onChange={setPage} />}
       <Sheet open={editing} onOpenChange={setEditing}>

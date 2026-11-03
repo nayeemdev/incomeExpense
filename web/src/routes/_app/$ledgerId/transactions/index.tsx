@@ -191,7 +191,7 @@ function Transactions() {
         selected={selected}
         onToggle={canEdit ? toggle : undefined}
         empty={
-          <Empty className="border">
+          <Empty className="surface-card">
             <EmptyHeader>
               <EmptyTitle>{filtered ? t('No transactions match these filters') : t('No transactions yet')}</EmptyTitle>
               <EmptyDescription>

@@ -76,7 +76,7 @@ export function LabelDetail({ kind, id, page, onPageChange }: LabelDetailProps) 
       />
       <TransactionList
         transactions={transactions?.data}
-        empty={<p className="text-muted-foreground rounded-lg border py-10 text-center text-sm">{t('No transactions yet.')}</p>}
+        empty={<p className="text-muted-foreground surface-card py-10 text-center text-sm">{t('No transactions yet.')}</p>}
       />
       {transactions && (
         <Pagination page={transactions.meta.current_page} lastPage={transactions.meta.last_page} onChange={onPageChange} />

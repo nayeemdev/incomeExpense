@@ -44,7 +44,7 @@ function PiggyBanks() {
       />
       {!piggyBanks && <Skeleton className="h-48 w-full" />}
       {piggyBanks?.length === 0 && (
-        <Empty className="border">
+        <Empty className="surface-card">
           <EmptyHeader>
             <EmptyTitle>{t('No piggy banks yet')}</EmptyTitle>
             <EmptyDescription>{t('Save towards a holiday, a new phone or an emergency fund.')}</EmptyDescription>

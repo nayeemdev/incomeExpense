@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { startOfMonth, subMonths } from 'date-fns'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { ArrowRightIcon, PlusIcon, SlidersHorizontalIcon } from 'lucide-react'
+import { ArrowDownLeftIcon, ArrowRightIcon, ArrowUpRightIcon, LandmarkIcon, PlusIcon, SlidersHorizontalIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Money } from '@/components/app/money'
 import { MonthSwitcher } from '@/components/app/month-switcher'
 import { PageHeader } from '@/components/app/page-header'
+import { StatCard } from '@/components/app/stat-card'
 import { useQuickAdd } from '@/components/app/quick-add-context'
 import { TransactionList } from '@/components/app/transaction-list'
 import { IncomeExpenseChart } from '@/components/charts/income-expense-chart'
@@ -20,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCanEdit, useLedger, useLocale } from '@/hooks/use-ledger'
@@ -57,9 +58,9 @@ function Amounts({
 
   return (
     <div className="space-y-1">
-      <Money amount={total.amount} currency={total.currency} tone={tone} className="block text-2xl font-semibold" />
+      <Money amount={total.amount} currency={total.currency} tone={tone} className="block" />
       {others.length > 0 && (
-        <p className="text-muted-foreground text-xs">
+        <p className="text-muted-foreground text-xs font-normal tracking-normal">
           {total.complete ? t('Includes') : t('Without rates for some of')}{' '}
           {others.map((item, index) => (
             <span key={item.currency}>
@@ -110,7 +111,7 @@ function Dashboard() {
 
   if (summary && summary.accounts.length === 0 && canEdit) {
     return (
-      <Empty className="border">
+      <Empty className="surface-card">
         <EmptyHeader>
           <EmptyTitle>{t('Add your first account')}</EmptyTitle>
           <EmptyDescription>{t('Start with the bank account or wallet you use most, with what is in it today.')}</EmptyDescription>
@@ -141,30 +142,9 @@ function Dashboard() {
       />
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardDescription>{t('Net worth')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Amounts amounts={summary?.net_worth} total={summary?.net_worth_total} />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardDescription>{t('Spent')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Amounts amounts={summary?.spent} total={summary?.spent_total} tone="none" />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardDescription>{t('Earned')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Amounts amounts={summary?.earned} total={summary?.earned_total} tone="none" />
-          </CardContent>
-        </Card>
+        <StatCard label={t('Net worth')} icon={LandmarkIcon} tone="brand" value={<Amounts amounts={summary?.net_worth} total={summary?.net_worth_total} />} />
+        <StatCard label={t('Spent')} icon={ArrowUpRightIcon} tone="danger" value={<Amounts amounts={summary?.spent} total={summary?.spent_total} tone="none" />} />
+        <StatCard label={t('Earned')} icon={ArrowDownLeftIcon} tone="success" value={<Amounts amounts={summary?.earned} total={summary?.earned_total} tone="none" />} />
       </div>
 
       {show('trend') && trend && (

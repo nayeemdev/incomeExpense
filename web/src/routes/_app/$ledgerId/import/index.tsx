@@ -264,7 +264,7 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
             </div>
             {csv && (
               <>
-                <div className="overflow-x-auto rounded-lg border">
+                <div className="surface-card overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -338,7 +338,7 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="max-h-[28rem] overflow-auto rounded-lg border">
+            <div className="surface-card max-h-[28rem] overflow-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
