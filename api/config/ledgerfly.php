@@ -27,6 +27,11 @@ return [
         ],
         'colors' => ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'pink', 'rose', 'slate'],
         'fallback' => ['icon' => 'tag', 'color' => 'slate'],
+        // Every new ledger starts with these, so the first expense can be categorised without setup.
+        'defaults' => [
+            'Groceries', 'Eating out', 'Transport', 'Rent', 'Utilities', 'Internet & phone', 'Shopping', 'Clothing',
+            'Health', 'Entertainment', 'Travel', 'Education', 'Gifts', 'Subscriptions', 'Salary', 'Freelance', 'Investments',
+        ],
         'suggestions' => [
             'grocer' => ['shopping-cart', 'green'],
             'supermarket' => ['shopping-cart', 'green'],
