@@ -28,7 +28,9 @@ import { QuickPicks } from './quick-picks'
 import { TagInput } from './tag-input'
 import {
   accountRef,
+  defaultOwnAccount,
   emptySplit,
+  ownSideOf,
   toInput,
   transactionSchema,
   type EditableType,
@@ -102,6 +104,8 @@ export function TransactionForm({ defaultValues, onSubmit, submitLabel, allowSpl
 
     form.setValue('type', next)
     form.getValues('splits').forEach((split, index) => {
+      const ownBefore = split[ownSideOf(previous)]
+
       for (const side of ['source', 'destination'] as const) {
         const choice = split[side]
         const account = choice && 'id' in choice ? accounts.find((item) => item.id === choice.id) : undefined
@@ -109,6 +113,12 @@ export function TransactionForm({ defaultValues, onSubmit, submitLabel, allowSpl
 
         if (!keep) form.setValue(`splits.${index}.${side}`, null)
       }
+
+      const side = ownSideOf(next)
+      if (next === 'transfer' || next === previous || form.getValues(`splits.${index}.${side}`)) return
+
+      const fallback = form.formState.dirtyFields.splits?.[index]?.[ownSideOf(previous)] ? undefined : defaultOwnAccount(ledger, next)
+      form.setValue(`splits.${index}.${side}`, fallback ? { id: fallback } : ownBefore && 'id' in ownBefore ? ownBefore : null)
     })
   }
 

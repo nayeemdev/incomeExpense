@@ -42,7 +42,14 @@ class User {
 }
 
 class Ledger {
-  const Ledger({required this.id, required this.name, required this.currency, required this.role, this.defaultAccountId});
+  const Ledger({
+    required this.id,
+    required this.name,
+    required this.currency,
+    required this.role,
+    this.defaultAccountId,
+    this.defaultIncomeAccountId,
+  });
 
   factory Ledger.fromJson(Json json) => Ledger(
     id: json['id'] as int,
@@ -50,6 +57,7 @@ class Ledger {
     currency: Currency.fromJson(json['primary_currency'] as Json),
     role: json['role'] as String? ?? 'viewer',
     defaultAccountId: json['default_account_id'] as int?,
+    defaultIncomeAccountId: json['default_income_account_id'] as int?,
   );
 
   final int id;
@@ -57,6 +65,10 @@ class Ledger {
   final Currency currency;
   final String role;
   final int? defaultAccountId;
+  final int? defaultIncomeAccountId;
+
+  /// The account new money is paid from, or received into for income, unless the member picks another.
+  int? defaultAccountFor(String type) => type == 'deposit' ? defaultIncomeAccountId ?? defaultAccountId : defaultAccountId;
 
   bool get canEdit => role == 'owner' || role == 'editor';
 }

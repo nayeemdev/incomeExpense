@@ -35,6 +35,7 @@ export type Ledger = {
   fiscal_year_start: string
   role: LedgerRole
   default_account_id: number | null
+  default_income_account_id: number | null
   created_at: string
 }
 

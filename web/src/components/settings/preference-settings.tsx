@@ -35,7 +35,8 @@ export function PreferenceSettings() {
   })
 
   const updateDefaultAccount = useMutation({
-    mutationFn: (accountId: number | null) => api.patch(`/ledgers/${ledger.id}/membership`, { default_account_id: accountId }),
+    mutationFn: (patch: { default_account_id?: number | null; default_income_account_id?: number | null }) =>
+      api.patch(`/ledgers/${ledger.id}/membership`, patch),
     onSuccess: async () => {
       await invalidateLedger()
       toast.success(t('Preferences saved'))
@@ -44,6 +45,8 @@ export function PreferenceSettings() {
   })
 
   if (!user) return null
+
+  const accountOptions = accounts.map((account) => ({ value: String(account.id), label: account.name, hint: account.currency?.code }))
 
   const weekdays = Array.from({ length: 7 }, (_, day) =>
     new Intl.DateTimeFormat(user.preferences.locale, { weekday: 'long' }).format(new Date(2024, 0, 7 + day)),
@@ -105,17 +108,34 @@ export function PreferenceSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('Quick entry in {{ledger}}', { ledger: ledger.name })}</CardTitle>
-          <CardDescription>{t('The account new expenses come from when you do not pick one, for example from a widget.')}</CardDescription>
+          <CardTitle>{t('Default accounts in {{ledger}}', { ledger: ledger.name })}</CardTitle>
+          <CardDescription>{t('Picked for you when you add a transaction, in the web app, the mobile app and widgets. You can still change it each time.')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <Combobox
-            className="max-w-sm"
-            options={accounts.map((account) => ({ value: String(account.id), label: account.name, hint: account.currency?.code }))}
-            value={ledger.default_account_id ? String(ledger.default_account_id) : null}
-            onChange={(value) => updateDefaultAccount.mutate(value ? Number(value) : null)}
-            placeholder={t('First asset account')}
-          />
+          <FieldGroup>
+            <Field>
+              <FieldLabel>{t('Pay expenses from')}</FieldLabel>
+              <Combobox
+                className="max-w-sm"
+                options={accountOptions}
+                value={ledger.default_account_id ? String(ledger.default_account_id) : null}
+                onChange={(value) => updateDefaultAccount.mutate({ default_account_id: value ? Number(value) : null })}
+                placeholder={t('Choose each time')}
+              />
+              <FieldDescription>{t('For example the card you use most for shopping.')}</FieldDescription>
+            </Field>
+            <Field>
+              <FieldLabel>{t('Receive income into')}</FieldLabel>
+              <Combobox
+                className="max-w-sm"
+                options={accountOptions}
+                value={ledger.default_income_account_id ? String(ledger.default_income_account_id) : null}
+                onChange={(value) => updateDefaultAccount.mutate({ default_income_account_id: value ? Number(value) : null })}
+                placeholder={t('Same as expenses')}
+              />
+              <FieldDescription>{t('For example the account your salary is paid into.')}</FieldDescription>
+            </Field>
+          </FieldGroup>
         </CardContent>
       </Card>
     </div>
