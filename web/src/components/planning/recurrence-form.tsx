@@ -173,22 +173,22 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
-        <FormField control={form.control} name="title" label={t('Name')}>
+        <FormField control={form.control} name="title" required label={t('Name')}>
           {(field) => <Input autoFocus placeholder={t('e.g. Rent or Salary')} {...field} />}
         </FormField>
         <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
-          <FormField control={form.control} name="amount" label={t('Amount')}>
+          <FormField control={form.control} name="amount" required label={t('Amount')}>
             {(field) => <MoneyInput {...field} />}
           </FormField>
-          <FormField control={form.control} name="description" label={t('Description')}>
+          <FormField control={form.control} name="description" required label={t('Description')}>
             {(field) => <Input {...field} />}
           </FormField>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField control={form.control} name="source" label={t('From')}>
+          <FormField control={form.control} name="source" required label={t('From')}>
             {(field) => <AccountPicker id={field.id} type={type} side="source" accounts={accounts} value={field.value} onChange={field.onChange} />}
           </FormField>
-          <FormField control={form.control} name="destination" label={t('To')}>
+          <FormField control={form.control} name="destination" required label={t('To')}>
             {(field) => <AccountPicker id={field.id} type={type} side="destination" accounts={accounts} value={field.value} onChange={field.onChange} />}
           </FormField>
         </div>
@@ -226,28 +226,28 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
         <FieldSeparator>{t('Schedule')}</FieldSeparator>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField control={form.control} name="first_date" label={t('Starts on')}>
+          <FormField control={form.control} name="first_date" required label={t('Starts on')}>
             {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
           </FormField>
-          <FormField control={form.control} name="repetition_type" label={t('Repeats')}>
+          <FormField control={form.control} name="repetition_type" required label={t('Repeats')}>
             {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={repetitionLabels()} />}
           </FormField>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {repetitionType === 'ndom' && (
-            <FormField control={form.control} name="nth" label={t('Which one')}>
+            <FormField control={form.control} name="nth" required label={t('Which one')}>
               {(field) => (
                 <SelectField id={field.id} value={field.value} onChange={field.onChange} options={Object.fromEntries(ordinals().map((label, index) => [String(index + 1), label]))} />
               )}
             </FormField>
           )}
           {(repetitionType === 'weekly' || repetitionType === 'ndom') && (
-            <FormField control={form.control} name="weekday" label={t('Day of the week')}>
+            <FormField control={form.control} name="weekday" required label={t('Day of the week')}>
               {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={days} />}
             </FormField>
           )}
           {repetitionType === 'monthly' && (
-            <FormField control={form.control} name="day" label={t('Day of the month')} description={t('Shorter months use their last day.')}>
+            <FormField control={form.control} name="day" required label={t('Day of the month')} description={t('Shorter months use their last day.')}>
               {(field) => <Input type="number" min={1} max={31} {...field} />}
             </FormField>
           )}
@@ -271,12 +271,12 @@ export function RecurrenceForm({ recurrence, onSaved, onCancel }: RecurrenceForm
           </FormField>
         </div>
         {ends === 'date' && (
-          <FormField control={form.control} name="repeat_until" label={t('Last date')}>
+          <FormField control={form.control} name="repeat_until" required label={t('Last date')}>
             {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
           </FormField>
         )}
         {ends === 'count' && (
-          <FormField control={form.control} name="max_occurrences" label={t('Number of times')}>
+          <FormField control={form.control} name="max_occurrences" required label={t('Number of times')}>
             {(field) => <Input type="number" min={1} {...field} />}
           </FormField>
         )}

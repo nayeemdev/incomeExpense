@@ -86,12 +86,12 @@ function LedgerStep({ onCreated }: { onCreated: (ledger: Ledger) => void }) {
       <form onSubmit={form.handleSubmit((values) => create.mutate(values))}>
         <CardContent>
           <FieldGroup>
-            <FormField control={form.control} name="name" label={t('Ledger name')}>
+            <FormField control={form.control} name="name" required label={t('Ledger name')}>
               {(field) => <Input autoFocus placeholder={t('e.g. Personal or Household')} {...field} />}
             </FormField>
             <FormField
               control={form.control}
-              name="primary_currency_id"
+              name="primary_currency_id" required
               label={t('Primary currency')}
               description={t('Reports and net worth are shown in this currency.')}
             >
@@ -148,7 +148,7 @@ function AccountsStep({ ledger }: { ledger: Ledger }) {
         <CardContent className="space-y-4">
           {fields.map((item, index) => (
             <div key={item.id} className="grid grid-cols-[1fr_auto] items-start gap-2 sm:grid-cols-[1fr_9rem_8rem_auto]">
-              <FormField control={form.control} name={`accounts.${index}.name`} className="col-span-2 sm:col-span-1">
+              <FormField control={form.control} name={`accounts.${index}.name`} required className="col-span-2 sm:col-span-1">
                 {(field) => <Input placeholder={t('Account name')} autoFocus={index === fields.length - 1} {...field} />}
               </FormField>
               <FormField control={form.control} name={`accounts.${index}.asset_role`}>

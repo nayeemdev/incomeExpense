@@ -59,6 +59,17 @@ describe('toInput', () => {
   })
 })
 
+describe('payee defaults', () => {
+  it('uses the description as payee when none is chosen', () => {
+    const input = toInput(
+      { type: 'withdrawal', date: '2026-11-03', title: '', splits: [emptySplit({ description: ' Rickshaw ', amount: '60', source: { id: 1 } })] },
+      [account(1, 'BDT')],
+    )
+
+    expect(input.transactions[0]).toMatchObject({ destination_id: null, destination_name: 'Rickshaw' })
+  })
+})
+
 describe('groupToFormValues', () => {
   it('turns expense and revenue accounts back into names', () => {
     const group = {

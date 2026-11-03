@@ -46,10 +46,11 @@ export function AccountPicker({ id, type, side, accounts, value, onChange, ...pr
       placeholder={
         counterparty
           ? type === 'withdrawal'
-            ? t('Paid to…')
-            : t('Received from…')
+            ? t('Who you paid (optional)')
+            : t('Who paid you (optional)')
           : t('Choose an account')
       }
+      emptyText={counterparty ? t('Type a name and press Enter to add it.') : undefined}
       searchPlaceholder={counterparty ? t('Search or type a new name…') : t('Search accounts…')}
     />
   )

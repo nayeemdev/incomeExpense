@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/app/confirm-dialog'
 import { Badge } from '@/components/ui/badge'
+import { RequiredMark } from '@/components/app/required-mark'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldLabel } from '@/components/ui/field'
@@ -66,7 +67,9 @@ export function TokenSettings() {
           }}
         >
           <Field className="flex-1">
-            <FieldLabel htmlFor="token-name">{t('Name')}</FieldLabel>
+            <FieldLabel htmlFor="token-name">{t('Name')}
+            <RequiredMark />
+          </FieldLabel>
             <Input id="token-name" placeholder={t('e.g. iPhone widget')} value={name} onChange={(event) => setName(event.target.value)} />
           </Field>
           <Select value={scope} onValueChange={(value) => setScope(value as Scope)}>

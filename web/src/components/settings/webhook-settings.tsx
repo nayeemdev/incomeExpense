@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/app/confirm-dialog'
+import { RequiredMark } from '@/components/app/required-mark'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -137,11 +138,17 @@ export function WebhookSettings() {
             </DialogHeader>
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="webhook-title">{t('Name')}</FieldLabel>
+                <FieldLabel htmlFor="webhook-title">
+                  {t('Name')}
+                  <RequiredMark />
+                </FieldLabel>
                 <Input id="webhook-title" autoFocus value={draft.title} onChange={(event) => setDraft({ ...draft, title: event.target.value })} />
               </Field>
               <Field>
-                <FieldLabel htmlFor="webhook-url">{t('URL')}</FieldLabel>
+                <FieldLabel htmlFor="webhook-url">
+                  {t('URL')}
+                  <RequiredMark />
+                </FieldLabel>
                 <Input id="webhook-url" type="url" placeholder="https://" value={draft.url} onChange={(event) => setDraft({ ...draft, url: event.target.value })} />
               </Field>
               <div className="space-y-2">

@@ -76,11 +76,11 @@ export function BillForm({ bill, onSaved, onCancel }: BillFormProps) {
   return (
     <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
       <FieldGroup>
-        <FormField control={form.control} name="name" label={t('Name')}>
+        <FormField control={form.control} name="name" required label={t('Name')}>
           {(field) => <Input autoFocus placeholder={t('e.g. Rent or Netflix')} {...field} />}
         </FormField>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField control={form.control} name="amount_min" label={t('Lowest amount')}>
+          <FormField control={form.control} name="amount_min" required label={t('Lowest amount')}>
             {(field) => (
               <MoneyInput
                 {...field}
@@ -91,18 +91,18 @@ export function BillForm({ bill, onSaved, onCancel }: BillFormProps) {
               />
             )}
           </FormField>
-          <FormField control={form.control} name="amount_max" label={t('Highest amount')}>
+          <FormField control={form.control} name="amount_max" required label={t('Highest amount')}>
             {(field) => <MoneyInput {...field} />}
           </FormField>
         </div>
-        <FormField control={form.control} name="currency_id" label={t('Currency')}>
+        <FormField control={form.control} name="currency_id" required label={t('Currency')}>
           {(field) => <CurrencySelect id={field.id} value={field.value} onChange={field.onChange} />}
         </FormField>
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField control={form.control} name="date" label={t('Next due date')}>
+          <FormField control={form.control} name="date" required label={t('Next due date')}>
             {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
           </FormField>
-          <FormField control={form.control} name="repeat_freq" label={t('Repeats')}>
+          <FormField control={form.control} name="repeat_freq" required label={t('Repeats')}>
             {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={frequencyLabels()} />}
           </FormField>
         </div>

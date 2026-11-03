@@ -66,7 +66,7 @@ export function PiggyBankForm({ piggyBank, onSaved, onCancel }: PiggyBankFormPro
   return (
     <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
       <FieldGroup>
-        <FormField control={form.control} name="name" label={t('Name')}>
+        <FormField control={form.control} name="name" required label={t('Name')}>
           {(field) => <Input autoFocus placeholder={t('e.g. Holiday or New laptop')} {...field} />}
         </FormField>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -77,10 +77,10 @@ export function PiggyBankForm({ piggyBank, onSaved, onCancel }: PiggyBankFormPro
             {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} placeholder={t('Optional')} />}
           </FormField>
         </div>
-        <FormField control={form.control} name="currency_id" label={t('Currency')}>
+        <FormField control={form.control} name="currency_id" required label={t('Currency')}>
           {(field) => <CurrencySelect id={field.id} value={field.value} onChange={field.onChange} />}
         </FormField>
-        <FormField control={form.control} name="account_ids" label={t('Saved in')} description={t('Money set aside stays in these accounts.')}>
+        <FormField control={form.control} name="account_ids" required label={t('Saved in')} description={t('Money set aside stays in these accounts.')}>
           {(field) => (
             <div className="space-y-2">
               {accounts.map((account) => {

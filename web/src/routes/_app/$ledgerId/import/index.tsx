@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { Combobox } from '@/components/app/combobox'
+import { RequiredMark } from '@/components/app/required-mark'
 import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
 import { SectionCard } from '@/components/app/section-card'
@@ -285,7 +286,10 @@ function ImportSetup({ job, profiles }: { job: ImportJob; profiles: Array<{ id: 
           <FieldGroup>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field>
-                <FieldLabel>{t('Import into')}</FieldLabel>
+                <FieldLabel>
+                  {t('Import into')}
+                  <RequiredMark />
+                </FieldLabel>
                 <Combobox
                   options={accounts.map((account) => ({ value: String(account.id), label: account.name, hint: account.currency?.code }))}
                   value={config.account_id ? String(config.account_id) : null}

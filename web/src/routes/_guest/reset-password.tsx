@@ -51,13 +51,13 @@ function ResetPassword() {
       <form onSubmit={form.handleSubmit((values) => reset.mutate(values))}>
         <CardContent>
           <FieldGroup>
-            <FormField control={form.control} name="email" label={t('Email')}>
+            <FormField control={form.control} name="email" required label={t('Email')}>
               {(field) => <Input type="email" autoComplete="email" {...field} />}
             </FormField>
-            <FormField control={form.control} name="password" label={t('New password')}>
+            <FormField control={form.control} name="password" required label={t('New password')}>
               {(field) => <Input type="password" autoComplete="new-password" autoFocus {...field} />}
             </FormField>
-            <FormField control={form.control} name="password_confirmation" label={t('Confirm password')}>
+            <FormField control={form.control} name="password_confirmation" required label={t('Confirm password')}>
               {(field) => <Input type="password" autoComplete="new-password" {...field} />}
             </FormField>
           </FieldGroup>

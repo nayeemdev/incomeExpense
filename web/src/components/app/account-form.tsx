@@ -128,24 +128,24 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
   return (
     <form onSubmit={form.handleSubmit((values) => save.mutate(values))} className="space-y-6">
       <FieldGroup>
-        <FormField control={form.control} name="name" label={t('Name')}>
+        <FormField control={form.control} name="name" required label={t('Name')}>
           {(field) => <Input autoFocus {...field} />}
         </FormField>
 
         {type === 'asset' && (
-          <FormField control={form.control} name="asset_role" label={t('Kind')}>
+          <FormField control={form.control} name="asset_role" required label={t('Kind')}>
             {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={assetRoleLabels()} />}
           </FormField>
         )}
 
         {type === 'liability' && (
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField control={form.control} name="liability_type" label={t('Kind')}>
+            <FormField control={form.control} name="liability_type" required label={t('Kind')}>
               {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={liabilityTypeLabels()} />}
             </FormField>
             <FormField
               control={form.control}
-              name="liability_direction"
+              name="liability_direction" required
               label={t('Direction')}
               description={t('Choose "I am owed this" for money you lent to someone.')}
             >
@@ -157,7 +157,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
         )}
 
         {own && (
-          <FormField control={form.control} name="currency_id" label={t('Currency')}>
+          <FormField control={form.control} name="currency_id" required label={t('Currency')}>
             {(field) => <CurrencySelect id={field.id} value={field.value} onChange={field.onChange} aria-invalid={field['aria-invalid']} />}
           </FormField>
         )}
