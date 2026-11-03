@@ -2,6 +2,7 @@ import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from './client'
 import type {
   Account,
+  AccountRef,
   AccountType,
   Attachment,
   AppNotification,
@@ -261,4 +262,17 @@ export const webhookDeliveriesQuery = (ledgerId: number, webhookId: number) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'webhooks', webhookId, 'deliveries'],
     queryFn: () => api.get<Resource<WebhookDelivery[]>>(`/ledgers/${ledgerId}/webhooks/${webhookId}/deliveries`).then((r) => r.data),
+  })
+
+export const frequentQuery = (ledgerId: number, type: TransactionType) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'frequent', type],
+    queryFn: () =>
+      api
+        .get<Resource<{ transactions: Transaction[]; categories: Array<{ id: number; name: string }>; counterparties: AccountRef[] }>>(
+          `/ledgers/${ledgerId}/autocomplete/frequent`,
+          { type },
+        )
+        .then((r) => r.data),
+    staleTime: 60_000,
   })

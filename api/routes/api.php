@@ -50,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('accounts', [AccountController::class, 'index']);
             Route::get('categories', [CategoryController::class, 'index']);
             Route::get('autocomplete/transactions', [AutocompleteController::class, 'transactions']);
+            Route::get('autocomplete/frequent', [AutocompleteController::class, 'frequent']);
             Route::post('quick-entry', QuickEntryController::class)->middleware('can:edit,ledger');
         });
     });

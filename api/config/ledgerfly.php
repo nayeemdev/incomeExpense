@@ -18,6 +18,7 @@ return [
 
     'autocomplete' => [
         'limit' => 10,
+        'frequent_days' => 90,
     ],
 
     'exchange_rates' => [
