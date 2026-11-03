@@ -1,0 +1,276 @@
+<!--
+{
+  "path": "/",
+  "title": "LedgerFly: self-hosted personal finance manager",
+  "description": "Track accounts, budgets, bills and goals on your own server. A free, open source finance manager with a web app and apps for Android and iOS.",
+  "og": "home.png",
+  "ogAlt": "LedgerFly dashboard showing net worth, spending and income",
+  "schema": {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "LedgerFly",
+        "url": "{{url}}/",
+        "description": "Self-hosted personal finance manager with double-entry accounts, budgets, bills, rules and reports, plus web and mobile apps.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "Web, Android, iOS, Linux",
+        "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+        "image": "{{url}}/og/home.png",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      },
+      {
+        "@type": "WebSite",
+        "name": "LedgerFly",
+        "url": "{{url}}/"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "Is LedgerFly free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. LedgerFly is open source under the AGPL-3.0 license. There is no paid tier and no account with us; you run it on your own server." } },
+          { "@type": "Question", "name": "Where is my financial data stored?", "acceptedAnswer": { "@type": "Answer", "text": "Only in the database on your server. LedgerFly has no tracking or telemetry, and it only contacts outside services you turn on, such as exchange rates, email or ntfy." } },
+          { "@type": "Question", "name": "What kind of server do I need?", "acceptedAnswer": { "@type": "Answer", "text": "Any Linux machine that runs Docker. A small VPS with 2 GB of RAM is plenty for a household, and a home server works too." } },
+          { "@type": "Question", "name": "Can I share a ledger with my family?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Invite people to a ledger as an owner, editor or viewer. Everyone signs in with their own account." } },
+          { "@type": "Question", "name": "Can I import my bank statements?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Import CSV files with column mapping and saved profiles, or camt.053 statements. Duplicates are detected and your rules run on imported transactions." } },
+          { "@type": "Question", "name": "Is there a mobile app?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Android app is coming to Google Play, and the iOS app can be built from source with Xcode. The web app also works on phones." } }
+        ]
+      }
+    ]
+  }
+}
+-->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Open source · Self-hosted · Free</span>
+    <h1>Your money, on your own server.</h1>
+    <p class="lead">LedgerFly tracks accounts, budgets, bills and goals with real double-entry bookkeeping. Run it with Docker, then use it from the web, Android or iPhone.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/self-hosting/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+        Self-host it
+      </a>
+      <a class="btn btn-secondary" href="{{repo}}" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.62 1.58.23 2.75.11 3.04.74.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+    <p class="hero-note">AGPL-3.0 licensed. No accounts with us, no tracking.</p>
+  </div>
+  <div class="hero-shots">
+    <div class="frame">
+      <div class="frame-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+      <img src="/images/web-dashboard-light-1600.webp" srcset="/images/web-dashboard-light-800.webp 800w, /images/web-dashboard-light-1600.webp 1600w" sizes="(max-width: 1100px) 100vw, 1032px" width="1600" height="1000" alt="LedgerFly web dashboard with net worth, monthly spending and income, a six month chart and recent transactions" fetchpriority="high">
+    </div>
+    <div class="phone hero-phone">
+      <img src="/images/m-dashboard-light.webp" width="600" height="1304" alt="LedgerFly mobile app home screen with total balance and accounts" fetchpriority="high">
+    </div>
+  </div>
+</section>
+
+<section class="strip" aria-label="Highlights">
+  <div class="wrap">
+    <ul>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Your data stays with you</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg>Double-entry accounting</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4m8.71 3.88.7.71-2.82 2.82"/></svg>Multi-currency</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>Shared ledgers</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/></svg>Web, Android and iOS</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Features</span>
+      <h2>Everything a household needs to stay on top of money</h2>
+      <p>Built as a modern take on Firefly III, with the same solid accounting underneath and a much faster way to use it day to day.</p>
+    </div>
+    <div class="grid">
+      <article class="card">
+        <div class="tile" style="--tint:#3b82f6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg></div>
+        <h3>Accounts and balances</h3>
+        <p>Checking, savings, cash, credit cards, loans and money you lent, each with a running balance and reconciliation against your statement.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#10b981"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg></div>
+        <h3>Budgets and goals</h3>
+        <p>Monthly budgets that reset or roll over, savings goals with progress, and a warning before you overspend.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#f59e0b"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"/></svg></div>
+        <h3>Bills and subscriptions</h3>
+        <p>Know what is due and what is already paid this period, with a reminder before each due date.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#8b5cf6"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></svg></div>
+        <h3>Recurring transactions</h3>
+        <p>Salary, rent and memberships are recorded for you on schedule, daily to yearly, with skips and end dates.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#ef4444"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg></div>
+        <h3>Rules that do the filing</h3>
+        <p>Set categories, tags and budgets from the description, amount or account. Test a rule first, then apply it to past transactions.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#0ea5e9"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9M13 17V5M8 17v-3"/></svg></div>
+        <h3>Reports and search</h3>
+        <p>Income against expenses, net worth over time and spending by category, tag or payee. Search with filters and save the ones you reuse.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#14b8a6"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18M7 6h1v4m8.71 3.88.7.71-2.82 2.82"/></svg></div>
+        <h3>Multi-currency</h3>
+        <p>Accounts in any currency, foreign amounts on transactions, and exchange rates fetched on a schedule so totals add up in your main currency.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#ec4899"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4M12 12v6m3-3-3-3-3 3"/></svg></div>
+        <h3>Import, export and receipts</h3>
+        <p>Import CSV or camt.053 bank statements, attach receipt photos, and export everything to a JSON backup whenever you like.</p>
+      </article>
+      <article class="card">
+        <div class="tile" style="--tint:#f97316"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></div>
+        <h3>Alerts that reach you</h3>
+        <p>Budget, bill, balance and large spending alerts by email, browser push, ntfy or the mobile app, with quiet hours.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <span class="eyebrow">Insight</span>
+        <h2>See where every taka, dollar or euro went</h2>
+        <p>Reports cover any period and convert everything to your main currency, so the picture stays honest even with accounts abroad.</p>
+        <ul class="checks">
+          <li>Income and expenses side by side, month by month</li>
+          <li>Net worth over time, including loans and debts</li>
+          <li>Spending by category, tag, payee or budget</li>
+          <li>Print or export any report</li>
+        </ul>
+      </div>
+      <div class="frame">
+        <img src="/images/web-reports-dark-1600.webp" srcset="/images/web-reports-dark-800.webp 800w, /images/web-reports-dark-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 640px" width="1600" height="1000" alt="Reports page in dark mode with income and expense bars and a net worth line" loading="lazy" decoding="async">
+      </div>
+    </div>
+    <div class="split reverse">
+      <div>
+        <span class="eyebrow">Day to day</span>
+        <h2>Fast to keep up to date</h2>
+        <p>Add a transaction in seconds with smart suggestions from what you entered before, then let rules and recurring transactions handle the rest.</p>
+        <ul class="checks">
+          <li>Quick add from anywhere with <code>N</code>, and a command palette on <code>⌘K</code></li>
+          <li>Split one payment across categories and budgets</li>
+          <li>Bulk edit many transactions at once</li>
+          <li>Webhooks and a REST API for your own tools</li>
+        </ul>
+      </div>
+      <div class="frame">
+        <img src="/images/web-transactions-light-1600.webp" srcset="/images/web-transactions-light-800.webp 800w, /images/web-transactions-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 640px" width="1600" height="1000" alt="Transactions list grouped by day with categories and accounts" loading="lazy" decoding="async">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Mobile apps</span>
+      <h2>Your ledger in your pocket</h2>
+      <p>Native apps that talk to your own server. Add expenses with a keypad, snap receipts, keep working offline and see your month on a home screen widget.</p>
+    </div>
+    <div class="phones">
+      <figure>
+        <div class="phone"><img src="/images/m-add-light.webp" width="600" height="1304" alt="Quick add screen with an amount keypad and category options" loading="lazy" decoding="async"></div>
+        <figcaption>Quick add with a keypad</figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><img src="/images/m-reports-light.webp" width="600" height="1304" alt="Mobile reports with monthly bars and a category donut chart" loading="lazy" decoding="async"></div>
+        <figcaption>Reports by category</figcaption>
+      </figure>
+      <figure>
+        <div class="phone"><img src="/images/m-goals-light.webp" width="600" height="1304" alt="Goals screen with an overall progress gauge and two savings goals" loading="lazy" decoding="async"></div>
+        <figcaption>Savings goals</figcaption>
+      </figure>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-secondary" href="/apps/">About the apps</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Self-hosting</span>
+      <h2>Running in about ten minutes</h2>
+      <p>One Docker Compose stack with the web app, API, database, queue worker and scheduler. The first account you create becomes the admin.</p>
+    </div>
+    <div class="steps">
+      <div class="card step">
+        <h3>Get a server</h3>
+        <p>Any Linux machine with Docker. A small VPS with 2 GB of RAM is plenty for a household.</p>
+      </div>
+      <div class="card step">
+        <h3>Start the stack</h3>
+        <p>Clone the repository, fill in two <code>.env</code> files and run <code>docker compose up -d</code>.</p>
+      </div>
+      <div class="card step">
+        <h3>Sign up and configure</h3>
+        <p>Create the admin account, then set email, sign-ups and alerts from Settings in the app.</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/self-hosting/">Read the full guide</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions people ask</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Is LedgerFly free?</summary>
+        <p>Yes. LedgerFly is open source under the AGPL-3.0 license. There is no paid tier and no account with us; you run it on your own server.</p>
+      </details>
+      <details>
+        <summary>Where is my financial data stored?</summary>
+        <p>Only in the database on your server. LedgerFly has no tracking or telemetry, and it only contacts outside services you turn on, such as exchange rates, email or ntfy.</p>
+      </details>
+      <details>
+        <summary>What kind of server do I need?</summary>
+        <p>Any Linux machine that runs Docker. A small VPS with 2 GB of RAM is plenty for a household, and a home server works too.</p>
+      </details>
+      <details>
+        <summary>Can I share a ledger with my family?</summary>
+        <p>Yes. Invite people to a ledger as an owner, editor or viewer. Everyone signs in with their own account.</p>
+      </details>
+      <details>
+        <summary>Can I import my bank statements?</summary>
+        <p>Yes. Import CSV files with column mapping and saved profiles, or camt.053 statements. Duplicates are detected and your rules run on imported transactions.</p>
+      </details>
+      <details>
+        <summary>Is there a mobile app?</summary>
+        <p>Yes. The Android app is coming to Google Play, and the iOS app can be built from source with Xcode. The web app also works on phones. See <a href="/apps/">the apps page</a>.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="section cta">
+  <div class="wrap">
+    <div class="card">
+      <h2>Take your finances home</h2>
+      <p>Set up LedgerFly on your own server and keep every number where it belongs.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/self-hosting/">Get started</a>
+        <a class="btn btn-secondary" href="{{repo}}" rel="noopener">Star on GitHub</a>
+      </div>
+    </div>
+  </div>
+</section>
