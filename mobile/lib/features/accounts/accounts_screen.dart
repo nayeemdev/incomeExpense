@@ -145,7 +145,7 @@ class AccountScreen extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: palette.brandGradient,
+                  color: palette.primary,
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [BoxShadow(color: palette.accent.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10))],
                 ),

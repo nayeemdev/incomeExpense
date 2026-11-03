@@ -59,7 +59,7 @@ class SettingsScreen extends ConsumerWidget {
                   width: 56,
                   height: 56,
                   alignment: Alignment.center,
-                  decoration: BoxDecoration(gradient: palette.brandGradient, shape: BoxShape.circle),
+                  decoration: BoxDecoration(color: palette.primary, shape: BoxShape.circle),
                   child: Text(
                     initials,
                     style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),

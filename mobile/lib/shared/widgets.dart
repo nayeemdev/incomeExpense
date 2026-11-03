@@ -219,10 +219,7 @@ class IconBadge extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: filled ? null : color.withValues(alpha: 0.12),
-        gradient: filled
-            ? LinearGradient(colors: [color.withValues(alpha: 0.75), color], begin: Alignment.topLeft, end: Alignment.bottomRight)
-            : null,
+        color: filled ? color : color.withValues(alpha: 0.12),
         boxShadow: filled ? [BoxShadow(color: color.withValues(alpha: 0.35), blurRadius: 24, offset: const Offset(0, 10))] : null,
       ),
       child: Icon(icon, size: size * 0.45, color: filled ? Colors.white : color),
@@ -599,9 +596,7 @@ class _GaugePainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(rect, math.pi, math.pi, false, paint..color = track);
     if (progress <= 0) return;
-    paint
-      ..color = start
-      ..shader = LinearGradient(colors: [end, start]).createShader(rect);
+    paint.color = start;
     canvas.drawArc(rect, math.pi, math.pi * progress, false, paint);
   }
 
@@ -657,14 +652,7 @@ class BarChart extends StatelessWidget {
                       margin: EdgeInsets.symmetric(horizontal: dense ? 1.5 : 5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(dense ? 4 : 10),
-                        gradient: index == peakIndex
-                            ? LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [palette.primary, palette.accent],
-                              )
-                            : null,
-                        color: index == peakIndex ? null : palette.accentTint,
+                        color: index == peakIndex ? palette.primary : palette.accentTint,
                       ),
                     ),
                   ),
@@ -883,7 +871,7 @@ class LogoMark extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        gradient: palette.brandGradient,
+        color: palette.primary,
         borderRadius: BorderRadius.circular(size * 0.28),
         boxShadow: size > 40
             ? [BoxShadow(color: palette.accent.withValues(alpha: 0.35), blurRadius: size * 0.45, offset: Offset(0, size * 0.14))]

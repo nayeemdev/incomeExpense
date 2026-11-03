@@ -43,10 +43,6 @@ class Palette extends ThemeExtension<Palette> {
   final Color warning;
   final List<BoxShadow> shadow;
 
-  /// The web's navy sidebar fading into the brand color.
-  LinearGradient get brandGradient =>
-      const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF0C2239), Color(0xFF0076A8)]);
-
   static Palette of(BuildContext context) => Theme.of(context).extension<Palette>()!;
 
   static const light = Palette(
