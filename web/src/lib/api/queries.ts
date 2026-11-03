@@ -35,8 +35,7 @@ import type {
   Transaction,
   TransactionGroup,
   TransactionType,
-  User,
-} from './types'
+  User, CategoryStyles } from './types'
 
 export type TransactionFilters = {
   account_id?: number
@@ -260,6 +259,12 @@ export const ruleGroupsQuery = (ledgerId: number) =>
 export const ruleOptionsQuery = queryOptions({
   queryKey: ['rule-options'],
   queryFn: () => api.get<Resource<RuleOptions>>('/rule-options').then((r) => r.data),
+  staleTime: Infinity,
+})
+
+export const categoryStylesQuery = queryOptions({
+  queryKey: ['category-styles'],
+  queryFn: () => api.get<Resource<CategoryStyles>>('/category-styles').then((r) => r.data),
   staleTime: Infinity,
 })
 

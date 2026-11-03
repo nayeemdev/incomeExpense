@@ -18,6 +18,7 @@ import { formatDate } from '@/lib/format'
 import { notifyError } from '@/lib/forms'
 import { accountDisplayName } from '@/lib/transactions'
 import { cn } from '@/lib/utils'
+import { CategoryIcon } from './category-icon'
 import { Money } from './money'
 import { useQuickAdd } from './quick-add-context'
 
@@ -122,16 +123,20 @@ function TransactionRow({
           onCheckedChange={() => onToggle(transaction.id)}
         />
       )}
-      <span
-        className={cn(
-          'grid size-8 shrink-0 place-items-center rounded-full',
-          transaction.type === 'withdrawal' && 'bg-destructive/10 text-destructive',
-          transaction.type === 'deposit' && 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-          !['withdrawal', 'deposit'].includes(transaction.type) && 'bg-muted text-muted-foreground',
-        )}
-      >
-        <Icon className="size-4" />
-      </span>
+      {transaction.category ? (
+        <CategoryIcon icon={transaction.category.icon} color={transaction.category.color} className="rounded-full" />
+      ) : (
+        <span
+          className={cn(
+            'grid size-8 shrink-0 place-items-center rounded-full',
+            transaction.type === 'withdrawal' && 'bg-destructive/10 text-destructive',
+            transaction.type === 'deposit' && 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+            !['withdrawal', 'deposit'].includes(transaction.type) && 'bg-muted text-muted-foreground',
+          )}
+        >
+          <Icon className="size-4" />
+        </span>
+      )}
       <div className="min-w-0 flex-1">
         <Link
           to="/$ledgerId/transactions/$groupId"

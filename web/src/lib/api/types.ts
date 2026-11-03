@@ -101,7 +101,7 @@ export type Transaction = {
   amount: string
   foreign_currency: Currency | null
   foreign_amount: string | null
-  category?: { id: number; name: string } | null
+  category?: CategoryRef | null
   budget?: { id: number; name: string } | null
   bill?: { id: number; name: string } | null
   tags?: Array<{ id: number; name: string }>
@@ -120,9 +120,15 @@ export type TransactionGroup = {
   updated_at: string
 }
 
+export type CategoryRef = { id: number; name: string; icon?: string | null; color?: string | null }
+
+export type CategoryStyles = { icons: string[]; colors: string[] }
+
 export type Category = {
   id: number
   name: string
+  icon: string | null
+  color: string | null
   notes: string | null
   transactions_count?: number
   created_at: string
@@ -167,7 +173,7 @@ export type Summary = {
   earned_total: CurrencyAmount & { complete: boolean }
   spent: CurrencyAmount[]
   earned: CurrencyAmount[]
-  top_categories: Array<{ id: number | null; name: string | null } & CurrencyAmount>
+  top_categories: Array<{ id: number | null; name: string | null; icon: string | null; color: string | null } & CurrencyAmount>
   accounts: Account[]
 }
 
@@ -287,7 +293,7 @@ export type Recurrence = {
     currency: Currency | null
     source: AccountRef
     destination: AccountRef
-    category: { id: number; name: string } | null
+    category: CategoryRef | null
     budget: { id: number; name: string } | null
     bill: { id: number; name: string } | null
     tags: string[]
