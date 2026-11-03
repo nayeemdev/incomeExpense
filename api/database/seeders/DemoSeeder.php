@@ -80,8 +80,8 @@ class DemoSeeder extends Seeder
     {
         $email = config()->string('ledgerfly.demo.email');
 
-        $this->owner = User::create(['name' => 'Demo Owner', 'email' => $email, 'password' => $password, 'is_admin' => User::query()->doesntExist()]);
-        $partner = User::create(['name' => 'Demo Partner', 'email' => 'partner.'.$email, 'password' => $password]);
+        $this->owner = User::create(['name' => 'Nathan Drake', 'email' => $email, 'password' => $password, 'is_admin' => User::query()->doesntExist()]);
+        $partner = User::create(['name' => 'Elena Fisher', 'email' => 'elena@'.Str::after($email, '@'), 'password' => $password]);
 
         $currency = Currency::findByCode(config()->string('ledgerfly.demo.currency')) ?? Currency::findByCode('USD');
         $this->ledger = Ledger::create(['name' => 'Household', 'primary_currency_id' => $currency?->id]);
@@ -130,7 +130,7 @@ class DemoSeeder extends Seeder
         $primary = $this->ledger->primary_currency_id;
         $today = CarbonImmutable::today();
 
-        foreach (['Groceries' => '600', 'Eating out' => '250', 'Transport' => '180', 'Fun' => '150'] as $name => $amount) {
+        foreach (['Groceries' => '700', 'Eating out' => '250', 'Transport' => '180', 'Fun' => '150'] as $name => $amount) {
             $budget = $this->ledger->budgets()->create([
                 'name' => $name,
                 'auto_budget_type' => $name === 'Fun' ? 'rollover' : 'reset',
@@ -155,7 +155,7 @@ class DemoSeeder extends Seeder
         }
 
         $bills = [
-            ['Rent', '1450', '1450', 1, 'monthly', 'Home'],
+            ['Rent', '950', '950', 1, 'monthly', 'Home'],
             ['Electricity', '60', '110', 12, 'monthly', 'Home'],
             ['Internet', '45', '45', 18, 'monthly', 'Home'],
             ['Phone plan', '25', '30', 20, 'monthly', 'Subscriptions'],
@@ -201,9 +201,20 @@ class DemoSeeder extends Seeder
         for ($date = $today->subYear()->startOfMonth(); $date->lessThanOrEqualTo($today); $date = $date->addDay()) {
             if ($date->day === 1) {
                 $this->deposit($date, 'Salary', (string) (4100 + mt_rand(0, 4) * 50), 'Acme Corp', 'Salary', 'checking');
-                $this->spend($date, 'Rent', '1450', 'Landlord', 'Housing', 'checking', bill: $bills['Rent']->id);
+                $this->spend($date, 'Rent', '950', 'Landlord', 'Housing', 'checking', bill: $bills['Rent']->id);
                 $this->transfer($date, 'Monthly saving', '400', 'checking', 'savings');
-                $this->transfer($date->addDays(4), 'Car loan payment', '310', 'checking', 'loan');
+            }
+
+            if ($date->day === 5) {
+                $this->transfer($date, 'Car loan payment', '310', 'checking', 'loan', 'Car');
+            }
+
+            if (in_array($date->day, [6, 20], true)) {
+                $this->spend($date, 'Household supplies', (string) mt_rand(15, 45), 'HomeGoods', 'Household', 'card', ['household']);
+            }
+
+            if ($date->day === 8 && mt_rand(1, 2) === 1) {
+                $this->spend($date, collect(['New shirt', 'Shoes', 'Jeans'])->random(), (string) mt_rand(40, 150), 'Urban Outfit', 'Shopping', 'card');
             }
 
             if ($date->day === 25) {
@@ -232,6 +243,22 @@ class DemoSeeder extends Seeder
 
             if ($date->isWeekday() && mt_rand(1, 10) <= 4) {
                 $this->spend($date, 'Metro ride', '2.75', 'City Transit', 'Transport', 'card', ['commute'], $budgets['Transport']);
+            }
+
+            if ($date->isWeekday() && mt_rand(1, 10) <= 3) {
+                $this->spend($date, 'Lunch', (string) mt_rand(8, 15), collect(['Noodle Bar', 'Deli Corner', 'Spice Route'])->random(), 'Eating out', 'card', [], $budgets['Eating out']);
+            }
+
+            if (($date->isTuesday() || $date->isThursday()) && mt_rand(1, 3) === 1) {
+                $this->spend($date, 'Ride home', (string) mt_rand(8, 18), 'QuickRide', 'Transport', 'card', [], $budgets['Transport']);
+            }
+
+            if ($date->isWednesday()) {
+                $this->spend($date, 'Grocery top-up', (string) mt_rand(20, 45), 'Corner Grocer', 'Groceries', 'card', ['household'], $budgets['Groceries']);
+            }
+
+            if ($date->isWeekday() && mt_rand(1, 12) === 1) {
+                $this->spend($date, 'Pharmacy', (string) mt_rand(8, 40), 'Wellness Pharmacy', 'Health', 'card');
             }
 
             if ($date->isFriday() && mt_rand(1, 3) === 1) {
@@ -349,13 +376,13 @@ class DemoSeeder extends Seeder
         ]);
     }
 
-    private function transfer(CarbonImmutable $date, string $description, string $amount, string $from, string $to): TransactionGroup
+    private function transfer(CarbonImmutable $date, string $description, string $amount, string $from, string $to, ?string $category = null): TransactionGroup
     {
         $type = $this->accounts[$to]->type === AccountType::Liability ? 'withdrawal' : 'transfer';
 
         return $this->save([
             'type' => $type, 'date' => $date->toDateString(), 'description' => $description, 'amount' => $this->amountIn($amount, $from),
-            'source_id' => $this->accounts[$from]->id, 'destination_id' => $this->accounts[$to]->id,
+            'source_id' => $this->accounts[$from]->id, 'destination_id' => $this->accounts[$to]->id, 'category_name' => $category,
         ]);
     }
 
