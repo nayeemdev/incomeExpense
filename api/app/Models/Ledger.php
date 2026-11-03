@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property-read Currency $primaryCurrency
+ */
 #[Fillable(['name', 'primary_currency_id', 'fiscal_year_start'])]
 class Ledger extends Model
 {
