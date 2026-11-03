@@ -17,6 +17,7 @@ import '../features/ledger/ledger_data.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/planning/planning_screen.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/transactions/outbox.dart';
 import '../features/transactions/quick_add_screen.dart';
 import '../features/transactions/transaction_form_screen.dart';
 import '../features/transactions/transaction_screen.dart';
@@ -144,7 +145,7 @@ class _Shell extends ConsumerWidget {
       AsyncValue(hasValue: true, :final value?) => Consumer(
         builder: (context, ref, child) {
           ref.watch(widgetSyncProvider);
-          return child!;
+          return OutboxSync(child: child!);
         },
         child: Scaffold(
           extendBody: true,

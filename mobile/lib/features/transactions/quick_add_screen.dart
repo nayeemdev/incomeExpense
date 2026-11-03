@@ -11,9 +11,12 @@ import '../../shared/format.dart';
 import '../../shared/widgets.dart';
 import '../accounts/accounts_screen.dart';
 import '../auth/session.dart';
+import '../../api/api_client.dart';
 import '../categories/categories.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
+import '../receipts/receipts.dart';
+import 'outbox.dart';
 
 const _types = {'withdrawal': 'Expense', 'deposit': 'Income', 'transfer': 'Transfer'};
 
@@ -44,6 +47,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
   int? _budgetId;
   String _tags = '';
   String _notes = '';
+  String? _receipt;
   bool _saving = false;
 
   Transaction? get _editing => widget.group?.splits.first;
@@ -130,24 +134,33 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     };
     final ledger = ref.read(currentLedgerProvider);
     final api = ref.read(apiProvider);
+    final body = {
+      'transactions': [split],
+    };
     setState(() => _saving = true);
     try {
-      final body = {
-        'transactions': [split],
-      };
-      if (widget.group != null) {
-        await api.put(ledgerPath(ledger, 'transactions/${widget.group!.id}'), body);
-      } else {
-        await api.post(ledgerPath(ledger, 'transactions'), body);
-      }
+      final response = widget.group != null
+          ? await api.put(ledgerPath(ledger, 'transactions/${widget.group!.id}'), body)
+          : await api.post(ledgerPath(ledger, 'transactions'), body);
+      if (_receipt != null) await uploadReceipt(ref, (response['data'] as Json)['id'] as int, _receipt!);
       HapticFeedback.mediumImpact();
-      refreshLedgerData(ref);
+      refreshLedgerData(ref.invalidate);
       if (mounted) {
         showToast(context, widget.group == null ? '${_types[_type]} saved' : 'Transaction updated');
         closeScreen(context);
       }
-    } catch (error) {
-      if (mounted) showError(context, error);
+    } on ApiException catch (error) {
+      // No connection: keep a new entry on the device and send it once the server is reachable.
+      if (error.status == null && widget.group == null) {
+        await ref.read(outboxProvider.notifier).add(ledger.id, body, receiptPath: _receipt);
+        HapticFeedback.mediumImpact();
+        if (mounted) {
+          showToast(context, 'Saved offline. It will sync when you are back online.');
+          closeScreen(context);
+        }
+      } else if (mounted) {
+        showError(context, error);
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -237,16 +250,20 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: 40,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 1.9,
                   children: [
                     if (_type != 'transfer')
                       _Chip(
                         leading: _category == null
-                            ? Icon(LucideIcons.layoutGrid, size: 16, color: palette.muted)
+                            ? Icon(LucideIcons.layoutGrid, size: 20, color: palette.muted)
                             : CategoryIcon(icon: _category!.icon, color: _category!.color, size: 26),
                         label: _category?.name ?? 'Category',
                         set: _category != null,
@@ -256,7 +273,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                         },
                       ),
                     _Chip(
-                      leading: Icon(LucideIcons.wallet, size: 16, color: palette.muted),
+                      leading: Icon(LucideIcons.wallet, size: 20, color: palette.muted),
                       label: _type == 'transfer' ? (find(_fromId)?.name ?? 'From') : (find(_ownAccountId)?.name ?? 'Account'),
                       set: true,
                       onTap: () async {
@@ -271,7 +288,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                     ),
                     if (_type == 'transfer')
                       _Chip(
-                        leading: Icon(LucideIcons.arrowRight, size: 16, color: palette.muted),
+                        leading: Icon(LucideIcons.arrowRight, size: 20, color: palette.muted),
                         label: find(_toId)?.name ?? 'To',
                         set: _toId != null,
                         onTap: () async {
@@ -281,7 +298,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                       )
                     else
                       _Chip(
-                        leading: Icon(_type == 'deposit' ? LucideIcons.briefcase : LucideIcons.store, size: 16, color: palette.muted),
+                        leading: Icon(_type == 'deposit' ? LucideIcons.briefcase : LucideIcons.store, size: 20, color: palette.muted),
                         label: _payee.isEmpty ? (_type == 'deposit' ? 'Payer' : 'Payee') : _payee,
                         set: _payee.isNotEmpty,
                         onTap: () async {
@@ -294,7 +311,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                         },
                       ),
                     _Chip(
-                      leading: Icon(LucideIcons.calendar, size: 16, color: palette.muted),
+                      leading: Icon(LucideIcons.calendar, size: 20, color: palette.muted),
                       label: formatDay(_date),
                       set: true,
                       onTap: () async {
@@ -307,9 +324,19 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                         if (picked != null) setState(() => _date = picked);
                       },
                     ),
+                    if (widget.group == null)
+                      _Chip(
+                        leading: Icon(_receipt == null ? LucideIcons.camera : LucideIcons.circleCheck, size: 20, color: palette.muted),
+                        label: _receipt == null ? 'Receipt' : 'Receipt added',
+                        set: _receipt != null,
+                        onTap: () async {
+                          final photo = await pickReceipt(context);
+                          if (photo != null) setState(() => _receipt = photo.path);
+                        },
+                      ),
                     _Chip(
-                      leading: Icon(LucideIcons.slidersHorizontal, size: 16, color: palette.muted),
-                      label: 'Details',
+                      leading: Icon(LucideIcons.slidersHorizontal, size: 20, color: palette.muted),
+                      label: 'More',
                       set: _budgetId != null || _tags.isNotEmpty || _notes.isNotEmpty,
                       onTap: () async {
                         final result = await showAppSheet<({int? budget, String tags, String notes})>(
@@ -371,6 +398,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
   }
 }
 
+/// One option tile in the grid under the amount: an icon over a label, tinted once it has a value.
 class _Chip extends StatelessWidget {
   const _Chip({required this.leading, required this.label, required this.set, required this.onTap});
 
@@ -382,31 +410,30 @@ class _Chip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = Palette.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: Material(
-        color: palette.surface,
-        shape: StadiumBorder(side: BorderSide(color: set ? palette.input : Colors.transparent)),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 7, right: 14),
-            child: Row(
-              children: [
-                SizedBox(width: 26, child: Center(child: leading)),
-                const SizedBox(width: 6),
-                ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 140),
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w500, color: set ? palette.foreground : palette.muted),
-                  ),
+    return Material(
+      color: set ? palette.primaryTint : palette.surface,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 26, child: Center(child: leading)),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: set ? FontWeight.w600 : FontWeight.w500,
+                  color: set ? palette.foreground : palette.muted,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

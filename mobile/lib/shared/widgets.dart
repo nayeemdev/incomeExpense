@@ -692,7 +692,7 @@ class AmountKeypad extends StatelessWidget {
       crossAxisCount: 3,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.4,
+      childAspectRatio: 2.9,
       mainAxisSpacing: 8,
       crossAxisSpacing: 8,
       children: [
@@ -861,9 +861,11 @@ Future<T?> showAppSheet<T>(BuildContext context, {required String title, require
 
 /// The LedgerFly mark on the brand gradient.
 class LogoMark extends StatelessWidget {
-  const LogoMark({super.key, this.size = 32});
+  const LogoMark({super.key, this.size = 32, this.background, this.foreground = Colors.white});
 
   final double size;
+  final Color? background;
+  final Color foreground;
 
   @override
   Widget build(BuildContext context) {
@@ -872,23 +874,27 @@ class LogoMark extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: palette.primary,
+        color: background ?? palette.primary,
         borderRadius: BorderRadius.circular(size * 0.28),
-        boxShadow: size > 40
+        boxShadow: size > 40 && background == null
             ? [BoxShadow(color: palette.accent.withValues(alpha: 0.35), blurRadius: size * 0.45, offset: Offset(0, size * 0.14))]
             : null,
       ),
-      child: CustomPaint(painter: _LogoPainter()),
+      child: CustomPaint(painter: _LogoPainter(foreground)),
     );
   }
 }
 
 class _LogoPainter extends CustomPainter {
+  _LogoPainter(this.color);
+
+  final Color color;
+
   @override
   void paint(Canvas canvas, Size size) {
     canvas.scale(size.width / 32);
     final stroke = Paint()
-      ..color = Colors.white
+      ..color = color
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
@@ -911,12 +917,12 @@ class _LogoPainter extends CustomPainter {
         ..lineTo(25, 16),
       stroke
         ..strokeWidth = 2.25
-        ..color = Colors.white.withValues(alpha: 0.85),
+        ..color = color.withValues(alpha: 0.85),
     );
   }
 
   @override
-  bool shouldRepaint(_LogoPainter old) => false;
+  bool shouldRepaint(_LogoPainter old) => old.color != color;
 }
 
 /// Leaves a pushed screen. Screens opened from a link or widget have nothing underneath, so those go to the dashboard.

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../../api/models.dart';
 import '../../shared/format.dart';
@@ -117,19 +118,19 @@ final transactionGroupProvider = FutureProvider.autoDispose.family<TransactionGr
   return TransactionGroup.fromJson(response['data'] as Json);
 });
 
-void refreshLedgerData(WidgetRef ref) {
-  ref
-    ..invalidate(summaryProvider)
-    ..invalidate(accountsProvider)
-    ..invalidate(accountProvider)
-    ..invalidate(budgetsProvider)
-    ..invalidate(billsProvider)
-    ..invalidate(transactionsProvider)
-    ..invalidate(frequentProvider)
-    ..invalidate(reportProvider)
-    ..invalidate(goalsProvider)
-    ..invalidate(categoriesProvider)
-    ..invalidate(transactionGroupProvider);
+/// Everything that changes when a transaction is added, edited or removed. Pass `ref.invalidate`.
+void refreshLedgerData(void Function(ProviderOrFamily provider) invalidate) {
+  invalidate(summaryProvider);
+  invalidate(accountsProvider);
+  invalidate(accountProvider);
+  invalidate(budgetsProvider);
+  invalidate(billsProvider);
+  invalidate(transactionsProvider);
+  invalidate(frequentProvider);
+  invalidate(reportProvider);
+  invalidate(goalsProvider);
+  invalidate(categoriesProvider);
+  invalidate(transactionGroupProvider);
 }
 
 enum ReportRange { week, month, year }

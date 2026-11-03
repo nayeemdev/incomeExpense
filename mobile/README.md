@@ -12,6 +12,11 @@ Flutter app for iOS and Android. It talks to the same `/api/v1` as the web app a
 - Categories have an icon and color, suggested from their name and editable from a predefined set.
 - Settings: switch ledger, accounts, categories, budgets and bills, notifications, light, dark or system theme, Face ID lock and logout.
 
+## Receipts and offline entry
+
+- Attach a receipt photo from the camera or photo library, either while adding a transaction (the Receipt chip) or later from the transaction's page.
+- If the server cannot be reached when you save a new transaction, it is kept on the device, with its receipt, and sent automatically when the app next opens or comes back to the foreground. The dashboard shows how many are waiting and has a Sync now button.
+
 ## Widgets and Siri
 
 - A home screen widget in small and medium sizes, plus lock screen versions, shows what you have spent this month, the budget left and the next bill due. Its + button opens quick add.

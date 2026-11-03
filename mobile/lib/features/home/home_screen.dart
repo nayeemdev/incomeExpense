@@ -12,6 +12,7 @@ import '../accounts/accounts_screen.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
 import '../notifications/notifications_screen.dart';
+import '../transactions/outbox.dart';
 import '../transactions/transaction_tile.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -31,7 +32,8 @@ class HomeScreen extends ConsumerWidget {
         bottom: false,
         child: RefreshIndicator.adaptive(
           onRefresh: () async {
-            refreshLedgerData(ref);
+            await ref.read(outboxProvider.notifier).flush();
+            refreshLedgerData(ref.invalidate);
             ref.invalidate(unreadCountProvider);
             await ref.read(summaryProvider.future);
           },
@@ -63,6 +65,7 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+              const _OutboxBanner(),
               AsyncView(
                 value: summary,
                 onRetry: () => ref.invalidate(summaryProvider),
@@ -391,6 +394,46 @@ class _HomeSkeleton extends StatelessWidget {
           SizedBox(height: 24),
           SkeletonList(rows: 4),
         ],
+      ),
+    );
+  }
+}
+
+/// Says how many transactions saved offline are still waiting, or why one could not be saved.
+class _OutboxBanner extends ConsumerWidget {
+  const _OutboxBanner();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final palette = Palette.of(context);
+    final outbox = ref.watch(outboxProvider).value;
+    if (outbox == null || (outbox.pending.isEmpty && outbox.lastError == null)) return const SizedBox.shrink();
+    final failed = outbox.pending.isEmpty;
+    final count = outbox.pending.length;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(14, 10, 6, 10),
+        decoration: BoxDecoration(color: failed ? palette.negativeTint : palette.primaryTint, borderRadius: BorderRadius.circular(14)),
+        child: Row(
+          children: [
+            Icon(failed ? LucideIcons.circleAlert : LucideIcons.cloudOff, size: 18, color: failed ? palette.negative : palette.primary),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                failed
+                    ? 'An offline entry could not be saved: ${outbox.lastError}'
+                    : '$count ${count == 1 ? 'transaction' : 'transactions'} saved offline, waiting to sync',
+                style: TextStyle(fontSize: 13, color: failed ? palette.negative : palette.foreground),
+              ),
+            ),
+            TextButton(
+              onPressed: failed ? ref.read(outboxProvider.notifier).dismissError : ref.read(outboxProvider.notifier).flush,
+              child: Text(failed ? 'Dismiss' : 'Sync now'),
+            ),
+          ],
+        ),
       ),
     );
   }
