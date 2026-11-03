@@ -82,7 +82,7 @@ class WriteTransaction
         }
     }
 
-    private function currencyFor(TransactionType $type, Account $source, Account $destination, TransactionGroup $group): int
+    private function currencyFor(TransactionType $type, Account $source, Account $destination, TransactionGroup $group): string
     {
         $primary = $type === TransactionType::Deposit ? $destination : $source;
         $other = $primary->is($source) ? $destination : $source;
@@ -91,7 +91,7 @@ class WriteTransaction
     }
 
     /**
-     * @return array{account_id: string, currency_id: int, amount: string}
+     * @return array{account_id: string, currency_id: string, amount: string}
      */
     private function posting(Transaction $transaction, Account $account, string $amount, string $errorKey): array
     {

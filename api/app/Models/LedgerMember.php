@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\LedgerRole;
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class LedgerMember extends Pivot
 {
-    public $incrementing = true;
+    use HasUlids;
 
     protected $table = 'ledger_user';
 

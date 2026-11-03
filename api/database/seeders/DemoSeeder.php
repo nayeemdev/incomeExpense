@@ -350,8 +350,8 @@ class DemoSeeder extends Seeder
     private function createExtras(): void
     {
         DB::table('saved_searches')->insert([
-            ['id' => (string) Str::ulid(), 'ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Weekend fun', 'query' => 'tag:weekend', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => (string) Str::ulid(), 'ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Big card spending', 'query' => 'account:Visa amount_more:'.$this->money('100').' type:withdrawal', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => strtolower((string) Str::ulid()), 'ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Weekend fun', 'query' => 'tag:weekend', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => strtolower((string) Str::ulid()), 'ledger_id' => $this->ledger->id, 'user_id' => $this->owner->id, 'name' => 'Big card spending', 'query' => 'account:Visa amount_more:'.$this->money('100').' type:withdrawal', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         $preferences = $this->owner->preferences ?? [];

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->boolean('active')->default(true);
             $table->unsignedInteger('order')->default(0);
             $table->string('auto_budget_type', 20)->nullable();
-            $table->foreignId('auto_budget_currency_id')->nullable()->constrained('currencies');
+            $table->foreignUlid('auto_budget_currency_id')->nullable()->constrained('currencies');
             $table->decimal('auto_budget_amount', 32, 12)->nullable();
             $table->string('auto_budget_period', 20)->nullable();
             $table->text('notes')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
         Schema::create('budget_limits', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('budget_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->foreignUlid('currency_id')->constrained('currencies');
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('amount', 32, 12);
@@ -40,7 +40,7 @@ return new class extends Migration
         Schema::create('available_budgets', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->foreignUlid('currency_id')->constrained('currencies');
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('amount', 32, 12);

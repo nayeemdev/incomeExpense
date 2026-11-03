@@ -46,7 +46,7 @@ class CheckTransactionAlerts implements ShouldQueue
     /**
      * @param  Collection<int, User>  $members
      */
-    private function largeTransaction(Transaction $transaction, Collection $members, int $primaryCurrencyId): void
+    private function largeTransaction(Transaction $transaction, Collection $members, string $primaryCurrencyId): void
     {
         if ($transaction->type !== TransactionType::Withdrawal || $transaction->currency_id !== $primaryCurrencyId) {
             return;

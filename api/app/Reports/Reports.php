@@ -24,7 +24,7 @@ class Reports
 {
     private bool $complete = true;
 
-    /** @var Collection<int, Currency> */
+    /** @var Collection<string, Currency> */
     private Collection $currencies;
 
     public function __construct(private CurrencyConverter $converter)
@@ -109,7 +109,7 @@ class Reports
         $groups = [];
 
         foreach ($rows as $row) {
-            /** @var object{date: string, currency_id: int, group_id: ?string, group_name: ?string, total: string} $row */
+            /** @var object{date: string, currency_id: string, group_id: ?string, group_name: ?string, total: string} $row */
             $bucket = collect($buckets)->first(fn (Period $bucket) => $row->date >= $bucket->start->toDateString() && $row->date <= $bucket->end->toDateString());
 
             if ($bucket === null) {
@@ -167,7 +167,7 @@ class Reports
 
         foreach ($period->buckets($interval) as $bucket) {
             foreach ($daily as $row) {
-                /** @var object{date: string, currency_id: int, total: string} $row */
+                /** @var object{date: string, currency_id: string, total: string} $row */
                 if ($row->date >= $bucket->start->toDateString() && $row->date <= $bucket->end->toDateString()) {
                     $running[$row->currency_id] = Money::sum($running[$row->currency_id] ?? '0', $row->total);
                 }
@@ -176,7 +176,7 @@ class Reports
             $total = '0';
 
             foreach ($running as $currencyId => $amount) {
-                $total = Money::sum($total, $this->toPrimary($ledger, $amount, $currencyId, $bucket->end));
+                $total = Money::sum($total, $this->toPrimary($ledger, $amount, (string) $currencyId, $bucket->end));
             }
 
             $series[] = ['date' => $bucket->end->toDateString(), 'balance' => $this->round($ledger, $total)];
@@ -271,11 +271,11 @@ class Reports
     /**
      * @param  list<string>  $accountIds
      * @param  list<string>  $extra
-     * @return Collection<int, object{date: string, currency_id: int, total: string, type: string}>
+     * @return Collection<int, object{date: string, currency_id: string, total: string, type: string}>
      */
     private function dailyTotals(Ledger $ledger, Period $period, array $accountIds, array $extra): Collection
     {
-        /** @var Collection<int, object{date: string, currency_id: int, total: string, type: string}> */
+        /** @var Collection<int, object{date: string, currency_id: string, total: string, type: string}> */
         return $this->transactions($ledger, $period, $accountIds)
             ->groupBy('transactions.date', 'transactions.currency_id', ...$extra)
             ->select('transactions.date', 'transactions.currency_id', ...$extra)
@@ -323,7 +323,7 @@ class Reports
             ->all();
     }
 
-    private function toPrimary(Ledger $ledger, string $amount, int $currencyId, CarbonImmutable $date): string
+    private function toPrimary(Ledger $ledger, string $amount, string $currencyId, CarbonImmutable $date): string
     {
         $converted = $this->converter->convert($amount, $currencyId, $ledger->primary_currency_id, $date, $ledger->id);
 

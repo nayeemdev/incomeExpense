@@ -24,7 +24,7 @@ class NotifyNewLogin
         $key = 'login:'.sha1($ip.'|'.$agent);
 
         if ($user->created_at?->greaterThan(now()->subMinutes(10))) {
-            DB::table('sent_notifications')->insertOrIgnore(['id' => (string) Str::ulid(), 'user_id' => $user->id, 'key' => $key, 'created_at' => now()]);
+            DB::table('sent_notifications')->insertOrIgnore(['id' => strtolower((string) Str::ulid()), 'user_id' => $user->id, 'key' => $key, 'created_at' => now()]);
 
             return;
         }

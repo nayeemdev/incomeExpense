@@ -39,7 +39,7 @@ class PersonalAccessTokenController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function destroy(#[CurrentUser] User $user, int $token): Response
+    public function destroy(#[CurrentUser] User $user, string $token): Response
     {
         $user->tokens()->whereKey($token)->firstOrFail()->delete();
 

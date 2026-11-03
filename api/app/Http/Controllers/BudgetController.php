@@ -116,7 +116,7 @@ class BudgetController extends Controller
 
         foreach ($budgets as $budget) {
             $budget->setAttribute('spent', collect($spent[$budget->id] ?? [])
-                ->map(function (string $total, int $currencyId) use ($currencies) {
+                ->map(function (string $total, string $currencyId) use ($currencies) {
                     $currency = $currencies->get($currencyId) ?? Currency::query()->findOrFail($currencyId);
 
                     return ['currency' => $currency->code, 'amount' => Money::round($total, $currency->decimal_places)];

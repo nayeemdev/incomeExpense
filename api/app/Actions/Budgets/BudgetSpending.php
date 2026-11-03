@@ -13,7 +13,7 @@ class BudgetSpending
      * Amount spent per budget and currency between two dates, as [budget_id][currency_id] => total.
      *
      * @param  list<string>  $budgetIds
-     * @return array<int, array<int, string>>
+     * @return array<string, array<string, string>>
      */
     public function between(array $budgetIds, CarbonInterface $start, CarbonInterface $end): array
     {
@@ -33,7 +33,7 @@ class BudgetSpending
         $spent = [];
 
         foreach ($rows as $row) {
-            /** @var object{budget_id: int, currency_id: int, total: string} $row */
+            /** @var object{budget_id: string, currency_id: string, total: string} $row */
             $spent[$row->budget_id][$row->currency_id] = $row->total;
         }
 

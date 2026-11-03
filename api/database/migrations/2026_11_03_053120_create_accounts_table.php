@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->string('type', 20);
             $table->string('name');
-            $table->foreignId('currency_id')->nullable()->constrained('currencies');
+            $table->foreignUlid('currency_id')->nullable()->constrained('currencies');
             $table->string('asset_role', 20)->nullable();
             $table->string('liability_type', 20)->nullable();
             $table->string('liability_direction', 10)->nullable();

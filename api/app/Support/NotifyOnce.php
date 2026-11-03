@@ -20,7 +20,7 @@ final class NotifyOnce
     {
         foreach ($users as $user) {
             try {
-                DB::table('sent_notifications')->insert(['id' => (string) Str::ulid(), 'user_id' => $user->id, 'key' => $key, 'created_at' => now()]);
+                DB::table('sent_notifications')->insert(['id' => strtolower((string) Str::ulid()), 'user_id' => $user->id, 'key' => $key, 'created_at' => now()]);
             } catch (UniqueConstraintViolationException) {
                 continue;
             }

@@ -39,7 +39,7 @@ return new class extends Migration
             $table->foreignUlid('recurrence_id')->constrained()->cascadeOnDelete();
             $table->string('description');
             $table->decimal('amount', 32, 12);
-            $table->foreignId('foreign_currency_id')->nullable()->constrained('currencies');
+            $table->foreignUlid('foreign_currency_id')->nullable()->constrained('currencies');
             $table->decimal('foreign_amount', 32, 12)->nullable();
             $table->foreignUlid('source_account_id')->constrained('accounts')->cascadeOnDelete();
             $table->foreignUlid('destination_account_id')->constrained('accounts')->cascadeOnDelete();

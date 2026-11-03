@@ -15,7 +15,7 @@ class CurrencyConverter
      * The most recent rate on or before $date, preferring the ledger's own rates and
      * falling back to the inverse of the opposite pair.
      */
-    public function rate(int $fromId, int $toId, CarbonInterface $date, ?string $ledgerId = null): ?string
+    public function rate(string $fromId, string $toId, CarbonInterface $date, ?string $ledgerId = null): ?string
     {
         if ($fromId === $toId) {
             return '1';
@@ -38,14 +38,14 @@ class CurrencyConverter
         return $this->rates[$key] = $rate;
     }
 
-    public function convert(string $amount, int $fromId, int $toId, CarbonInterface $date, ?string $ledgerId = null): ?string
+    public function convert(string $amount, string $fromId, string $toId, CarbonInterface $date, ?string $ledgerId = null): ?string
     {
         $rate = $this->rate($fromId, $toId, $date, $ledgerId);
 
         return $rate === null ? null : Money::of($amount)->mul(Money::of($rate), Money::SCALE)->value;
     }
 
-    private function find(int $fromId, int $toId, CarbonInterface $date, ?string $ledgerId): ?string
+    private function find(string $fromId, string $toId, CarbonInterface $date, ?string $ledgerId): ?string
     {
         $rate = ExchangeRate::query()
             ->where('from_currency_id', $fromId)

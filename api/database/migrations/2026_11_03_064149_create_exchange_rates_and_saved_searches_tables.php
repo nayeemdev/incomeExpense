@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('ledger_id')->nullable()->constrained()->cascadeOnDelete();
-            $table->foreignId('from_currency_id')->constrained('currencies')->cascadeOnDelete();
-            $table->foreignId('to_currency_id')->constrained('currencies')->cascadeOnDelete();
+            $table->foreignUlid('from_currency_id')->constrained('currencies')->cascadeOnDelete();
+            $table->foreignUlid('to_currency_id')->constrained('currencies')->cascadeOnDelete();
             $table->date('date');
             $table->decimal('rate', 32, 12);
             $table->timestamps();

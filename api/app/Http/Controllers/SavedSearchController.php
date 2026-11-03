@@ -29,7 +29,7 @@ class SavedSearchController extends Controller
             'query' => ['required', 'string', 'max:1000'],
         ]);
 
-        $id = (string) Str::ulid();
+        $id = strtolower((string) Str::ulid());
 
         DB::table('saved_searches')->insert([
             ...$validated,

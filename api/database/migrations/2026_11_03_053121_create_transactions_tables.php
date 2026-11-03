@@ -26,9 +26,9 @@ return new class extends Migration
             $table->string('description');
             $table->foreignUlid('source_account_id')->constrained('accounts');
             $table->foreignUlid('destination_account_id')->constrained('accounts');
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->foreignUlid('currency_id')->constrained('currencies');
             $table->decimal('amount', 32, 12);
-            $table->foreignId('foreign_currency_id')->nullable()->constrained('currencies');
+            $table->foreignUlid('foreign_currency_id')->nullable()->constrained('currencies');
             $table->decimal('foreign_amount', 32, 12)->nullable();
             $table->foreignUlid('category_id')->nullable()->constrained()->nullOnDelete();
             $table->text('notes')->nullable();
@@ -44,7 +44,7 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->foreignUlid('transaction_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('account_id')->constrained('accounts');
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->foreignUlid('currency_id')->constrained('currencies');
             $table->decimal('amount', 32, 12);
 
             $table->index(['account_id', 'transaction_id']);

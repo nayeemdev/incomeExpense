@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignUlid('ledger_id')->constrained()->cascadeOnDelete();
             $table->foreignUlid('object_group_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
-            $table->foreignId('currency_id')->constrained('currencies');
+            $table->foreignUlid('currency_id')->constrained('currencies');
             $table->decimal('target_amount', 32, 12)->nullable();
             $table->date('start_date')->nullable();
             $table->date('target_date')->nullable();
