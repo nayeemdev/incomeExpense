@@ -11,9 +11,12 @@ import '../../shared/format.dart';
 import '../../shared/widgets.dart';
 import '../accounts/accounts_screen.dart';
 import '../auth/session.dart';
+import '../../api/api_client.dart';
 import '../categories/categories.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
+import '../receipts/receipts.dart';
+import 'outbox.dart';
 
 const _types = {'withdrawal': 'Expense', 'deposit': 'Income', 'transfer': 'Transfer'};
 
@@ -44,6 +47,7 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
   int? _budgetId;
   String _tags = '';
   String _notes = '';
+  String? _receipt;
   bool _saving = false;
 
   Transaction? get _editing => widget.group?.splits.first;
@@ -130,24 +134,33 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
     };
     final ledger = ref.read(currentLedgerProvider);
     final api = ref.read(apiProvider);
+    final body = {
+      'transactions': [split],
+    };
     setState(() => _saving = true);
     try {
-      final body = {
-        'transactions': [split],
-      };
-      if (widget.group != null) {
-        await api.put(ledgerPath(ledger, 'transactions/${widget.group!.id}'), body);
-      } else {
-        await api.post(ledgerPath(ledger, 'transactions'), body);
-      }
+      final response = widget.group != null
+          ? await api.put(ledgerPath(ledger, 'transactions/${widget.group!.id}'), body)
+          : await api.post(ledgerPath(ledger, 'transactions'), body);
+      if (_receipt != null) await uploadReceipt(ref, (response['data'] as Json)['id'] as int, _receipt!);
       HapticFeedback.mediumImpact();
-      refreshLedgerData(ref);
+      refreshLedgerData(ref.invalidate);
       if (mounted) {
         showToast(context, widget.group == null ? '${_types[_type]} saved' : 'Transaction updated');
         closeScreen(context);
       }
-    } catch (error) {
-      if (mounted) showError(context, error);
+    } on ApiException catch (error) {
+      // No connection: keep a new entry on the device and send it once the server is reachable.
+      if (error.status == null && widget.group == null) {
+        await ref.read(outboxProvider.notifier).add(ledger.id, body, receiptPath: _receipt);
+        HapticFeedback.mediumImpact();
+        if (mounted) {
+          showToast(context, 'Saved offline. It will sync when you are back online.');
+          closeScreen(context);
+        }
+      } else if (mounted) {
+        showError(context, error);
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -307,6 +320,16 @@ class _QuickAddScreenState extends ConsumerState<QuickAddScreen> {
                         if (picked != null) setState(() => _date = picked);
                       },
                     ),
+                    if (widget.group == null)
+                      _Chip(
+                        leading: Icon(_receipt == null ? LucideIcons.camera : LucideIcons.circleCheck, size: 16, color: palette.muted),
+                        label: _receipt == null ? 'Receipt' : 'Receipt added',
+                        set: _receipt != null,
+                        onTap: () async {
+                          final photo = await pickReceipt(context);
+                          if (photo != null) setState(() => _receipt = photo.path);
+                        },
+                      ),
                     _Chip(
                       leading: Icon(LucideIcons.slidersHorizontal, size: 16, color: palette.muted),
                       label: 'Details',

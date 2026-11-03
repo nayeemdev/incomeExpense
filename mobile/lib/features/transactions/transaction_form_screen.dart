@@ -152,7 +152,7 @@ class _TransactionFormScreenState extends ConsumerState<TransactionFormScreen> {
         await api.post(ledgerPath(ledger, 'transactions'), body);
       }
       HapticFeedback.lightImpact();
-      refreshLedgerData(ref);
+      refreshLedgerData(ref.invalidate);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(_editing ? 'Transaction updated' : 'Transaction saved')));
         closeScreen(context);

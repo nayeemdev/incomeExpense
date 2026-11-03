@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ledgerfly/api/models.dart';
+import 'package:ledgerfly/features/transactions/outbox.dart';
 import 'package:ledgerfly/shared/format.dart';
 
 void main() {
@@ -52,5 +53,14 @@ void main() {
     expect(formatMoney('1250.5', 'USD', signed: true), '+\$1,250.50');
     expect(negate('60.00'), '-60.00');
     expect(negate('-60.00'), '60.00');
+  });
+
+  test('an offline entry survives being written and read back', () {
+    const pending = Pending(ledgerId: 3, body: {'transactions': []}, receipt: '/tmp/receipt.jpg');
+    final restored = Pending.fromJson(pending.toJson());
+
+    expect(restored.ledgerId, 3);
+    expect(restored.body, {'transactions': []});
+    expect(restored.receipt, '/tmp/receipt.jpg');
   });
 }
