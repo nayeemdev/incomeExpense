@@ -59,6 +59,7 @@ export type Account = {
   id: number
   type: AccountType
   name: string
+  object_group?: string | null
   currency: Currency | null
   asset_role: AssetRole | null
   liability_type: LiabilityType | null
@@ -99,6 +100,8 @@ export type Transaction = {
   foreign_currency: Currency | null
   foreign_amount: string | null
   category?: { id: number; name: string } | null
+  budget?: { id: number; name: string } | null
+  bill?: { id: number; name: string } | null
   tags?: Array<{ id: number; name: string }>
   notes: string | null
   running_balance?: string
@@ -176,8 +179,124 @@ export type SplitInput = {
   foreign_currency_id?: number | null
   category_id?: number | null
   category_name?: string | null
+  budget_id?: number | null
+  bill_id?: number | null
   tags?: string[]
   notes?: string | null
 }
 
 export type TransactionGroupInput = { title?: string | null; transactions: SplitInput[] }
+
+export type Frequency = 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'half_year' | 'yearly'
+export type AutoBudgetType = 'reset' | 'rollover' | 'adjusted'
+
+export type BudgetLimit = {
+  id: number
+  budget_id: number
+  currency: Currency
+  start_date: string
+  end_date: string
+  amount: string
+  spent: string | null
+  generated: boolean
+}
+
+export type Budget = {
+  id: number
+  name: string
+  active: boolean
+  order: number
+  notes: string | null
+  auto_budget_type: AutoBudgetType | null
+  auto_budget_period: Frequency | null
+  auto_budget_currency: Currency | null
+  auto_budget_amount: string | null
+  limits: BudgetLimit[]
+  spent?: CurrencyAmount[]
+}
+
+export type AvailableBudget = {
+  id: number
+  currency: Pick<Currency, 'id' | 'code' | 'decimal_places'>
+  start_date: string
+  end_date: string
+  amount: string
+}
+
+export type Bill = {
+  id: number
+  name: string
+  object_group: string | null
+  currency: Currency
+  amount_min: string
+  amount_max: string
+  date: string
+  repeat_freq: Frequency
+  skip: number
+  end_date: string | null
+  extension_date: string | null
+  active: boolean
+  order: number
+  notes: string | null
+  next_expected_date?: string | null
+  expected_dates?: string[]
+  payments?: Array<{ transaction_id: number; group_id: number; date: string; description: string; amount: string }>
+}
+
+export type PiggyBank = {
+  id: number
+  name: string
+  object_group: string | null
+  currency: Currency
+  target_amount: string | null
+  saved_amount: string
+  left_to_save: string | null
+  start_date: string | null
+  target_date: string | null
+  active: boolean
+  order: number
+  notes: string | null
+  accounts: Array<{ id: number; name: string; current_amount: string }>
+  events?: Array<{ id: number; account: { id: number; name: string }; amount: string; date: string }>
+}
+
+export type RepetitionType = 'daily' | 'weekly' | 'monthly' | 'ndom' | 'yearly'
+export type WeekendHandling = 'keep' | 'skip' | 'before' | 'after'
+
+export type Recurrence = {
+  id: number
+  type: 'withdrawal' | 'deposit' | 'transfer'
+  title: string
+  description: string | null
+  first_date: string
+  repeat_until: string | null
+  max_occurrences: number | null
+  occurrences_created: number
+  latest_date: string | null
+  apply_rules: boolean
+  active: boolean
+  repetition: { type: RepetitionType; moment: string; skip: number; weekend: WeekendHandling } | null
+  transactions: Array<{
+    description: string
+    amount: string
+    currency: Currency | null
+    source: AccountRef
+    destination: AccountRef
+    category: { id: number; name: string } | null
+    budget: { id: number; name: string } | null
+    bill: { id: number; name: string } | null
+    tags: string[]
+    notes: string | null
+  }>
+  upcoming: string[]
+}
+
+export type LinkType = { id: number; name: string; outward: string; inward: string; custom: boolean }
+
+export type TransactionLink = {
+  id: number
+  link_type_id: number
+  label: string
+  group: { id: number; title: string | null; date: string | null }
+  notes: string | null
+}
