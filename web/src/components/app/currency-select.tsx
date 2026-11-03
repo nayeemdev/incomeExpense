@@ -1,0 +1,32 @@
+import { useQuery } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
+import { currenciesQuery } from '@/lib/api/queries'
+import { Combobox } from './combobox'
+
+type CurrencySelectProps = {
+  id?: string
+  value: number | null | undefined
+  onChange: (value: number | null) => void
+  'aria-invalid'?: boolean
+}
+
+export function CurrencySelect({ id, value, onChange, ...props }: CurrencySelectProps) {
+  const { t } = useTranslation()
+  const { data: currencies = [] } = useQuery(currenciesQuery)
+
+  return (
+    <Combobox
+      id={id}
+      aria-invalid={props['aria-invalid']}
+      options={currencies.map((currency) => ({
+        value: String(currency.id),
+        label: `${currency.code} · ${currency.name}`,
+        keywords: [currency.code, currency.name],
+      }))}
+      value={value ? String(value) : null}
+      onChange={(next) => onChange(next ? Number(next) : null)}
+      placeholder={t('Choose a currency')}
+      searchPlaceholder={t('Search currencies…')}
+    />
+  )
+}

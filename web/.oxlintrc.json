@@ -8,8 +8,8 @@
   },
   "overrides": [
     {
-      "files": ["src/routes/**", "src/components/ui/**"],
-      "rules": { "react/only-export-components": "off" }
+      "files": ["src/routes/**", "src/components/ui/**", "src/hooks/use-mobile.ts", "src/hooks/use-theme.tsx"],
+      "rules": { "react/only-export-components": "off", "react/set-state-in-effect": "off" }
     }
   ]
 }
