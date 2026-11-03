@@ -77,6 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('push-subscriptions', [NotificationController::class, 'subscribe']);
         Route::delete('push-subscriptions', [NotificationController::class, 'unsubscribe']);
         Route::get('rule-options', [RuleController::class, 'options']);
+        Route::get('category-styles', [CategoryController::class, 'styles']);
 
         Route::get('invitations/{token}', [InvitationController::class, 'show']);
         Route::post('invitations/{token}/accept', [InvitationController::class, 'accept']);

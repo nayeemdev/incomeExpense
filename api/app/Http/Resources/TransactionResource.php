@@ -34,6 +34,8 @@ class TransactionResource extends JsonResource
             'category' => $this->whenLoaded('category', fn () => $this->category ? [
                 'id' => $this->category->id,
                 'name' => $this->category->name,
+                'icon' => $this->category->icon,
+                'color' => $this->category->color,
             ] : null),
             'budget' => $this->whenLoaded('budget', fn () => $this->budget ? ['id' => $this->budget->id, 'name' => $this->budget->name] : null),
             'bill' => $this->whenLoaded('bill', fn () => $this->bill ? ['id' => $this->bill->id, 'name' => $this->bill->name] : null),

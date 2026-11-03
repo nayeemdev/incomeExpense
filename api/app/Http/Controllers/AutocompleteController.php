@@ -87,12 +87,12 @@ class AutocompleteController extends Controller
             ->limit($limit)
             ->pluck($counterpartyColumn);
 
-        $categories = Category::query()->whereKey($categoryIds)->get(['id', 'name'])->keyBy('id');
+        $categories = Category::query()->whereKey($categoryIds)->get(['id', 'name', 'icon', 'color'])->keyBy('id');
         $accounts = Account::query()->whereKey($counterpartyIds)->get(['id', 'name', 'type'])->keyBy('id');
 
         return response()->json(['data' => [
             'transactions' => TransactionResource::collection($transactions),
-            'categories' => $categoryIds->map(fn ($id) => $categories->get($id)?->only('id', 'name'))->filter()->values(),
+            'categories' => $categoryIds->map(fn ($id) => $categories->get($id)?->only('id', 'name', 'icon', 'color'))->filter()->values(),
             'counterparties' => $counterpartyIds->map(fn ($id) => $accounts->get($id)?->only('id', 'name', 'type'))->filter()->values(),
         ]]);
     }
