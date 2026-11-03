@@ -323,6 +323,25 @@ export type AppNotification = {
   created_at: string
 }
 
+export type SystemSettings = {
+  registration_enabled: boolean
+  invitation_expiry_days: number
+  exchange_rates_enabled: boolean
+  exchange_rates_url: string
+  bill_reminder_days: number
+  budget_warning_percentage: number
+  attachments_max_size_kb: number
+  mail_mailer: 'smtp' | 'log'
+  mail_host: string | null
+  mail_port: number | null
+  mail_scheme: 'smtp' | 'smtps' | null
+  mail_username: string | null
+  /** True when a password is saved; a string only while the admin is typing a new one. */
+  mail_password: boolean | string
+  mail_from_address: string | null
+  mail_from_name: string | null
+}
+
 export type NotificationSettings = {
   channels: string[]
   events: Record<string, string[]>

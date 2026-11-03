@@ -35,7 +35,10 @@ import type {
   Transaction,
   TransactionGroup,
   TransactionType,
-  User, CategoryStyles } from './types'
+  User,
+  CategoryStyles,
+  SystemSettings,
+} from './types'
 
 export type TransactionFilters = {
   account_id?: number
@@ -255,6 +258,11 @@ export const ruleGroupsQuery = (ledgerId: number) =>
     queryKey: [...ledgerKey(ledgerId), 'rule-groups'],
     queryFn: () => api.get<Resource<RuleGroup[]>>(`/ledgers/${ledgerId}/rule-groups`).then((r) => r.data),
   })
+
+export const systemSettingsQuery = queryOptions({
+  queryKey: ['system-settings'],
+  queryFn: () => api.get<Resource<SystemSettings>>('/admin/settings').then((r) => r.data),
+})
 
 export const ruleOptionsQuery = queryOptions({
   queryKey: ['rule-options'],

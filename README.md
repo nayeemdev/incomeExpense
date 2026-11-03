@@ -54,6 +54,10 @@ The `queue` container delivers notifications and webhooks, and the `scheduler` c
 
 The app is served on `http://localhost:8000` (change with `APP_PORT`). Nginx serves the web app and forwards `/api`, `/sanctum`, `/storage` and `/docs` to Laravel, so both share one origin. Migrations run automatically when the `api` container starts.
 
+## First run and admin settings
+
+The first account created on a new server becomes its admin. Everything that differs between installations, like whether strangers can sign up, outgoing email, exchange rates, alert thresholds and upload limits, is set from the web app under Settings, System, and stored in the database. The `.env` file only needs what the server must know before it can read the database: the app key, URL and database connection. Values in `.env` for those other settings still work as defaults until the admin changes them.
+
 ## Local development
 
 Requirements: PHP 8.5 with `bcmath`, `intl` and `pdo_mysql`, Composer, Node 24 with pnpm, Docker (for MySQL).
