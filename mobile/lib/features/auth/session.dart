@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../api/api_client.dart';
+import '../widgets/widget_sync.dart';
 
 const _serverKey = 'server_url';
 const _tokenKey = 'token';
@@ -70,6 +71,7 @@ class SessionNotifier extends AsyncNotifier<Session?> {
 
   Future<void> expire() async {
     await _storage.delete(key: _tokenKey);
+    await clearWidget();
     state = const AsyncData(null);
   }
 }
