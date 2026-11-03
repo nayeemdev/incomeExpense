@@ -49,11 +49,18 @@ class DemoSeeder extends Seeder
             return;
         }
 
+        if (User::query()->where('email', config()->string('ledgerfly.demo.email'))->exists()) {
+            $this->command?->error('The demo user already exists. Run it on a fresh database (php artisan migrate:fresh --seed) or set DEMO_EMAIL.');
+
+            return;
+        }
+
         $this->call([CurrencySeeder::class, LinkTypeSeeder::class]);
         mt_srand(2026);
 
         DB::transaction(function () {
-            $password = Str::password(16, symbols: false);
+            $configured = config('ledgerfly.demo.password');
+            $password = is_string($configured) && $configured !== '' ? $configured : Str::password(16, symbols: false);
             $this->createPeople($password);
             $this->createAccounts();
             $this->createPlanning();
@@ -62,14 +69,13 @@ class DemoSeeder extends Seeder
             $this->createRules();
             $this->createExtras();
 
-            $this->command?->info('Demo ledger ready. Sign in as '.$this->owner->email.' with password '.$password);
+            $this->command?->info('Demo ledger ready. Sign in as '.$this->owner->email.($configured ? ' with DEMO_PASSWORD from .env' : ' with password '.$password));
         });
     }
 
     private function createPeople(string $password): void
     {
         $email = config()->string('ledgerfly.demo.email');
-        abort_if(User::query()->where('email', $email)->exists(), 409, "{$email} already exists. Use a fresh database or set DEMO_EMAIL.");
 
         $this->owner = User::create(['name' => 'Demo Owner', 'email' => $email, 'password' => $password, 'is_admin' => User::query()->doesntExist()]);
         $partner = User::create(['name' => 'Demo Partner', 'email' => 'partner.'.$email, 'password' => $password]);
