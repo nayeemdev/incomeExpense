@@ -83,6 +83,7 @@ it('lists and marks in-app notifications as read', function () {
 
     $this->getJson('/api/v1/notifications')
         ->assertJsonPath('meta.unread', 1)
+        ->assertJsonPath('meta.quiet', false)
         ->assertJsonPath('data.0.event', 'low_balance');
     $this->postJson('/api/v1/notifications/read-all')->assertNoContent();
     $this->getJson('/api/v1/notifications?unread=1')->assertJsonCount(0, 'data');
@@ -101,4 +102,5 @@ it('respects channel preferences and quiet hours', function () {
     $notification = new LowBalanceNotification(Account::factory()->for($ledger)->create(), '1');
 
     expect($notification->via($user->refresh()))->toBe(['database']);
+    $this->getJson('/api/v1/notifications')->assertJsonPath('meta.quiet', true);
 });

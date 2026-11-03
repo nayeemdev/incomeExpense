@@ -34,6 +34,7 @@ class NotificationController extends Controller
                 'last_page' => $page->lastPage(),
                 'total' => $page->total(),
                 'unread' => $user->unreadNotifications()->count(),
+                'quiet' => NotificationPreferences::for($user)->inQuietHours(),
             ],
         ]);
     }
