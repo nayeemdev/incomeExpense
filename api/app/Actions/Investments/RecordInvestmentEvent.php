@@ -46,9 +46,45 @@ class RecordInvestmentEvent
                 InvestmentEventType::Valuation => $this->valuation($investment, $data, $date, $position->units),
             };
 
+            if ($type === InvestmentEventType::Buy) {
+                $event->update(['user_id' => $data['user_id'] ?? $user->id]);
+            }
+
             $this->syncClosed($investment, $type === InvestmentEventType::Sell ? $date : null);
 
             return $event;
+        });
+    }
+
+    /**
+     * Rolls a matured deposit into a new term: the interest it earned is booked as income that stays
+     * invested, and the investment starts again from the renewal date.
+     *
+     * @param  array{date: string, amount?: ?string, maturity_date?: ?string, interest_rate?: ?string}  $data
+     */
+    public function renew(Investment $investment, User $user, array $data): void
+    {
+        $date = CarbonImmutable::parse($data['date']);
+
+        DB::transaction(function () use ($investment, $user, $data, $date) {
+            $position = $investment->position($date);
+            $total = $data['amount'] ?? $position->value();
+            $interest = Money::of($total)->sub(Money::of($position->cost))->value;
+
+            if (Money::isNegative($interest)) {
+                throw ValidationException::withMessages(['amount' => __('The renewed amount cannot be less than what is invested.')]);
+            }
+
+            if (! Money::isZero(Money::round($interest, $investment->currency()->decimal_places))) {
+                $this->income($investment, $user, ['amount' => $interest, 'reinvest' => true], $date);
+            }
+
+            $investment->update([
+                'start_date' => $date,
+                'maturity_date' => $data['maturity_date'] ?? null,
+                'interest_rate' => $data['interest_rate'] ?? $investment->interest_rate,
+                'closed_at' => null,
+            ]);
         });
     }
 
@@ -141,12 +177,13 @@ class RecordInvestmentEvent
     {
         $amount = (string) $data['amount'];
         $name = $investment->account->name;
+        $reinvest = (bool) ($data['reinvest'] ?? false);
 
         $group = $this->book($investment, $user, $date, __('Income from :name', ['name' => $name]), [[
             'type' => TransactionType::Deposit->value,
             'amount' => $amount,
             'source_name' => $name,
-            'destination_id' => $data['account_id'],
+            'destination_id' => $reinvest ? $investment->account_id : $data['account_id'],
             'category_name' => __('Investment income'),
         ]]);
 
@@ -155,6 +192,7 @@ class RecordInvestmentEvent
             'type' => InvestmentEventType::Income,
             'date' => $date,
             'amount' => $amount,
+            'reinvested' => $reinvest,
         ]);
     }
 

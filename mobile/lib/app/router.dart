@@ -11,7 +11,10 @@ import '../features/auth/login_screen.dart';
 import '../features/auth/session.dart';
 import '../features/categories/categories.dart';
 import '../features/goals/goals_screen.dart';
+import '../features/investments/investment_calendar_screen.dart';
+import '../features/investments/investment_income_screen.dart';
 import '../features/investments/investments_screen.dart';
+import '../features/investments/what_if_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/ledger/ledger.dart';
 import '../features/ledger/ledger_data.dart';
@@ -25,6 +28,7 @@ import '../features/transactions/transaction_form_screen.dart';
 import '../features/transactions/transaction_screen.dart';
 import '../features/transactions/transactions_screen.dart';
 import '../features/widgets/widget_sync.dart';
+import '../features/zakat/zakat_screen.dart';
 import '../shared/widgets.dart';
 import 'theme.dart';
 
@@ -78,6 +82,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       pushed('/accounts/:id', (state) => AccountScreen(accountId: state.pathParameters['id']!, initial: state.extra as Account?)),
       pushed('/planning', (_) => const PlanningScreen()),
       pushed('/investments', (_) => const InvestmentsScreen()),
+      pushed('/investments/calendar', (_) => const InvestmentCalendarScreen()),
+      pushed('/investments/income', (_) => const InvestmentIncomeScreen()),
+      pushed('/investments/what-if', (_) => const WhatIfScreen()),
+      pushed('/zakat', (_) => const ZakatScreen()),
       pushed('/investments/:id', (state) => InvestmentScreen(investmentId: state.pathParameters['id']!)),
       pushed('/categories', (_) => const CategoriesScreen()),
       pushed('/notifications', (_) => const NotificationsScreen()),

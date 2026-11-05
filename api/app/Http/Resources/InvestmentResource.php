@@ -6,6 +6,7 @@ use App\Enums\InvestmentEventType;
 use App\Models\Investment;
 use App\Models\InvestmentEvent;
 use App\Support\InvestmentPosition;
+use App\Support\InvestmentRoadmap;
 use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
@@ -52,6 +53,14 @@ class InvestmentResource extends JsonResource
             'income' => $round($position->income),
             'realized' => $round($position->realized),
             'payout_amount' => $round($payout),
+            'tax_rate' => $this->tax_rate !== null ? Money::round($this->tax_rate, 4) : null,
+            'annual_return' => ($rate = $this->annualReturn($today)) === null ? null : round($rate, 2),
+            'contribution' => $this->contribution_amount === null ? null : [
+                'amount' => $round($this->contribution_amount),
+                'frequency' => $this->contribution_frequency,
+                'account_id' => $this->contribution_account_id,
+                'next_date' => $this->next_contribution_date?->toDateString(),
+            ],
             'upcoming_payouts' => $this->upcomingPayouts($today)->map(fn (CarbonImmutable $date) => [
                 'date' => $date->toDateString(),
                 'amount' => $round($payout),
@@ -66,9 +75,12 @@ class InvestmentResource extends JsonResource
                 'amount' => $round($event->amount),
                 'gain' => $event->cost !== null ? $round(Money::of($event->amount)->sub(Money::of($event->cost))->value) : null,
                 'transaction_group_id' => $event->transaction_group_id,
+                'reinvested' => $event->reinvested,
+                'user' => $event->user === null ? null : ['id' => $event->user->id, 'name' => $event->user->name],
             ])),
             'history' => $this->when($request->route('investment') !== null, fn () => $this->history($today, $decimals)),
-            'roadmap' => $this->when($request->route('investment') !== null, fn () => $this->roadmap($today, $position, $decimals)),
+            'roadmap' => $this->when($request->route('investment') !== null, fn () => InvestmentRoadmap::for($this->resource, $today)),
+            'contributors' => $this->when($request->route('investment') !== null, fn () => $this->contributors($position, $decimals)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
@@ -88,60 +100,33 @@ class InvestmentResource extends JsonResource
     }
 
     /**
-     * Where the return is heading: every payout from the start (recorded ones at what was received,
-     * later ones at the expected amount) with the running total, the date that total passes what
-     * was put in, and the value expected at maturity.
+     * Who put money in and their share of it, so income and value can be split between partners.
      *
-     * @return array<string, mixed>|null
+     * @return list<array{id: ?string, name: ?string, invested: string, share: float, income: string, value: string}>
      */
-    private function roadmap(CarbonImmutable $today, InvestmentPosition $position, int $decimals): ?array
+    private function contributors(InvestmentPosition $position, int $decimals): array
     {
-        if ($this->interest_rate === null || $this->closed_at !== null) {
-            return null;
+        $buys = $this->events->where('type', InvestmentEventType::Buy)->groupBy(fn (InvestmentEvent $event) => (string) $event->user_id);
+        $total = (float) $this->events->where('type', InvestmentEventType::Buy)->sum(fn (InvestmentEvent $event) => (float) $event->amount);
+
+        if ($total <= 0 || $buys->count() < 2) {
+            return [];
         }
 
-        $horizon = $today->addYears(config()->integer('ledgerfly.investments.roadmap_years'));
-        $end = $this->maturity_date ?? $horizon->addYears(config()->integer('ledgerfly.investments.break_even_years'));
-        $received = $this->events
-            ->filter(fn (InvestmentEvent $event) => $event->type === InvestmentEventType::Income
-                && ($this->start_date === null || $event->date->greaterThanOrEqualTo($this->start_date)))
-            ->values();
-        $expected = $position->payoutAmount();
-        $cumulative = '0';
-        $breakEven = null;
-        $points = [];
+        return array_values($buys->map(function ($events) use ($total, $position, $decimals) {
+            $user = $events->first()?->user;
+            $invested = (string) $events->sum(fn (InvestmentEvent $event) => (float) $event->amount);
+            $share = (float) $invested / $total;
 
-        foreach ($this->payoutDates($end) as $index => $date) {
-            if ($this->maturity_date === null && $date->greaterThan($horizon) && $breakEven !== null) {
-                break;
-            }
-
-            $event = $received->get($index);
-            $amount = $event !== null ? $event->amount : (string) $expected;
-            $cumulative = Money::sum($cumulative, $amount);
-
-            if ($breakEven === null && ! Money::isZero($position->invested) && Money::of($cumulative) >= Money::of($position->invested)) {
-                $breakEven = $date->toDateString();
-            }
-
-            $points[] = [
-                'date' => $date->toDateString(),
-                'amount' => Money::round($amount, $decimals),
-                'cumulative' => Money::round($cumulative, $decimals),
-                'status' => $event !== null ? 'received' : ($date->lessThanOrEqualTo($today) ? 'due' : 'expected'),
+            return [
+                'id' => $user?->id,
+                'name' => $user?->name,
+                'invested' => Money::round($invested, $decimals),
+                'share' => round($share * 100, 2),
+                'income' => Money::round((string) ((float) $position->income * $share), $decimals),
+                'value' => Money::round((string) ((float) $position->value() * $share), $decimals),
             ];
-        }
-
-        $maturityValue = $this->maturity_date !== null ? $this->position($this->maturity_date)->value() : null;
-
-        return [
-            'end' => ($points === [] ? $end : CarbonImmutable::parse(end($points)['date']))->toDateString(),
-            'points' => $points,
-            'total_return' => Money::round($cumulative, $decimals),
-            'break_even' => $breakEven,
-            'maturity_value' => $maturityValue !== null ? Money::round($maturityValue, $decimals) : null,
-            'maturity_gain' => $maturityValue !== null ? Money::round(Money::of($maturityValue)->sub(Money::of($position->cost))->value, $decimals) : null,
-        ];
+        })->sortByDesc('share')->all());
     }
 
     /**

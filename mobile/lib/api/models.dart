@@ -424,6 +424,8 @@ class InvestmentEvent {
     this.price,
     this.gain,
     this.groupId,
+    this.reinvested = false,
+    this.userName,
   });
 
   factory InvestmentEvent.fromJson(Json json) => InvestmentEvent(
@@ -435,6 +437,8 @@ class InvestmentEvent {
     price: json['price']?.toString(),
     gain: json['gain']?.toString(),
     groupId: json['transaction_group_id'] as String?,
+    reinvested: json['reinvested'] as bool? ?? false,
+    userName: (json['user'] as Map?)?['name'] as String?,
   );
 
   final String id;
@@ -445,6 +449,8 @@ class InvestmentEvent {
   final String? price;
   final String? gain;
   final String? groupId;
+  final bool reinvested;
+  final String? userName;
 }
 
 typedef Payout = ({DateTime date, String? amount, bool overdue});
@@ -458,6 +464,8 @@ class InvestmentRoadmap {
     this.breakEven,
     this.maturityValue,
     this.maturityGain,
+    this.installmentsLeft = 0,
+    this.installmentsTotal,
   });
 
   factory InvestmentRoadmap.fromJson(Json json) => InvestmentRoadmap(
@@ -475,6 +483,8 @@ class InvestmentRoadmap {
     breakEven: _date(json['break_even']),
     maturityValue: json['maturity_value']?.toString(),
     maturityGain: json['maturity_gain']?.toString(),
+    installmentsLeft: json['installments_left'] as int? ?? 0,
+    installmentsTotal: json['installments_total']?.toString(),
   );
 
   final DateTime end;
@@ -483,7 +493,13 @@ class InvestmentRoadmap {
   final DateTime? breakEven;
   final String? maturityValue;
   final String? maturityGain;
+  final int installmentsLeft;
+  final String? installmentsTotal;
 }
+
+typedef Contribution = ({String amount, String frequency, String? accountId, DateTime? nextDate});
+
+typedef Contributor = ({String? name, String invested, double share, String income, String value});
 
 class Investment {
   const Investment({
@@ -513,6 +529,10 @@ class Investment {
     this.gainPercent,
     this.payoutAmount,
     this.roadmap,
+    this.taxRate,
+    this.annualReturn,
+    this.contribution,
+    this.contributors = const [],
   });
 
   factory Investment.fromJson(Json json) => Investment(
@@ -545,6 +565,26 @@ class Investment {
     ),
     events: _list(json['events'], InvestmentEvent.fromJson),
     roadmap: json['roadmap'] is Map ? InvestmentRoadmap.fromJson((json['roadmap'] as Map).cast<String, dynamic>()) : null,
+    taxRate: double.tryParse(json['tax_rate']?.toString() ?? ''),
+    annualReturn: double.tryParse(json['annual_return']?.toString() ?? ''),
+    contribution: json['contribution'] is Map
+        ? (
+            amount: json['contribution']['amount'].toString(),
+            frequency: json['contribution']['frequency'] as String,
+            accountId: json['contribution']['account_id'] as String?,
+            nextDate: _date(json['contribution']['next_date']),
+          )
+        : null,
+    contributors: _list(
+      json['contributors'],
+      (item) => (
+        name: item['name'] as String?,
+        invested: item['invested'].toString(),
+        share: _number(item['share']),
+        income: item['income'].toString(),
+        value: item['value'].toString(),
+      ),
+    ),
   );
 
   final String id;
@@ -573,6 +613,10 @@ class Investment {
   final List<Payout> upcomingPayouts;
   final List<InvestmentEvent> events;
   final InvestmentRoadmap? roadmap;
+  final double? taxRate;
+  final double? annualReturn;
+  final Contribution? contribution;
+  final List<Contributor> contributors;
 
   bool get held => _number(cost) > 0 || units > 0;
 }
@@ -587,6 +631,8 @@ class Portfolio {
     required this.income,
     required this.allocation,
     this.gainPercent,
+    this.annualReturn,
+    this.targets = const [],
   });
 
   factory Portfolio.fromJson(Json json) {
@@ -600,6 +646,8 @@ class Portfolio {
       income: summary['income'].toString(),
       gainPercent: double.tryParse(summary['gain_percent']?.toString() ?? ''),
       allocation: _list(summary['allocation'], (item) => (kind: item['kind'] as String, value: _number(item['value']))),
+      annualReturn: double.tryParse(summary['annual_return']?.toString() ?? ''),
+      targets: _list(summary['targets'], parseTarget),
     );
   }
 
@@ -611,4 +659,144 @@ class Portfolio {
   final String income;
   final double? gainPercent;
   final List<({String kind, double value})> allocation;
+  final double? annualReturn;
+  final List<InvestmentTarget> targets;
+}
+
+typedef InvestmentTarget = ({String kind, double percent});
+
+InvestmentTarget parseTarget(Json json) => (kind: json['kind'] as String, percent: _number(json['percent']));
+
+class Member {
+  const Member({required this.id, required this.name});
+
+  factory Member.fromJson(Json json) => Member(id: json['id'] as String, name: json['name'] as String);
+
+  final String id;
+  final String name;
+}
+
+typedef IncomeRow = ({String id, String name, String kind, String currency, String income, String realized});
+
+class InvestmentIncome {
+  const InvestmentIncome({
+    required this.rows,
+    required this.currency,
+    required this.complete,
+    required this.income,
+    required this.realized,
+  });
+
+  factory InvestmentIncome.fromJson(Json json) => InvestmentIncome(
+    rows: _list(
+      json['rows'],
+      (row) => (
+        id: row['id'] as String,
+        name: row['name'] as String,
+        kind: row['kind'] as String,
+        currency: row['currency'] as String,
+        income: row['income'].toString(),
+        realized: row['realized'].toString(),
+      ),
+    ),
+    currency: json['currency'] as String,
+    complete: json['complete'] as bool? ?? true,
+    income: json['income'].toString(),
+    realized: json['realized'].toString(),
+  );
+
+  final List<IncomeRow> rows;
+  final String currency;
+  final bool complete;
+  final String income;
+  final String realized;
+}
+
+class CalendarItem {
+  const CalendarItem({
+    required this.investmentId,
+    required this.name,
+    required this.kind,
+    required this.currency,
+    required this.type,
+    required this.date,
+    required this.overdue,
+    this.amount,
+  });
+
+  factory CalendarItem.fromJson(Json json) => CalendarItem(
+    investmentId: json['investment_id'] as String,
+    name: json['name'] as String,
+    kind: json['kind'] as String,
+    currency: json['currency'] as String,
+    type: json['type'] as String,
+    date: _date(json['date'])!,
+    amount: json['amount']?.toString(),
+    overdue: json['overdue'] as bool? ?? false,
+  );
+
+  final String investmentId;
+  final String name;
+  final String kind;
+  final String currency;
+  final String type;
+  final DateTime date;
+  final String? amount;
+  final bool overdue;
+}
+
+class Projection {
+  const Projection({required this.roadmap, this.payoutAmount});
+
+  factory Projection.fromJson(Json json) => Projection(
+    payoutAmount: json['payout_amount']?.toString(),
+    roadmap: InvestmentRoadmap.fromJson((json['roadmap'] as Map).cast<String, dynamic>()),
+  );
+
+  final String? payoutAmount;
+  final InvestmentRoadmap roadmap;
+}
+
+typedef ZakatItem = ({String group, String name, String amount});
+
+class Zakat {
+  const Zakat({
+    required this.date,
+    required this.currency,
+    required this.complete,
+    required this.items,
+    required this.total,
+    required this.nisab,
+    required this.nisabGoldGrams,
+    required this.rate,
+    required this.due,
+    required this.zakat,
+  });
+
+  factory Zakat.fromJson(Json json) => Zakat(
+    date: _date(json['date'])!,
+    currency: json['currency'] as String,
+    complete: json['complete'] as bool? ?? true,
+    items: _list(
+      json['items'],
+      (item) => (group: item['group'] as String, name: item['name'] as String, amount: item['amount'].toString()),
+    ),
+    total: json['total'].toString(),
+    nisab: json['nisab'].toString(),
+    nisabGoldGrams: _number(json['nisab_gold_grams']),
+    rate: _number(json['rate']),
+    due: json['due'] as bool? ?? false,
+    zakat: json['zakat'].toString(),
+  );
+
+  final DateTime date;
+  final String currency;
+  final bool complete;
+  final List<ZakatItem> items;
+  final String total;
+  final String nisab;
+  final double nisabGoldGrams;
+  final double rate;
+  final bool due;
+  final String zakat;
 }

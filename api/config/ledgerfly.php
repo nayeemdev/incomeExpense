@@ -160,6 +160,11 @@ return [
         'break_even_years' => (int) env('INVESTMENT_BREAK_EVEN_YEARS', 30),
     ],
 
+    'zakat' => [
+        'nisab_gold_grams' => (float) env('ZAKAT_NISAB_GOLD_GRAMS', 87.48),
+        'rate' => (float) env('ZAKAT_RATE', 2.5),
+    ],
+
     'pagination' => [
         'per_page' => 50,
         'max_per_page' => 200,

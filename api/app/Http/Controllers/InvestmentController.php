@@ -13,11 +13,13 @@ use App\Http\Resources\InvestmentResource;
 use App\Models\Currency;
 use App\Models\Investment;
 use App\Models\InvestmentEvent;
+use App\Models\InvestmentTarget;
 use App\Models\Ledger;
 use App\Models\User;
 use App\Rules\Amount;
 use App\Support\CurrencyConverter;
 use App\Support\Money;
+use App\Support\Xirr;
 use Carbon\CarbonImmutable;
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,7 +59,7 @@ class InvestmentController extends Controller
 
     public function store(Request $request, Ledger $ledger, #[CurrentUser] User $user): JsonResponse
     {
-        $validated = $this->validated($request);
+        $validated = $this->validated($request, $ledger);
         $purchase = $request->validate([
             'purchase' => ['nullable', 'array'],
             'purchase.amount' => ['required_with:purchase', Amount::positive()],
@@ -75,6 +77,7 @@ class InvestmentController extends Controller
             ]);
 
             $investment = $ledger->investments()->create([...collect($validated)->except('name', 'currency_id')->all(), 'account_id' => $account->id]);
+            $this->ensureCurrency($investment, $validated['contribution_account_id'] ?? null, 'contribution_account_id');
 
             if ($purchase !== null) {
                 $this->ensureCurrency($investment, $purchase['account_id'] ?? null, 'purchase.account_id');
@@ -94,7 +97,8 @@ class InvestmentController extends Controller
 
     public function update(Request $request, Ledger $ledger, Investment $investment): InvestmentResource
     {
-        $validated = $this->validated($request, $investment);
+        $validated = $this->validated($request, $ledger, $investment);
+        $this->ensureCurrency($investment, $validated['contribution_account_id'] ?? null, 'contribution_account_id');
 
         DB::transaction(function () use ($investment, $validated) {
             $investment->account->update(collect($validated)->only('name')->all());
@@ -118,7 +122,8 @@ class InvestmentController extends Controller
     {
         $type = InvestmentEventType::tryFrom((string) $request->input('type'));
         $units = $investment->kind->tracksUnits();
-        $movesMoney = in_array($type, [InvestmentEventType::Sell, InvestmentEventType::Income], true);
+        $reinvest = $type === InvestmentEventType::Income && $request->boolean('reinvest');
+        $movesMoney = $type === InvestmentEventType::Sell || ($type === InvestmentEventType::Income && ! $reinvest);
         $pricePerUnit = $type === InvestmentEventType::Valuation && $units;
 
         $validated = $request->validate([
@@ -129,6 +134,8 @@ class InvestmentController extends Controller
             'price' => [Rule::requiredIf($pricePerUnit), 'nullable', Amount::positive()],
             'account_id' => [Rule::requiredIf($movesMoney), 'nullable', 'ulid', $this->ownAccountRule($ledger)],
             'close' => ['sometimes', 'boolean'],
+            'reinvest' => ['sometimes', 'boolean'],
+            'user_id' => ['nullable', 'ulid', Rule::exists('ledger_user', 'user_id')->where('ledger_id', $ledger->id)],
         ]);
 
         $this->ensureCurrency($investment, $validated['account_id'] ?? null, 'account_id');
@@ -146,6 +153,22 @@ class InvestmentController extends Controller
         return new InvestmentResource($this->load($investment->refresh()));
     }
 
+    public function renew(Request $request, Ledger $ledger, Investment $investment, #[CurrentUser] User $user): InvestmentResource
+    {
+        abort_if($investment->kind->tracksUnits(), 404);
+
+        $validated = $request->validate([
+            'date' => ['required', 'date'],
+            'amount' => ['nullable', Amount::positive()],
+            'maturity_date' => ['nullable', 'date', 'after:date'],
+            'interest_rate' => ['nullable', 'numeric', 'min:0', 'max:1000'],
+        ]);
+
+        $this->recorder->renew($investment, $user, $validated);
+
+        return new InvestmentResource($this->load($investment->refresh()));
+    }
+
     public function destroyEvent(Ledger $ledger, Investment $investment, InvestmentEvent $event): InvestmentResource
     {
         $this->recorder->delete($event);
@@ -155,13 +178,13 @@ class InvestmentController extends Controller
 
     private function load(Investment $investment): Investment
     {
-        return $investment->load('account.currency', 'events');
+        return $investment->load('account.currency', 'events.user');
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function validated(Request $request, ?Investment $investment = null): array
+    private function validated(Request $request, Ledger $ledger, ?Investment $investment = null): array
     {
         $required = $investment ? 'sometimes' : 'required';
 
@@ -174,7 +197,12 @@ class InvestmentController extends Controller
             'payout_frequency' => ['nullable', Rule::enum(RepeatFrequency::class)],
             'start_date' => ['nullable', 'date', Rule::requiredIf(fn () => $request->filled('payout_frequency'))],
             'maturity_date' => ['nullable', 'date', 'after:start_date'],
+            'tax_rate' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'notes' => ['nullable', 'string', 'max:65000'],
+            'contribution_amount' => ['nullable', Amount::positive()],
+            'contribution_frequency' => ['nullable', 'required_with:contribution_amount', Rule::enum(RepeatFrequency::class)],
+            'contribution_account_id' => ['nullable', 'required_with:contribution_amount', 'ulid', $this->ownAccountRule($ledger)],
+            'next_contribution_date' => ['nullable', 'required_with:contribution_amount', 'date'],
         ]);
     }
 
@@ -209,10 +237,17 @@ class InvestmentController extends Controller
         $today = CarbonImmutable::today();
         $totals = ['value' => '0', 'cost' => '0', 'gain' => '0', 'income' => '0', 'realized' => '0'];
         $byKind = [];
+        $flows = [];
         $complete = true;
 
         foreach ($investments as $investment) {
             $position = $investment->position($today);
+            $rate = $this->converter->convert('1', $investment->currency()->id, $primary->id, $today, $ledger->id);
+
+            foreach ($rate === null ? [] : $investment->cashFlows($today) as $flow) {
+                $flows[] = ['date' => $flow['date'], 'amount' => $flow['amount'] * (float) $rate];
+            }
+
             $amounts = ['value' => $position->value(), 'cost' => $position->cost, 'gain' => $position->gain(), 'income' => $position->income, 'realized' => $position->realized];
 
             foreach ($amounts as $key => $amount) {
@@ -234,13 +269,18 @@ class InvestmentController extends Controller
 
         $round = fn (string $amount) => Money::round($amount, $primary->decimal_places);
         arsort($byKind, SORT_NUMERIC);
+        usort($flows, fn (array $a, array $b) => $a['date'] <=> $b['date']);
+        $annual = Xirr::rate($flows);
 
         return [
             'currency' => $primary->code,
             'complete' => $complete,
             ...array_map($round, $totals),
             'gain_percent' => Money::isZero($totals['cost']) ? null : Money::round(Money::of($totals['gain'])->mul(100, Money::SCALE)->div(Money::of($totals['cost']), Money::SCALE)->value, 2),
+            'annual_return' => $annual === null ? null : round($annual, 2),
             'allocation' => collect($byKind)->map(fn (string $value, string $kind) => ['kind' => $kind, 'value' => $round($value)])->values(),
+            'targets' => $ledger->investmentTargets()->orderByDesc('percent')->get(['kind', 'percent'])
+                ->map(fn (InvestmentTarget $target) => ['kind' => $target->kind, 'percent' => (float) $target->percent]),
         ];
     }
 }

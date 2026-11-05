@@ -284,6 +284,8 @@ export type InvestmentEvent = {
   amount: string
   gain: string | null
   transaction_group_id: string | null
+  reinvested: boolean
+  user: { id: string; name: string } | null
 }
 
 export type Investment = {
@@ -311,10 +313,14 @@ export type Investment = {
   income: string
   realized: string
   payout_amount: string | null
+  tax_rate: string | null
+  annual_return: number | null
+  contribution: { amount: string; frequency: Frequency; account_id: string; next_date: string | null } | null
   upcoming_payouts: Array<{ date: string; amount: string | null; overdue: boolean }>
   events?: InvestmentEvent[]
   history?: Array<{ date: string; value: string; cost: string }>
   roadmap?: InvestmentRoadmap | null
+  contributors?: Array<{ id: string | null; name: string | null; invested: string; share: number; income: string; value: string }>
 }
 
 export type InvestmentRoadmap = {
@@ -322,8 +328,44 @@ export type InvestmentRoadmap = {
   points: Array<{ date: string; amount: string; cumulative: string; status: 'received' | 'due' | 'expected' }>
   total_return: string
   break_even: string | null
+  installments_left: number
+  installments_total: string
   maturity_value: string | null
   maturity_gain: string | null
+}
+
+export type InvestmentCalendarItem = {
+  investment_id: string
+  name: string
+  kind: InvestmentKind
+  currency: string
+  type: 'payout' | 'installment' | 'maturity'
+  date: string
+  amount: string | null
+  overdue: boolean
+}
+
+export type InvestmentIncome = {
+  start: string
+  end: string
+  rows: Array<{ id: string; name: string; kind: InvestmentKind; currency: string; income: string; realized: string }>
+  currency: string
+  complete: boolean
+  income: string
+  realized: string
+}
+
+export type Zakat = {
+  date: string
+  currency: string
+  complete: boolean
+  items: Array<{ group: 'cash' | 'investments' | 'gold' | 'receivables' | 'debts'; name: string; amount: string }>
+  total: string
+  nisab: string
+  nisab_gold_grams: number
+  rate: number
+  due: boolean
+  zakat: string
 }
 
 export type PortfolioSummary = {
@@ -335,7 +377,9 @@ export type PortfolioSummary = {
   income: string
   realized: string
   gain_percent: string | null
+  annual_return: number | null
   allocation: Array<{ kind: InvestmentKind; value: string }>
+  targets: Array<{ kind: InvestmentKind; percent: number }>
 }
 
 export type RepetitionType = 'daily' | 'weekly' | 'monthly' | 'ndom' | 'yearly'

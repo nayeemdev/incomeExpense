@@ -13,6 +13,7 @@ import {
   LogOutIcon,
   MonitorIcon,
   PieChartIcon,
+  HandHeartIcon,
   TargetIcon,
   TrendingUpIcon,
   ReceiptIcon,
@@ -84,6 +85,7 @@ export function AppSidebar() {
     { to: '/$ledgerId/bills', label: t('Bills'), icon: ReceiptIcon },
     { to: '/$ledgerId/piggy-banks', label: t('Goals'), icon: TargetIcon },
     { to: '/$ledgerId/investments', label: t('Investments'), icon: TrendingUpIcon },
+    { to: '/$ledgerId/zakat', label: t('Zakat'), icon: HandHeartIcon },
     { to: '/$ledgerId/recurring', label: t('Recurring'), icon: RepeatIcon },
   ] as const
 

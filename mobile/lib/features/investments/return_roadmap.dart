@@ -21,9 +21,16 @@ class ReturnRoadmap extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = Palette.of(context);
     final milestones = [
-      (LucideIcons.handCoins, 'Return by ${formatDate(roadmap.end)}', formatMoney(roadmap.totalReturn, currency), null),
+      if (roadmap.points.isNotEmpty) (LucideIcons.handCoins, 'Return by ${formatDate(roadmap.end)}', formatMoney(roadmap.totalReturn, currency), null),
       if (roadmap.breakEven != null)
         (LucideIcons.flag, 'Money back', formatDate(roadmap.breakEven!), 'Payouts cover the ${formatMoney(invested, currency)} put in'),
+      if (roadmap.installmentsLeft > 0)
+        (
+          LucideIcons.calendarSync,
+          'Installments left',
+          '${roadmap.installmentsLeft}',
+          roadmap.installmentsTotal == null ? null : '${formatMoney(roadmap.installmentsTotal!, currency)} still to pay in',
+        ),
       if (roadmap.maturityValue != null)
         (
           LucideIcons.trophy,

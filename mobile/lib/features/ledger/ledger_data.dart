@@ -131,6 +131,8 @@ void refreshLedgerData(void Function(ProviderOrFamily provider) invalidate) {
   invalidate(goalsProvider);
   invalidate(portfolioProvider);
   invalidate(investmentProvider);
+  invalidate(investmentCalendarProvider);
+  invalidate(investmentIncomeProvider);
   invalidate(categoriesProvider);
   invalidate(transactionGroupProvider);
 }
@@ -167,6 +169,26 @@ final investmentProvider = FutureProvider.autoDispose.family<Investment, String>
   final ledger = ref.watch(currentLedgerProvider);
   final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'investments/$id'));
   return Investment.fromJson(response['data'] as Json);
+});
+
+final investmentCalendarProvider = FutureProvider.autoDispose.family<List<CalendarItem>, int>((ref, months) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'investments/calendar'), query: {'months': months});
+  return _data(response, CalendarItem.fromJson);
+});
+
+final investmentIncomeProvider = FutureProvider.autoDispose.family<InvestmentIncome, int>((ref, year) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref
+      .watch(apiProvider)
+      .get(ledgerPath(ledger, 'investments/income'), query: {'start': isoDate(DateTime(year)), 'end': isoDate(DateTime(year, 12, 31))});
+  return InvestmentIncome.fromJson(response['data'] as Json);
+});
+
+final membersProvider = FutureProvider.autoDispose<List<Member>>((ref) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'members'));
+  return _data(response, Member.fromJson);
 });
 
 final userProvider = FutureProvider<User>((ref) async {
