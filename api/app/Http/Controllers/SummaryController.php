@@ -6,6 +6,7 @@ use App\Enums\AccountType;
 use App\Enums\TransactionType;
 use App\Http\Resources\AccountResource;
 use App\Models\Currency;
+use App\Models\Investment;
 use App\Models\Ledger;
 use App\Models\Posting;
 use App\Models\Transaction;
@@ -36,10 +37,10 @@ class SummaryController extends Controller
         $end = Carbon::parse($validated['end'])->toDateString();
         $this->currencies = Currency::query()->get()->keyBy('id');
 
-        $netWorth = $this->netWorth($ledger, $end);
+        $date = CarbonImmutable::parse($end);
+        $netWorth = $this->withInvestmentGains($ledger, $this->netWorth($ledger, $end), $date);
         $spent = $this->totalByType($ledger, TransactionType::Withdrawal, $start, $end);
         $earned = $this->totalByType($ledger, TransactionType::Deposit, $start, $end);
-        $date = CarbonImmutable::parse($end);
 
         return response()->json(['data' => [
             'net_worth' => $netWorth,
@@ -78,6 +79,33 @@ class SummaryController extends Controller
             ->where('transactions.date', '<=', $end)
             ->groupBy('postings.currency_id')
             ->select('postings.currency_id', DB::raw('SUM(postings.amount) AS total')));
+    }
+
+    /**
+     * Investment accounts hold what was paid in. Net worth counts what the investments are worth now.
+     *
+     * @param  list<array{currency: string, amount: string}>  $netWorth
+     * @return list<array{currency: string, amount: string}>
+     */
+    private function withInvestmentGains(Ledger $ledger, array $netWorth, CarbonImmutable $date): array
+    {
+        $totals = collect($netWorth)->pluck('amount', 'currency')->all();
+
+        $ledger->investments()
+            ->whereHas('account', fn (Builder $query) => $query->where('include_net_worth', true))
+            ->with('account.currency', 'events')
+            ->get()
+            ->each(function (Investment $investment) use (&$totals, $date) {
+                $code = $this->currencies->get((string) $investment->account->currency_id)?->code;
+
+                if ($code !== null) {
+                    $totals[$code] = Money::sum($totals[$code] ?? '0', $investment->position($date)->gain());
+                }
+            });
+
+        return array_values(collect($totals)
+            ->map(fn (string $amount, string $code) => ['currency' => $code, 'amount' => Money::round($amount, $this->currencies->firstWhere('code', $code)->decimal_places ?? Money::SCALE)])
+            ->all());
     }
 
     /**
