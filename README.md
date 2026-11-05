@@ -51,6 +51,8 @@ plus a web app and native apps for Android and iOS.
 - Shares, funds, deposits, savings schemes, gold, property and private investments
 - Average cost, valuations, realised gains and income
 - Payout schedules with reminders and a return roadmap
+- Tax at source, DPS installments, renewals and partner shares
+- Yearly return, target mix, income report, what-if calculator and zakat estimate
 
 </td>
 <td width="50%" valign="top">
