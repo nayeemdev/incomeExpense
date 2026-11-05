@@ -2,7 +2,7 @@
 {
   "path": "/",
   "title": "LedgerFly: self-hosted personal finance manager",
-  "description": "Track accounts, budgets, bills and goals on your own server. A free, open source finance manager with a web app and apps for Android and iOS.",
+  "description": "Track accounts, budgets, bills, goals and investments on your own server. A free, open source finance manager with a web app and apps for Android and iOS.",
   "og": "home.png",
   "ogAlt": "LedgerFly dashboard showing net worth, spending and income",
   "schema": {
@@ -12,7 +12,7 @@
         "@type": "SoftwareApplication",
         "name": "LedgerFly",
         "url": "{{url}}/",
-        "description": "Self-hosted personal finance manager with double-entry accounts, budgets, bills, rules and reports, plus web and mobile apps.",
+        "description": "Self-hosted personal finance manager with double-entry accounts, budgets, bills, investments, rules and reports, plus web and mobile apps.",
         "applicationCategory": "FinanceApplication",
         "operatingSystem": "Web, Android, iOS, Linux",
         "license": "https://www.gnu.org/licenses/agpl-3.0.html",
@@ -41,7 +41,7 @@
   <span class="float-chip chip-b" data-speed="-0.16">Goals</span>
   <div class="wrap">
     <h1 data-reveal>Your money, on your <span>own server.</span></h1>
-    <p class="lead" data-reveal style="--d:.18s">Open source, self-hosted and free forever. LedgerFly tracks accounts, budgets, bills and goals with real double-entry bookkeeping, on the web, Android and iPhone.</p>
+    <p class="lead" data-reveal style="--d:.18s">Open source, self-hosted and free forever. LedgerFly tracks accounts, budgets, bills, goals and investments with real double-entry bookkeeping, on the web, Android and iPhone.</p>
     <div class="actions" data-reveal style="--d:.26s">
       <a class="btn btn-primary" href="/self-hosting/">Get started free <svg class="i arrow"><use href="#i-arrow"/></svg></a>
       <a class="btn btn-soft" href="{{repo}}" rel="noopener"><svg class="i"><use href="#i-github"/></svg>Star on GitHub</a>
@@ -275,6 +275,23 @@
       <div class="panel-art">
         <div class="window"><div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div><img src="/images/web-bills-light-1600.webp" srcset="/images/web-bills-light-800.webp 800w, /images/web-bills-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 720px" width="1600" height="1000" alt="Bills page with expected and paid amounts and due dates" loading="lazy" decoding="async"></div>
         <div class="ui" data-speed="0.1"><div class="ui-label">Eating out</div><div class="ui-value">৳<span data-count="20000">20,000</span> <small class="ui-label">of ৳25,000</small></div><div class="bar" style="--w:80%;--c:#ea580c"><i></i></div></div>
+      </div>
+    </article>
+
+    <article class="panel" data-reveal>
+      <div>
+        <h3>Investments and returns</h3>
+        <p>Everything you hold, valued in one place, with a roadmap of what it will pay you.</p>
+        <ul class="checks">
+          <li>Shares, funds, fixed deposits, savings schemes, gold and property</li>
+          <li>Money put into a business that pays a fixed return every quarter</li>
+          <li>Expected payouts, reminders and the date your money is back</li>
+          <li>Gains, income and net worth at today's value</li>
+        </ul>
+      </div>
+      <div class="panel-art">
+        <div class="window"><div class="window-bar" aria-hidden="true"><span></span><span></span><span></span></div><img src="/images/web-investments-light-1600.webp" srcset="/images/web-investments-light-800.webp 800w, /images/web-investments-light-1600.webp 1600w" sizes="(max-width: 960px) 100vw, 720px" width="1600" height="1000" alt="Investment page with a return roadmap of quarterly payouts and the date the money is back" loading="lazy" decoding="async"></div>
+        <div class="ui" data-speed="0.1"><div class="ui-label">Next payout</div><div class="ui-value">৳<span data-count="25000">25,000</span> <small class="ui-label">every quarter</small></div><div class="bar" style="--w:20%;--c:#16a34a"><i></i></div></div>
       </div>
     </article>
 
