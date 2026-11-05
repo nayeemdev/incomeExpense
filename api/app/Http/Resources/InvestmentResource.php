@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\InvestmentEventType;
 use App\Models\Investment;
 use App\Models\InvestmentEvent;
+use App\Support\InvestmentPosition;
 use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
@@ -66,6 +68,7 @@ class InvestmentResource extends JsonResource
                 'transaction_group_id' => $event->transaction_group_id,
             ])),
             'history' => $this->when($request->route('investment') !== null, fn () => $this->history($today, $decimals)),
+            'roadmap' => $this->when($request->route('investment') !== null, fn () => $this->roadmap($today, $position, $decimals)),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
@@ -82,6 +85,63 @@ class InvestmentResource extends JsonResource
         $due = $pending->filter(fn (CarbonImmutable $date) => $date->lessThanOrEqualTo($today));
 
         return $due->merge($pending->diffKeys($due)->take(4))->values();
+    }
+
+    /**
+     * Where the return is heading: every payout from the start (recorded ones at what was received,
+     * later ones at the expected amount) with the running total, the date that total passes what
+     * was put in, and the value expected at maturity.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function roadmap(CarbonImmutable $today, InvestmentPosition $position, int $decimals): ?array
+    {
+        if ($this->interest_rate === null || $this->closed_at !== null) {
+            return null;
+        }
+
+        $horizon = $today->addYears(config()->integer('ledgerfly.investments.roadmap_years'));
+        $end = $this->maturity_date ?? $horizon->addYears(config()->integer('ledgerfly.investments.break_even_years'));
+        $received = $this->events
+            ->filter(fn (InvestmentEvent $event) => $event->type === InvestmentEventType::Income
+                && ($this->start_date === null || $event->date->greaterThanOrEqualTo($this->start_date)))
+            ->values();
+        $expected = $position->payoutAmount();
+        $cumulative = '0';
+        $breakEven = null;
+        $points = [];
+
+        foreach ($this->payoutDates($end) as $index => $date) {
+            if ($this->maturity_date === null && $date->greaterThan($horizon) && $breakEven !== null) {
+                break;
+            }
+
+            $event = $received->get($index);
+            $amount = $event !== null ? $event->amount : (string) $expected;
+            $cumulative = Money::sum($cumulative, $amount);
+
+            if ($breakEven === null && ! Money::isZero($position->invested) && Money::of($cumulative) >= Money::of($position->invested)) {
+                $breakEven = $date->toDateString();
+            }
+
+            $points[] = [
+                'date' => $date->toDateString(),
+                'amount' => Money::round($amount, $decimals),
+                'cumulative' => Money::round($cumulative, $decimals),
+                'status' => $event !== null ? 'received' : ($date->lessThanOrEqualTo($today) ? 'due' : 'expected'),
+            ];
+        }
+
+        $maturityValue = $this->maturity_date !== null ? $this->position($this->maturity_date)->value() : null;
+
+        return [
+            'end' => ($points === [] ? $end : CarbonImmutable::parse(end($points)['date']))->toDateString(),
+            'points' => $points,
+            'total_return' => Money::round($cumulative, $decimals),
+            'break_even' => $breakEven,
+            'maturity_value' => $maturityValue !== null ? Money::round($maturityValue, $decimals) : null,
+            'maturity_gain' => $maturityValue !== null ? Money::round(Money::of($maturityValue)->sub(Money::of($position->cost))->value, $decimals) : null,
+        ];
     }
 
     /**

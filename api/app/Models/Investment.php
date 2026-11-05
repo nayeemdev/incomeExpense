@@ -41,6 +41,7 @@ class Investment extends Model
     {
         return [
             'kind' => InvestmentKind::class,
+            'interest_rate' => 'decimal:4',
             'payout_frequency' => RepeatFrequency::class,
             'start_date' => 'immutable_date',
             'maturity_date' => 'immutable_date',

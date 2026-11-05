@@ -155,6 +155,11 @@ return [
         ],
     ],
 
+    'investments' => [
+        'roadmap_years' => (int) env('INVESTMENT_ROADMAP_YEARS', 3),
+        'break_even_years' => (int) env('INVESTMENT_BREAK_EVEN_YEARS', 30),
+    ],
+
     'pagination' => [
         'per_page' => 50,
         'max_per_page' => 200,

@@ -79,6 +79,13 @@ it('schedules quarterly payouts from a fixed yearly return and books them as inc
         ->assertJsonPath('data.value', '100000.00');
 
     expect(Transaction::query()->where('type', 'deposit')->where('amount', '2500')->exists())->toBeTrue();
+
+    $this->getJson("/api/v1/ledgers/{$ledger->id}/investments/{$id}")
+        ->assertJsonPath('data.roadmap.points.0.status', 'received')
+        ->assertJsonPath('data.roadmap.points.1.status', 'expected')
+        ->assertJsonPath('data.roadmap.points.1.cumulative', '5000.00')
+        ->assertJsonPath('data.roadmap.break_even', '2036-06-01')
+        ->assertJsonPath('data.roadmap.maturity_value', null);
 });
 
 it('accrues interest on a deposit that pays at maturity and closes it on withdrawal', function () {
@@ -90,6 +97,10 @@ it('accrues interest on a deposit that pays at maturity and closes it on withdra
         'interest_rate' => '7.3', 'start_date' => '2026-01-05', 'maturity_date' => '2027-01-05',
         'purchase' => ['amount' => '50000', 'date' => '2026-01-05', 'account_id' => $bank->id],
     ])->assertJsonPath('data.value', '53040.00')->json('data.id');
+
+    $this->getJson("/api/v1/ledgers/{$ledger->id}/investments/{$id}")
+        ->assertJsonPath('data.roadmap.points', [])
+        ->assertJsonPath('data.roadmap.maturity_value', '53650.00');
 
     $this->postJson("/api/v1/ledgers/{$ledger->id}/investments/{$id}/events", ['type' => 'sell', 'date' => '2026-11-05', 'amount' => '53040', 'account_id' => $bank->id, 'close' => true])
         ->assertJsonPath('data.closed_at', '2026-11-05')
