@@ -20,6 +20,7 @@ use App\Models\Ledger;
 use App\Models\LinkType;
 use App\Models\TransactionGroup;
 use App\Models\User;
+use App\Support\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
@@ -473,7 +474,7 @@ class DemoSeeder extends Seeder
 
     private function money(string $amount): string
     {
-        return bcmul($amount, $this->scale, 2);
+        return Money::round(Money::of($amount)->mul(Money::of($this->scale), Money::SCALE)->value, 2);
     }
 
     /** Amounts on the euro travel account stay in euros; everything else is in the ledger currency. */
