@@ -47,6 +47,11 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
   late final _name = TextEditingController(text: widget.investment?.name);
   late final _symbol = TextEditingController(text: widget.investment?.symbol);
   late final _rate = TextEditingController(text: widget.investment?.interestRate?.toString());
+  late final _tax = TextEditingController(text: widget.investment?.taxRate?.toString());
+  late final _installment = TextEditingController(text: widget.investment?.contribution?.amount);
+  late String _installmentFrequency = widget.investment?.contribution?.frequency ?? 'monthly';
+  late String? _installmentAccountId = widget.investment?.contribution?.accountId;
+  late DateTime? _nextInstallment = widget.investment?.contribution?.nextDate;
   final _amount = TextEditingController();
   final _units = TextEditingController();
   late String _kind = widget.investment?.kind ?? 'stock';
@@ -59,7 +64,7 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
 
   @override
   void dispose() {
-    for (final controller in [_name, _symbol, _rate, _amount, _units]) {
+    for (final controller in [_name, _symbol, _rate, _tax, _installment, _amount, _units]) {
       controller.dispose();
     }
     super.dispose();
@@ -77,6 +82,8 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
       'payout_frequency': interest ? _frequency : null,
       'start_date': isoDate(_start ?? _date),
       'maturity_date': interest && _maturity != null ? isoDate(_maturity!) : null,
+      'tax_rate': interest && _tax.text.trim().isNotEmpty ? _tax.text.trim() : null,
+      ..._installmentBody(),
     };
     setState(() => _saving = true);
     try {
@@ -106,14 +113,27 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
     }
   }
 
+  bool get _hasInstallment => takesInstallments(_kind) && (double.tryParse(_installment.text.trim()) ?? 0) > 0;
+
+  Map<String, Object?> _installmentBody() => {
+    'contribution_amount': _hasInstallment ? _installment.text.trim() : null,
+    'contribution_frequency': _hasInstallment ? _installmentFrequency : null,
+    'contribution_account_id': _hasInstallment ? _installmentAccountId : null,
+    'next_contribution_date': _hasInstallment && _nextInstallment != null ? isoDate(_nextInstallment!) : null,
+  };
+
   @override
   Widget build(BuildContext context) {
     final editing = widget.investment != null;
     final interest = earnsInterest(_kind);
     final units = tracksUnits(_kind);
-    final currency = ref.watch(currentLedgerProvider).currency;
+    final currency = widget.investment?.currency ?? ref.watch(currentLedgerProvider).currency;
     final accounts = _cashAccounts(ref, currency.id);
-    final ready = _name.text.trim().isNotEmpty && (!units || _amount.text.trim().isEmpty || _units.text.trim().isNotEmpty) && !_saving;
+    final ready =
+        _name.text.trim().isNotEmpty &&
+        (!units || _amount.text.trim().isEmpty || _units.text.trim().isNotEmpty) &&
+        (!_hasInstallment || (_installmentAccountId != null && _nextInstallment != null)) &&
+        !_saving;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
@@ -153,6 +173,13 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
               decoration: const InputDecoration(hintText: '10', suffixText: '%'),
             ),
             const SizedBox(height: 16),
+            const FieldLabel('Tax on profit'),
+            TextField(
+              controller: _tax,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(hintText: 'Optional, taken from each payout', suffixText: '%'),
+            ),
+            const SizedBox(height: 16),
             const FieldLabel('Pays out'),
             QuickPicks(
               items: [
@@ -166,7 +193,7 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
             Row(
               children: [
                 Expanded(
-                  child: _DateField(
+                  child: DateField(
                     label: 'Start date',
                     value: _start,
                     hint: 'First payment',
@@ -175,7 +202,7 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _DateField(
+                  child: DateField(
                     label: 'Maturity',
                     value: _maturity,
                     hint: 'Optional',
@@ -184,6 +211,49 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
                 ),
               ],
             ),
+          ],
+          if (takesInstallments(_kind)) ...[
+            const SizedBox(height: 20),
+            Text('Installment', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            Text(
+              'Money paid in on a schedule. Each one is recorded for you on its date.',
+              style: TextStyle(color: Palette.of(context).muted, fontSize: 12.5),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: _installment,
+              onChanged: (_) => setState(() {}),
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(hintText: 'Amount, optional', suffixText: currency.code),
+            ),
+            if (_hasInstallment) ...[
+              const SizedBox(height: 12),
+              const FieldLabel('Every', required: true),
+              QuickPicks(
+                items: [
+                  for (final entry in contributionFrequencies.entries)
+                    (label: entry.value, hint: null, active: entry.key == _installmentFrequency, leading: null),
+                ],
+                onPick: (index) => setState(() => _installmentFrequency = contributionFrequencies.keys.elementAt(index)),
+              ),
+              const SizedBox(height: 12),
+              const FieldLabel('Paid from', required: true),
+              QuickPicks(
+                items: [
+                  for (final account in accounts)
+                    (label: account.name, hint: null, active: account.id == _installmentAccountId, leading: null),
+                ],
+                onPick: (index) => setState(() => _installmentAccountId = accounts[index].id),
+              ),
+              const SizedBox(height: 12),
+              DateField(
+                label: editing ? 'Next installment' : 'First installment',
+                value: _nextInstallment,
+                hint: 'Choose a date',
+                onChanged: (date) => setState(() => _nextInstallment = date),
+              ),
+            ],
           ],
           if (!editing) ...[
             const SizedBox(height: 20),
@@ -213,7 +283,7 @@ class _InvestmentFormState extends ConsumerState<_InvestmentForm> {
               ],
             ),
             const SizedBox(height: 12),
-            _DateField(label: 'Date', value: _date, onChanged: (date) => setState(() => _date = date ?? _date)),
+            DateField(label: 'Date', value: _date, onChanged: (date) => setState(() => _date = date ?? _date)),
             const SizedBox(height: 12),
             const FieldLabel('Paid from'),
             QuickPicks(
@@ -249,14 +319,16 @@ class _EventFormState extends ConsumerState<_EventForm> {
   final _units = TextEditingController();
   late DateTime _date = widget.date ?? Dates.today();
   String? _accountId;
+  String? _userId;
   bool _close = false;
+  bool _reinvest = false;
   bool _saving = false;
 
   bool get _pricePerUnit => widget.type == 'valuation' && widget.investment.tracksUnits;
 
   bool get _needsUnits => widget.investment.tracksUnits && (widget.type == 'buy' || widget.type == 'sell');
 
-  bool get _movesMoney => widget.type != 'valuation';
+  bool get _movesMoney => widget.type != 'valuation' && !_reinvest;
 
   @override
   void dispose() {
@@ -277,6 +349,8 @@ class _EventFormState extends ConsumerState<_EventForm> {
         'units': _needsUnits ? _units.text.trim() : null,
         'account_id': _movesMoney ? _accountId : null,
         'close': _close,
+        if (widget.type == 'income') 'reinvest': _reinvest,
+        if (widget.type == 'buy' && _userId != null) 'user_id': _userId,
       });
       refreshLedgerData(ref.invalidate);
       if (mounted) Navigator.pop(context, true);
@@ -293,6 +367,8 @@ class _EventFormState extends ConsumerState<_EventForm> {
     final investment = widget.investment;
     final accounts = _cashAccounts(ref, investment.currency.id);
     final buying = widget.type == 'buy';
+    final members = buying ? ref.watch(membersProvider).value ?? const <Member>[] : const <Member>[];
+    final me = ref.watch(userProvider).value?.id;
     if (!buying && _movesMoney) _accountId ??= accounts.firstOrNull?.id;
     final amountLabel = switch (widget.type) {
       'buy' => 'Total paid',
@@ -311,7 +387,7 @@ class _EventFormState extends ConsumerState<_EventForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _DateField(label: 'Date', value: _date, onChanged: (date) => setState(() => _date = date ?? _date)),
+          DateField(label: 'Date', value: _date, onChanged: (date) => setState(() => _date = date ?? _date)),
           if (_needsUnits) ...[
             const SizedBox(height: 16),
             FieldLabel(investment.kind == 'gold' ? 'Quantity' : 'Units', required: true),
@@ -332,6 +408,24 @@ class _EventFormState extends ConsumerState<_EventForm> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(hintText: '0.00', suffixText: investment.currency.code),
           ),
+          if (widget.type == 'income') ...[
+            const SizedBox(height: 12),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              value: _reinvest,
+              onChanged: (value) => setState(() => _reinvest = value),
+              title: const Text('Keep it invested'),
+              subtitle: Text('The income is added to the investment instead of paid out.', style: TextStyle(color: palette.muted)),
+            ),
+          ],
+          if (members.length > 1) ...[
+            const SizedBox(height: 16),
+            const FieldLabel('Put in by'),
+            QuickPicks(
+              items: [for (final member in members) (label: member.name, hint: null, active: member.id == (_userId ?? me), leading: null)],
+              onPick: (index) => setState(() => _userId = members[index].id),
+            ),
+          ],
           if (_movesMoney) ...[
             const SizedBox(height: 16),
             FieldLabel(buying ? 'Paid from' : 'Received in', required: !buying),
@@ -361,8 +455,224 @@ class _EventFormState extends ConsumerState<_EventForm> {
   }
 }
 
-class _DateField extends StatelessWidget {
-  const _DateField({required this.label, required this.value, required this.onChanged, this.hint});
+Future<void> showRenewSheet(BuildContext context, Investment investment) async {
+  final saved = await showAppSheet<bool>(
+    context,
+    title: 'Renew ${investment.name}',
+    builder: (_) => _RenewForm(investment: investment),
+  );
+  if (saved == true && context.mounted) showToast(context, 'Renewed');
+}
+
+class _RenewForm extends ConsumerStatefulWidget {
+  const _RenewForm({required this.investment});
+
+  final Investment investment;
+
+  @override
+  ConsumerState<_RenewForm> createState() => _RenewFormState();
+}
+
+class _RenewFormState extends ConsumerState<_RenewForm> {
+  final _amount = TextEditingController();
+  final _rate = TextEditingController();
+  late DateTime _date = () {
+    final maturity = widget.investment.maturityDate;
+    return maturity != null && !maturity.isAfter(Dates.today()) ? maturity : Dates.today();
+  }();
+  DateTime? _maturity;
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _amount.dispose();
+    _rate.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      await ref.read(apiProvider).post(ledgerPath(ref.read(currentLedgerProvider), 'investments/${widget.investment.id}/renew'), {
+        'date': isoDate(_date),
+        'amount': _amount.text.trim().isEmpty ? null : _amount.text.trim(),
+        'maturity_date': _maturity == null ? null : isoDate(_maturity!),
+        'interest_rate': _rate.text.trim().isEmpty ? null : _rate.text.trim(),
+      });
+      refreshLedgerData(ref.invalidate);
+      if (mounted) Navigator.pop(context, true);
+    } catch (error) {
+      if (mounted) showError(context, error);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final investment = widget.investment;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Starts a new term from this date, keeping the interest earned so far invested.',
+            style: TextStyle(color: Palette.of(context).muted, fontSize: 13),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: DateField(label: 'Renew on', value: _date, onChanged: (date) => setState(() => _date = date ?? _date)),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DateField(
+                  label: 'New maturity',
+                  value: _maturity,
+                  hint: 'Optional',
+                  onChanged: (date) => setState(() => _maturity = date),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const FieldLabel('New yearly return'),
+          TextField(
+            controller: _rate,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              hintText: investment.interestRate == null ? 'Optional' : 'Keep ${rateText(investment.interestRate!)}',
+              suffixText: '%',
+            ),
+          ),
+          const SizedBox(height: 16),
+          const FieldLabel('Amount'),
+          TextField(
+            controller: _amount,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            decoration: InputDecoration(
+              hintText: 'Current value, ${formatMoney(investment.value, investment.currency.code)}',
+              suffixText: investment.currency.code,
+            ),
+          ),
+          const SizedBox(height: 24),
+          FilledButton(onPressed: _saving ? null : _save, child: Text(_saving ? 'Saving...' : 'Renew')),
+        ],
+      ),
+    );
+  }
+}
+
+Future<void> showTargetsSheet(BuildContext context, List<InvestmentTarget> targets) async {
+  final saved = await showAppSheet<bool>(
+    context,
+    title: 'Target mix',
+    builder: (_) => _TargetsForm(targets: targets),
+  );
+  if (saved == true && context.mounted) showToast(context, 'Targets saved');
+}
+
+class _TargetsForm extends ConsumerStatefulWidget {
+  const _TargetsForm({required this.targets});
+
+  final List<InvestmentTarget> targets;
+
+  @override
+  ConsumerState<_TargetsForm> createState() => _TargetsFormState();
+}
+
+class _TargetsFormState extends ConsumerState<_TargetsForm> {
+  late final _fields = {
+    for (final kind in investmentKinds.keys)
+      kind: TextEditingController(
+        text: switch (widget.targets.where((target) => target.kind == kind).firstOrNull) {
+          final target? => target.percent.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), ''),
+          null => '',
+        },
+      ),
+  };
+  bool _saving = false;
+
+  double get _sum => _fields.values.fold(0, (sum, field) => sum + (double.tryParse(field.text.trim()) ?? 0));
+
+  @override
+  void dispose() {
+    for (final field in _fields.values) {
+      field.dispose();
+    }
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      await ref.read(apiProvider).put(ledgerPath(ref.read(currentLedgerProvider), 'investment-targets'), {
+        'targets': [
+          for (final MapEntry(key: kind, value: field) in _fields.entries)
+            if ((double.tryParse(field.text.trim()) ?? 0) > 0) {'kind': kind, 'percent': field.text.trim()},
+        ],
+      });
+      ref.invalidate(portfolioProvider);
+      if (mounted) Navigator.pop(context, true);
+    } catch (error) {
+      if (mounted) showError(context, error);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Palette.of(context);
+    final sum = _sum;
+    final valid = sum <= 100 && _fields.values.every((field) => field.text.trim().isEmpty || double.tryParse(field.text.trim()) != null);
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'The share of the portfolio you aim for in each kind. Leave a kind empty for no target.',
+            style: TextStyle(color: palette.muted, fontSize: 13),
+          ),
+          const SizedBox(height: 12),
+          for (final MapEntry(key: kind, value: field) in _fields.entries)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  Expanded(child: Text(investmentKinds[kind]!)),
+                  SizedBox(
+                    width: 110,
+                    child: TextField(
+                      controller: field,
+                      textAlign: TextAlign.right,
+                      onChanged: (_) => setState(() {}),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(hintText: '0', suffixText: '%'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(height: 4),
+          Text(
+            sum > 100 ? 'The targets add up to ${rateText(sum)}, more than 100%.' : 'Total ${rateText(sum)}',
+            style: TextStyle(color: sum > 100 ? palette.negative : palette.muted, fontSize: 13),
+          ),
+          const SizedBox(height: 20),
+          FilledButton(onPressed: valid && !_saving ? _save : null, child: Text(_saving ? 'Saving...' : 'Save targets')),
+        ],
+      ),
+    );
+  }
+}
+
+class DateField extends StatelessWidget {
+  const DateField({super.key, required this.label, required this.value, required this.onChanged, this.hint});
 
   final String label;
   final DateTime? value;

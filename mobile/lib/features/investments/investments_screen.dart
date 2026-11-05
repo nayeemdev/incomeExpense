@@ -11,6 +11,7 @@ import '../../shared/widgets.dart';
 import '../auth/session.dart';
 import '../ledger/ledger.dart';
 import '../ledger/ledger_data.dart';
+import 'investment_calendar_screen.dart';
 import 'investment_forms.dart';
 import 'investment_labels.dart';
 import 'return_roadmap.dart';
@@ -37,7 +38,24 @@ class InvestmentsScreen extends ConsumerWidget {
         title: const Text('Investments'),
         actions: [
           if (canEdit) TextButton(onPressed: () => showInvestmentSheet(context, ref), child: const Text('Add new')),
-          const SizedBox(width: 8),
+          PopupMenuButton<String>(
+            tooltip: 'More',
+            icon: const Icon(LucideIcons.ellipsisVertical, size: 20),
+            onSelected: (path) => context.push(path),
+            itemBuilder: (_) => [
+              for (final (path, icon, label) in [
+                ('/investments/calendar', LucideIcons.calendarDays, 'Calendar'),
+                ('/investments/income', LucideIcons.receiptText, 'Income report'),
+                ('/investments/what-if', LucideIcons.calculator, 'What-if calculator'),
+                ('/zakat', LucideIcons.handCoins, 'Zakat'),
+              ])
+                PopupMenuItem(
+                  value: path,
+                  child: Row(children: [Icon(icon, size: 18), const SizedBox(width: 12), Text(label)]),
+                ),
+            ],
+          ),
+          const SizedBox(width: 4),
         ],
       ),
       body: RefreshIndicator.adaptive(
@@ -66,22 +84,25 @@ class InvestmentsScreen extends ConsumerWidget {
   }
 }
 
-class _PortfolioBody extends StatefulWidget {
+class _PortfolioBody extends ConsumerStatefulWidget {
   const _PortfolioBody(this.portfolio);
 
   final Portfolio portfolio;
 
   @override
-  State<_PortfolioBody> createState() => _PortfolioBodyState();
+  ConsumerState<_PortfolioBody> createState() => _PortfolioBodyState();
 }
 
-class _PortfolioBodyState extends State<_PortfolioBody> {
+class _PortfolioBodyState extends ConsumerState<_PortfolioBody> {
   int? _selected;
 
   @override
   Widget build(BuildContext context) {
     final palette = Palette.of(context);
     final portfolio = widget.portfolio;
+    final canEdit = ref.watch(currentLedgerProvider).canEdit;
+    final comingUp = (ref.watch(investmentCalendarProvider(12)).value ?? const <CalendarItem>[]).take(4).toList();
+    final targets = {for (final target in portfolio.targets) investmentKinds[target.kind] ?? target.kind: target.percent};
     final open = portfolio.investments.where((investment) => investment.closedAt == null).toList();
     final closed = portfolio.investments.where((investment) => investment.closedAt != null).toList();
     final slices = donutSlices(context, [
@@ -112,13 +133,18 @@ class _PortfolioBodyState extends State<_PortfolioBody> {
                 children: [
                   Expanded(child: _Stat('Invested', formatMoney(portfolio.cost, portfolio.currency))),
                   Expanded(child: _Stat('Income received', formatMoney(portfolio.income, portfolio.currency))),
+                  if (portfolio.annualReturn != null) Expanded(child: _Stat('Yearly return', percentText(portfolio.annualReturn))),
                 ],
               ),
             ],
           ),
         ),
         if (slices.isNotEmpty) ...[
-          const SizedBox(height: 12),
+          SectionHeader(
+            'Mix',
+            action: canEdit ? (targets.isEmpty ? 'Set targets' : 'Edit targets') : null,
+            onAction: () => showTargetsSheet(context, portfolio.targets),
+          ),
           SurfaceCard(
             padding: const EdgeInsets.all(18),
             child: Row(
@@ -137,30 +163,19 @@ class _PortfolioBodyState extends State<_PortfolioBody> {
                 Expanded(
                   child: Column(
                     children: [
-                      for (final slice in slices)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(color: slice.color, shape: BoxShape.circle),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(slice.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)),
-                              ),
-                              Text('${(slice.value / total * 100).round()}%', style: TextStyle(color: palette.muted, fontSize: 13)),
-                            ],
-                          ),
-                        ),
+                      for (final slice in slices) _MixRow(slice.name, slice.color, slice.value / total * 100, targets[slice.name]),
+                      for (final MapEntry(key: name, value: target) in targets.entries)
+                        if (!slices.any((slice) => slice.name == name)) _MixRow(name, palette.subtle, 0, target),
                     ],
                   ),
                 ),
               ],
             ),
           ),
+        ],
+        if (comingUp.isNotEmpty) ...[
+          SectionHeader('Coming up', action: 'See all', onAction: () => context.push('/investments/calendar')),
+          SurfaceCard(child: Column(children: [for (final item in comingUp) CalendarRow(item)])),
         ],
         if (open.isNotEmpty) ...[
           const SectionHeader('Holdings'),
@@ -171,6 +186,45 @@ class _PortfolioBodyState extends State<_PortfolioBody> {
           SurfaceCard(child: Column(children: [for (final investment in closed) _InvestmentRow(investment)])),
         ],
       ],
+    );
+  }
+}
+
+class _MixRow extends StatelessWidget {
+  const _MixRow(this.name, this.color, this.percent, this.target);
+
+  final String name;
+  final Color color;
+  final double percent;
+  final double? target;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Palette.of(context);
+    final off = target != null && (percent - target!).abs() >= 5;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13)),
+                if (target != null)
+                  Text('Target ${rateText(target!)}', style: TextStyle(color: off ? palette.warning : palette.subtle, fontSize: 11.5)),
+              ],
+            ),
+          ),
+          Text('${percent.round()}%', style: TextStyle(color: palette.muted, fontSize: 13)),
+        ],
+      ),
     );
   }
 }
@@ -222,10 +276,7 @@ class _InvestmentRow extends StatelessWidget {
         children: [
           MoneyText(investment.value, investment.currency.code, tone: MoneyTone.none),
           if (investment.gainPercent != null)
-            Text(
-              percentText(investment.gainPercent),
-              style: TextStyle(fontSize: 12, color: gainColor(palette, investment.gain)),
-            ),
+            Text(percentText(investment.gainPercent), style: TextStyle(fontSize: 12, color: gainColor(palette, investment.gain))),
         ],
       ),
     );
@@ -285,16 +336,22 @@ class InvestmentScreen extends ConsumerWidget {
             ('income', LucideIcons.banknoteArrowUp),
             if (investment.held) ('valuation', LucideIcons.chartLine),
             if (investment.held) ('sell', LucideIcons.banknoteArrowDown),
+            if (investment.held && !investment.tracksUnits && investment.closedAt == null) ('renew', LucideIcons.refreshCw),
           ])
             ListRow(
               leading: IconBadge(icon, color: Palette.of(context).primary, size: 40),
-              title: labels[type]!,
+              title: labels[type] ?? 'Renew for a new term',
               onTap: () => Navigator.pop(context, type),
             ),
         ],
       ),
     );
-    if (type != null && context.mounted) await showEventSheet(context, investment, type);
+    if (type == null || !context.mounted) return;
+    if (type == 'renew') {
+      await showRenewSheet(context, investment);
+    } else {
+      await showEventSheet(context, investment, type);
+    }
   }
 
   @override
@@ -330,6 +387,9 @@ class InvestmentScreen extends ConsumerWidget {
           final currency = investment.currency.code;
           final labels = eventLabels(investment.kind);
           final gainTone = gainColor(palette, investment.gain);
+          final accountNames = {
+            for (final account in ref.watch(accountsProvider('asset')).value ?? const <Account>[]) account.id: account.name,
+          };
 
           return RefreshIndicator.adaptive(
             onRefresh: () => ref.refresh(investmentProvider(investmentId).future),
@@ -356,6 +416,10 @@ class InvestmentScreen extends ConsumerWidget {
                         '${formatMoney(investment.gain, currency, signed: true)}  ${percentText(investment.gainPercent)}',
                         style: TextStyle(color: gainTone, fontWeight: FontWeight.w600),
                       ),
+                      if (investment.annualReturn != null) ...[
+                        const SizedBox(height: 2),
+                        Text('${percentText(investment.annualReturn)} a year', style: TextStyle(color: palette.muted, fontSize: 13)),
+                      ],
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -394,6 +458,22 @@ class InvestmentScreen extends ConsumerWidget {
                   SurfaceCard(
                     padding: const EdgeInsets.all(16),
                     child: ReturnRoadmap(roadmap: investment.roadmap!, invested: investment.invested, currency: currency),
+                  ),
+                ],
+                if (investment.contributors.isNotEmpty) ...[
+                  const SectionHeader('Partners'),
+                  SurfaceCard(
+                    child: Column(
+                      children: [
+                        for (final partner in investment.contributors)
+                          ListRow(
+                            leading: IconBadge(LucideIcons.user, color: palette.primary, size: 40),
+                            title: partner.name ?? 'Not set',
+                            subtitle: '${rateText(partner.share)} share · Income ${formatMoney(partner.income, currency)}',
+                            trailing: MoneyText(partner.value, currency, tone: MoneyTone.none),
+                          ),
+                      ],
+                    ),
                   ),
                 ],
                 if (investment.upcomingPayouts.isNotEmpty) ...[
@@ -439,6 +519,8 @@ class InvestmentScreen extends ConsumerWidget {
                                 title: labels[event.type] ?? event.type,
                                 subtitle: [
                                   formatDate(event.date),
+                                  if (event.reinvested) 'Kept invested',
+                                  if (event.userName != null && event.type == 'buy') 'By ${event.userName}',
                                   if (event.units != null) '${unitsText(double.parse(event.units!))} units',
                                   if (event.gain != null && double.parse(event.gain!) != 0)
                                     'Gain ${formatMoney(event.gain!, currency, signed: true)}',
@@ -457,11 +539,20 @@ class InvestmentScreen extends ConsumerWidget {
                 SurfaceCard(
                   child: Column(
                     children: [
-                      if (investment.interestRate != null)
-                        _Fact('Yearly return', '${investment.interestRate!.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '')}%'),
+                      if (investment.interestRate != null) _Fact('Yearly return', rateText(investment.interestRate!)),
+                      if (investment.taxRate != null) _Fact('Tax on profit', rateText(investment.taxRate!)),
+                      if (investment.annualReturn != null) _Fact('Return so far', '${percentText(investment.annualReturn)} a year'),
                       if (investment.interestRate != null)
                         _Fact('Pays out', payoutFrequencies[investment.payoutFrequency] ?? 'At maturity'),
                       if (investment.payoutAmount != null) _Fact('Each payout', formatMoney(investment.payoutAmount!, currency)),
+                      if (investment.contribution case final installment?) ...[
+                        _Fact(
+                          'Installment',
+                          '${formatMoney(installment.amount, currency)} ${(contributionFrequencies[installment.frequency] ?? installment.frequency).toLowerCase()}',
+                        ),
+                        if (installment.nextDate != null) _Fact('Next installment', formatDate(installment.nextDate!)),
+                        if (accountNames[installment.accountId] case final account?) _Fact('Paid from', account),
+                      ],
                       if (investment.startDate != null) _Fact('Start date', formatDate(investment.startDate!)),
                       if (investment.maturityDate != null) _Fact('Maturity date', formatDate(investment.maturityDate!)),
                       if (investment.tracksUnits && investment.price != null)

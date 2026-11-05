@@ -20,6 +20,21 @@ const payoutFrequencies = <String, String>{
   'yearly': 'Yearly',
 };
 
+const contributionFrequencies = <String, String>{
+  'daily': 'Daily',
+  'weekly': 'Weekly',
+  'monthly': 'Monthly',
+  'quarterly': 'Quarterly',
+  'half_year': 'Every half year',
+  'yearly': 'Yearly',
+};
+
+const calendarTypes = <String, String>{'payout': 'Payout', 'installment': 'Installment', 'maturity': 'Matures'};
+
+bool takesInstallments(String kind) => const {'deposit', 'savings_scheme'}.contains(kind);
+
+String rateText(double value) => '${value.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '')}%';
+
 bool tracksUnits(String kind) => const {'stock', 'etf', 'mutual_fund', 'gold'}.contains(kind);
 
 bool earnsInterest(String kind) => const {'deposit', 'savings_scheme', 'private'}.contains(kind);
