@@ -1,0 +1,4 @@
+storeFile=/Users/you/ledgerfly-upload.jks
+storePassword=
+keyAlias=upload
+keyPassword=

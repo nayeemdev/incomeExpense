@@ -54,6 +54,22 @@ Start the API first (`php artisan serve` in `api/`). On the iOS simulator use `h
 
 Plain `http` works for local network addresses on iOS and in Android debug builds. Use `https` for a server on the internet.
 
+## Android release builds
+
+Release builds are signed with an upload key that stays on your machine. Create one once with the `keytool` that ships with Android Studio:
+
+```bash
+"/Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/keytool" -genkey -v -keystore ~/ledgerfly-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+```
+
+Copy `android/key.properties.example` to `android/key.properties` and fill in the path and passwords. Git ignores both files; keep a backup of the keystore, since every update to the Play listing must be signed with it. Then build the bundle to upload to Google Play:
+
+```bash
+flutter build appbundle --release
+```
+
+Without `key.properties`, release builds are signed with the debug key so `flutter run --release` still works locally. Release builds only connect to `https` servers.
+
 ## Layout
 
 ```
