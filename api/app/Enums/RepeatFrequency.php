@@ -25,6 +25,18 @@ enum RepeatFrequency: string
         };
     }
 
+    public function perYear(): int
+    {
+        return match ($this) {
+            self::Daily => 365,
+            self::Weekly => 52,
+            self::Monthly => 12,
+            self::Quarterly => 4,
+            self::HalfYear => 2,
+            self::Yearly => 1,
+        };
+    }
+
     public function startOf(CarbonImmutable $date): CarbonImmutable
     {
         return match ($this) {

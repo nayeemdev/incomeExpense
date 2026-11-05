@@ -90,6 +90,7 @@ class _HomeBody extends ConsumerWidget {
     final palette = Palette.of(context);
     final recent = ref.watch(transactionsProvider((query: '', type: null, accountId: null)));
     final goals = ref.watch(goalsProvider).value ?? const <Goal>[];
+    final portfolio = ref.watch(portfolioProvider).value;
     final net = (double.tryParse(summary.earned.value) ?? 0) - (double.tryParse(summary.spent.value) ?? 0);
     final currency = summary.netWorth.currency;
 
@@ -173,6 +174,10 @@ class _HomeBody extends ConsumerWidget {
         ],
         const SizedBox(height: 16),
         Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: _GoalCard(goals)),
+        if (portfolio != null && portfolio.investments.any((investment) => investment.closedAt == null)) ...[
+          const SizedBox(height: 12),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 20), child: _PortfolioCard(portfolio)),
+        ],
         if (summary.topCategories.isNotEmpty) ...[
           SectionHeader('Top spending', action: 'Reports', onAction: () => context.go('/analytics')),
           for (final row in summary.topCategories.take(4))
@@ -362,6 +367,46 @@ class _GoalCard extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Icon(goal == null ? LucideIcons.plus : LucideIcons.chevronRight, size: 18, color: palette.muted),
+        ],
+      ),
+    );
+  }
+}
+
+class _PortfolioCard extends StatelessWidget {
+  const _PortfolioCard(this.portfolio);
+
+  final Portfolio portfolio;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Palette.of(context);
+    final text = Theme.of(context).textTheme;
+    final gain = portfolio.gainPercent;
+
+    return SurfaceCard(
+      padding: const EdgeInsets.all(16),
+      onTap: () => context.push('/investments'),
+      child: Row(
+        children: [
+          IconBadge(LucideIcons.trendingUp, color: palette.primary, size: 46),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Investments', style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                Text(formatMoney(portfolio.value, portfolio.currency), style: text.bodySmall?.copyWith(color: palette.muted)),
+              ],
+            ),
+          ),
+          if (gain != null)
+            Text(
+              '${gain > 0 ? '+' : ''}${gain.toStringAsFixed(2)}%',
+              style: TextStyle(fontWeight: FontWeight.w600, color: gain < 0 ? palette.negative : palette.positive),
+            ),
+          const SizedBox(width: 8),
+          Icon(LucideIcons.chevronRight, size: 18, color: palette.muted),
         ],
       ),
     );

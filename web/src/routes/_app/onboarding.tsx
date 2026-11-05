@@ -158,7 +158,7 @@ function AccountsStep({ ledger }: { ledger: Ledger }) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {(Object.keys(roles) as AssetRole[]).map((role) => (
+                      {(Object.keys(roles) as AssetRole[]).filter((role) => role !== 'investment').map((role) => (
                         <SelectItem key={role} value={role}>
                           {roles[role]}
                         </SelectItem>

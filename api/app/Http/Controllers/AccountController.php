@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Accounts\DeleteAccount;
 use App\Actions\Accounts\SyncOpeningBalance;
 use App\Actions\ResolveObjectGroup;
 use App\Enums\AccountType;
@@ -10,7 +11,6 @@ use App\Http\Requests\AccountRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\Account;
 use App\Models\Ledger;
-use App\Models\TransactionGroup;
 use App\Models\User;
 use App\Support\Money;
 use Illuminate\Container\Attributes\CurrentUser;
@@ -26,6 +26,7 @@ class AccountController extends Controller
     public function __construct(
         private SyncOpeningBalance $openingBalance,
         private ResolveObjectGroup $objectGroup,
+        private DeleteAccount $deleteAccount,
     ) {}
 
     public function index(Request $request, Ledger $ledger): AnonymousResourceCollection
@@ -107,18 +108,7 @@ class AccountController extends Controller
     {
         abort_if($account->type->isSystem(), 404);
 
-        DB::transaction(function () use ($account) {
-            $this->openingBalance->remove($account);
-
-            TransactionGroup::query()
-                ->whereHas('transactions', fn ($query) => $query
-                    ->where('source_account_id', $account->id)
-                    ->orWhere('destination_account_id', $account->id))
-                ->get()
-                ->each->deleteWithTransactions();
-
-            $account->delete();
-        });
+        $this->deleteAccount->handle($account);
 
         return response()->noContent();
     }

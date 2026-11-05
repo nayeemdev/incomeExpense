@@ -9,4 +9,5 @@ enum AssetRole: string
     case Savings = 'savings';
     case CashWallet = 'cash_wallet';
     case CreditCard = 'credit_card';
+    case Investment = 'investment';
 }

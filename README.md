@@ -6,7 +6,7 @@
 
 **Self-hosted personal finance. Your money, on your own server.**
 
-Accounts, budgets, bills, goals, rules and reports with real double-entry bookkeeping,<br>
+Accounts, budgets, bills, goals, investments, rules and reports with real double-entry bookkeeping,<br>
 plus a web app and native apps for Android and iOS.
 
 [![API](https://github.com/nayeemdev/ledgerfly/actions/workflows/api.yml/badge.svg)](https://github.com/nayeemdev/ledgerfly/actions/workflows/api.yml)
@@ -46,6 +46,11 @@ plus a web app and native apps for Android and iOS.
 - Bills and subscriptions with reminders
 - Savings goals
 - Recurring transactions
+
+**Investments**
+- Shares, funds, deposits, savings schemes, gold, property and private investments
+- Average cost, valuations, realised gains and income
+- Payout schedules with reminders and a return roadmap
 
 </td>
 <td width="50%" valign="top">

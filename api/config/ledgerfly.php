@@ -144,6 +144,8 @@ return [
             'low_balance' => ['database', 'webpush', 'ntfy', 'mail'],
             'recurring_created' => ['database'],
             'piggy_bank_reached' => ['database', 'webpush', 'ntfy'],
+            'investment_payout' => ['database', 'webpush', 'ntfy'],
+            'investment_maturing' => ['database', 'webpush', 'ntfy', 'mail'],
             'rule_matched' => ['database'],
             'webhook_failing' => ['database', 'mail'],
             'import_finished' => ['database'],
@@ -151,6 +153,11 @@ return [
             'new_login' => ['mail'],
             'token_created' => ['mail'],
         ],
+    ],
+
+    'investments' => [
+        'roadmap_years' => (int) env('INVESTMENT_ROADMAP_YEARS', 3),
+        'break_even_years' => (int) env('INVESTMENT_BREAK_EVEN_YEARS', 30),
     ],
 
     'pagination' => [
@@ -166,7 +173,7 @@ return [
         'password' => env('DEMO_PASSWORD'),
     ],
 
-    'dashboard_widgets' => ['trend', 'recent', 'accounts', 'bills', 'top_spending'],
+    'dashboard_widgets' => ['trend', 'recent', 'accounts', 'investments', 'bills', 'top_spending'],
 
     'default_preferences' => [
         'locale' => env('APP_LOCALE', 'en'),

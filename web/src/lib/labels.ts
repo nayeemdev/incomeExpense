@@ -1,5 +1,5 @@
 import i18n from '@/i18n'
-import type { AccountType, AutoBudgetType, Frequency, RepetitionType, WeekendHandling, AssetRole, LedgerRole, LiabilityDirection, LiabilityType, TransactionType } from './api/types'
+import type { AccountType, AutoBudgetType, Frequency, InvestmentKind, RepetitionType, WeekendHandling, AssetRole, LedgerRole, LiabilityDirection, LiabilityType, TransactionType } from './api/types'
 
 const t = (key: string) => i18n.t(key)
 
@@ -30,6 +30,7 @@ export const assetRoleLabels = (): Record<AssetRole, string> => ({
   savings: t('Savings'),
   cash_wallet: t('Cash wallet'),
   credit_card: t('Credit card'),
+  investment: t('Investment'),
 })
 
 export const liabilityTypeLabels = (): Record<LiabilityType, string> => ({
@@ -66,6 +67,30 @@ export const frequencyLabels = (): Record<Frequency, string> => ({
   yearly: t('Yearly'),
 })
 
+export const investmentKindLabels = (): Record<InvestmentKind, string> => ({
+  stock: t('Stocks'),
+  etf: t('ETF'),
+  mutual_fund: t('Mutual fund'),
+  deposit: t('Fixed deposit'),
+  savings_scheme: t('Savings scheme'),
+  private: t('Private business'),
+  gold: t('Gold'),
+  property: t('Property'),
+  other: t('Other'),
+})
+
+export const investmentKindDescriptions = (): Record<InvestmentKind, string> => ({
+  stock: t('Shares in listed companies, counted in units.'),
+  etf: t('Exchange traded funds, counted in units.'),
+  mutual_fund: t('Fund units bought at their NAV.'),
+  deposit: t('FDR, term deposits and similar, with interest.'),
+  savings_scheme: t('DPS, Sanchayapatra, bonds and other schemes.'),
+  private: t('Money put into a business that pays you a return.'),
+  gold: t('Gold or other metals, counted in grams or units.'),
+  property: t('Land, flats and other property.'),
+  other: t('Anything else you hold to grow your money.'),
+})
+
 export const autoBudgetLabels = (): Record<AutoBudgetType, string> => ({
   reset: t('Same amount every period'),
   rollover: t('Carry over what is left'),
@@ -96,6 +121,8 @@ export const notificationEventLabels = (): Record<string, string> => ({
   low_balance: t('Low account balance'),
   recurring_created: t('Recurring transaction recorded'),
   piggy_bank_reached: t('Goal reached'),
+  investment_payout: t('Investment payout due'),
+  investment_maturing: t('Investment maturing'),
   rule_matched: t('Rule with a notify action matched'),
   webhook_failing: t('Webhook failing'),
   weekly_summary: t('Weekly summary'),

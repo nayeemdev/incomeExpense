@@ -15,6 +15,7 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\ExchangeRateController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\LedgerInvitationController;
@@ -107,6 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('available-budgets', [AvailableBudgetController::class, 'index']);
             Route::apiResource('bills', BillController::class)->only(['index', 'show']);
             Route::apiResource('piggy-banks', PiggyBankController::class)->only(['index', 'show']);
+            Route::apiResource('investments', InvestmentController::class)->only(['index', 'show']);
             Route::apiResource('recurrences', RecurrenceController::class)->only(['index', 'show']);
             Route::get('object-groups', [ObjectGroupController::class, 'index']);
             Route::get('link-types', [TransactionLinkController::class, 'linkTypes']);
@@ -144,6 +146,9 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::apiResource('bills', BillController::class)->only(['store', 'update', 'destroy']);
                 Route::apiResource('piggy-banks', PiggyBankController::class)->only(['store', 'update', 'destroy']);
                 Route::post('piggy-banks/{piggyBank}/move', [PiggyBankController::class, 'move']);
+                Route::apiResource('investments', InvestmentController::class)->only(['store', 'update', 'destroy']);
+                Route::post('investments/{investment}/events', [InvestmentController::class, 'storeEvent']);
+                Route::delete('investments/{investment}/events/{event}', [InvestmentController::class, 'destroyEvent']);
                 Route::apiResource('recurrences', RecurrenceController::class)->only(['store', 'update', 'destroy']);
                 Route::post('recurrences/{recurrence}/trigger', [RecurrenceController::class, 'trigger']);
                 Route::patch('object-groups/{objectGroup}', [ObjectGroupController::class, 'update']);

@@ -52,7 +52,7 @@ export type LedgerInvitation = {
 }
 
 export type AccountType = 'asset' | 'expense' | 'revenue' | 'liability'
-export type AssetRole = 'default' | 'shared' | 'savings' | 'cash_wallet' | 'credit_card'
+export type AssetRole = 'default' | 'shared' | 'savings' | 'cash_wallet' | 'credit_card' | 'investment'
 export type LiabilityType = 'loan' | 'debt' | 'mortgage'
 export type LiabilityDirection = 'owed' | 'lent'
 export type InterestPeriod = 'daily' | 'monthly' | 'yearly'
@@ -270,6 +270,72 @@ export type PiggyBank = {
   notes: string | null
   accounts: Array<{ id: string; name: string; current_amount: string }>
   events?: Array<{ id: string; account: { id: string; name: string }; amount: string; date: string }>
+}
+
+export type InvestmentKind = 'stock' | 'etf' | 'mutual_fund' | 'deposit' | 'savings_scheme' | 'private' | 'gold' | 'property' | 'other'
+export type InvestmentEventType = 'buy' | 'sell' | 'income' | 'valuation'
+
+export type InvestmentEvent = {
+  id: string
+  type: InvestmentEventType
+  date: string
+  units: string | null
+  price: string | null
+  amount: string
+  gain: string | null
+  transaction_group_id: string | null
+}
+
+export type Investment = {
+  id: string
+  name: string
+  kind: InvestmentKind
+  tracks_units: boolean
+  symbol: string | null
+  account_id: string
+  currency: Currency
+  interest_rate: string | null
+  payout_frequency: Frequency | null
+  start_date: string | null
+  maturity_date: string | null
+  closed_at: string | null
+  notes: string | null
+  units: string
+  price: string | null
+  valued_on: string | null
+  cost: string
+  value: string
+  gain: string
+  gain_percent: string | null
+  invested: string
+  income: string
+  realized: string
+  payout_amount: string | null
+  upcoming_payouts: Array<{ date: string; amount: string | null; overdue: boolean }>
+  events?: InvestmentEvent[]
+  history?: Array<{ date: string; value: string; cost: string }>
+  roadmap?: InvestmentRoadmap | null
+}
+
+export type InvestmentRoadmap = {
+  end: string
+  points: Array<{ date: string; amount: string; cumulative: string; status: 'received' | 'due' | 'expected' }>
+  total_return: string
+  break_even: string | null
+  maturity_value: string | null
+  maturity_gain: string | null
+}
+
+export type PortfolioSummary = {
+  currency: string
+  complete: boolean
+  value: string
+  cost: string
+  gain: string
+  income: string
+  realized: string
+  gain_percent: string | null
+  allocation: Array<{ kind: InvestmentKind; value: string }>
 }
 
 export type RepetitionType = 'daily' | 'weekly' | 'monthly' | 'ndom' | 'yearly'

@@ -10,6 +10,7 @@ import {
   LayoutDashboardIcon,
   PieChartIcon,
   TargetIcon,
+  TrendingUpIcon,
   ReceiptIcon,
   RepeatIcon,
   SettingsIcon,
@@ -111,6 +112,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/piggy-banks', params: { ledgerId } }))}>
             <TargetIcon />
             {t('Goals')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/investments', params: { ledgerId } }))}>
+            <TrendingUpIcon />
+            {t('Investments')}
           </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/recurring', params: { ledgerId } }))}>
             <RepeatIcon />

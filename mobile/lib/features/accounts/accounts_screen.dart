@@ -27,6 +27,7 @@ const _roleLabels = {
   'savings': 'Savings',
   'cash_wallet': 'Cash wallet',
   'credit_card': 'Credit card',
+  'investment': 'Investment',
 };
 
 String? roleLabel(Account account) => account.role == null ? null : _roleLabels[account.role] ?? sentenceCase(account.role!);
@@ -35,6 +36,7 @@ IconData accountIcon(Account account) => switch (account.role) {
   'savings' => LucideIcons.piggyBank,
   'cash_wallet' => LucideIcons.wallet,
   'credit_card' => LucideIcons.creditCard,
+  'investment' => LucideIcons.trendingUp,
   _ when account.type == 'liability' => LucideIcons.handCoins,
   _ when account.type == 'expense' => LucideIcons.store,
   _ when account.type == 'revenue' => LucideIcons.briefcase,
@@ -45,6 +47,7 @@ String accountColor(Account account) => switch (account.role) {
   'savings' => 'emerald',
   'cash_wallet' => 'amber',
   'credit_card' => 'violet',
+  'investment' => 'sky',
   _ when account.type == 'liability' => 'orange',
   _ when account.type == 'expense' || account.type == 'revenue' => 'slate',
   _ => 'blue',

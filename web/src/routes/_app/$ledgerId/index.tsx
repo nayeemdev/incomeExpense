@@ -13,6 +13,7 @@ import { StatCard } from '@/components/app/stat-card'
 import { useQuickAdd } from '@/components/app/quick-add-context'
 import { TransactionList } from '@/components/app/transaction-list'
 import { IncomeExpenseChart } from '@/components/charts/income-expense-chart'
+import { PortfolioCard } from '@/components/investments/portfolio-card'
 import { BillStatus } from '@/components/planning/bill-status'
 import {
   DropdownMenu,
@@ -217,6 +218,8 @@ function Dashboard() {
           </Card>
           )}
 
+          {show('investments') && <PortfolioCard />}
+
           {show('bills') && bills && bills.length > 0 && (
             <Card>
               <CardHeader>
@@ -280,6 +283,7 @@ function DashboardCustomizer({ hidden }: { hidden: Set<string> }) {
     trend: t('Last 6 months chart'),
     recent: t('Recent transactions'),
     accounts: t('Accounts'),
+    investments: t('Investments'),
     bills: t('Bills to pay'),
     top_spending: t('Top spending'),
   }

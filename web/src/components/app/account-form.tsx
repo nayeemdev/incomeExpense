@@ -134,7 +134,7 @@ export function AccountForm({ type, account, onSaved, onCancel }: AccountFormPro
 
         {type === 'asset' && (
           <FormField control={form.control} name="asset_role" required label={t('Kind')}>
-            {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={assetRoleLabels()} />}
+            {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={Object.fromEntries(Object.entries(assetRoleLabels()).filter(([role]) => role !== 'investment' || field.value === 'investment'))} />}
           </FormField>
         )}
 
