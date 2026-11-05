@@ -138,6 +138,12 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => context.push('/investments'),
               ),
               ListRow(
+                leading: const CategoryIcon(glyph: LucideIcons.handCoins, color: 'amber', size: 40),
+                title: 'Zakat',
+                trailing: chevron,
+                onTap: () => context.push('/zakat'),
+              ),
+              ListRow(
                 leading: const CategoryIcon(glyph: LucideIcons.bell, color: 'amber', size: 40),
                 title: 'Notifications',
                 trailing: chevron,
