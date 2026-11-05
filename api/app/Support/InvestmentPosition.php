@@ -47,7 +47,7 @@ final class InvestmentPosition
             match ($event->type) {
                 InvestmentEventType::Buy => $position->buy($event->amount, $event->units, $event->date),
                 InvestmentEventType::Sell => $position->sell($event->amount, $event->units, (string) $event->cost),
-                InvestmentEventType::Income => $position->income = Money::sum($position->income, $event->amount),
+                InvestmentEventType::Income => $position->earn($event->amount, $event->reinvested, $event->date),
                 InvestmentEventType::Valuation => $position->revalue($event->amount, $event->price, $event->date),
             };
         }
@@ -111,9 +111,39 @@ final class InvestmentPosition
         }
 
         return Money::of($this->cost)
-            ->mul(Money::of($investment->interest_rate), Money::SCALE)
+            ->mul(Money::of($this->netRate()), Money::SCALE)
             ->div(Money::of(100 * $investment->payout_frequency->perYear()), Money::SCALE)
             ->value;
+    }
+
+    /**
+     * The yearly rate after the tax withheld on interest or profit.
+     */
+    public function netRate(): string
+    {
+        $rate = Money::of((string) $this->investment->interest_rate);
+        $tax = $this->investment->tax_rate;
+
+        return $tax === null ? $rate->value : $rate->mul(Money::of(100)->sub(Money::of($tax)), Money::SCALE)->div(Money::of(100), Money::SCALE)->value;
+    }
+
+    /**
+     * Income that stays invested (a renewed deposit, reinvested dividends) raises the cost basis and
+     * replaces the interest estimated so far.
+     */
+    private function earn(string $amount, bool $reinvested, CarbonImmutable $date): void
+    {
+        $this->income = Money::sum($this->income, $amount);
+
+        if ($reinvested) {
+            $this->cost = Money::sum($this->cost, $amount);
+            $this->accrued = '0';
+            $this->accruedTo = $date;
+
+            if ($this->valuation !== null) {
+                $this->valuation = Money::sum($this->valuation, $amount);
+            }
+        }
     }
 
     private function buy(string $amount, ?string $units, CarbonImmutable $date): void
@@ -190,7 +220,7 @@ final class InvestmentPosition
         }
 
         $this->accrued = Money::sum($this->accrued, Money::of($this->cost)
-            ->mul(Money::of($investment->interest_rate), Money::SCALE)
+            ->mul(Money::of($this->netRate()), Money::SCALE)
             ->mul(Money::of($days), Money::SCALE)
             ->div(Money::of(36500), Money::SCALE)
             ->value);
