@@ -4,10 +4,14 @@ namespace Database\Seeders;
 
 use App\Actions\Accounts\SyncOpeningBalance;
 use App\Actions\Budgets\CreateAutoBudgetLimit;
+use App\Actions\Investments\RecordInvestmentEvent;
 use App\Actions\Recurrences\CreateRecurringTransaction;
 use App\Actions\Transactions\SaveTransactionGroup;
 use App\Enums\AccountType;
+use App\Enums\AssetRole;
+use App\Enums\InvestmentKind;
 use App\Enums\LedgerRole;
+use App\Enums\RepeatFrequency;
 use App\Models\Account;
 use App\Models\Bill;
 use App\Models\Currency;
@@ -41,6 +45,7 @@ class DemoSeeder extends Seeder
         private SyncOpeningBalance $openingBalance,
         private CreateAutoBudgetLimit $autoBudget,
         private CreateRecurringTransaction $recurring,
+        private RecordInvestmentEvent $investmentEvents,
     ) {}
 
     public function run(): void
@@ -68,6 +73,7 @@ class DemoSeeder extends Seeder
             $this->createAccounts();
             $this->createPlanning();
             $this->createHistory();
+            $this->createInvestments();
             $this->createRecurring();
             $this->createRules();
             $this->createExtras();
@@ -310,6 +316,45 @@ class DemoSeeder extends Seeder
         if ($refundType !== null) {
             $this->ledger->transactionLinks()->create(['link_type_id' => $refundType, 'outward_group_id' => $refund->id, 'inward_group_id' => $headphones->id]);
         }
+    }
+
+    private function createInvestments(): void
+    {
+        $today = CarbonImmutable::today();
+        $primary = $this->ledger->primary_currency_id;
+        $invest = function (string $name, InvestmentKind $kind, array $attributes, array $events) use ($primary) {
+            $account = $this->ledger->accounts()->create(['type' => AccountType::Asset, 'asset_role' => AssetRole::Investment, 'name' => $name, 'currency_id' => $primary]);
+            $investment = $this->ledger->investments()->create(['account_id' => $account->id, 'kind' => $kind, ...$attributes]);
+
+            foreach ($events as $event) {
+                $this->investmentEvents->handle($investment->refresh(), $this->owner, $event);
+            }
+        };
+
+        $invest('Northwind Traders', InvestmentKind::Stock, ['symbol' => 'NWT'], [
+            ['type' => 'buy', 'date' => $today->subMonths(11)->toDateString(), 'amount' => $this->money('2080'), 'units' => '40', 'account_id' => $this->accounts['savings']->id],
+            ['type' => 'buy', 'date' => $today->subMonths(5)->toDateString(), 'amount' => $this->money('1160'), 'units' => '20', 'account_id' => $this->accounts['savings']->id],
+            ['type' => 'income', 'date' => $today->subMonths(3)->toDateString(), 'amount' => $this->money('48'), 'account_id' => $this->accounts['checking']->id],
+            ['type' => 'valuation', 'date' => $today->subDays(3)->toDateString(), 'price' => $this->money('61.40')],
+        ]);
+
+        $invest('Harbor Bank fixed deposit', InvestmentKind::Deposit, ['interest_rate' => '7.5', 'start_date' => $today->subMonths(8), 'maturity_date' => $today->subMonths(8)->addYear()], [
+            ['type' => 'buy', 'date' => $today->subMonths(8)->toDateString(), 'amount' => $this->money('5000')],
+        ]);
+
+        $start = $today->subMonths(13)->startOfMonth();
+        $payouts = array_map(fn (int $quarter) => [
+            'type' => 'income', 'date' => $start->addMonthsNoOverflow(3 * $quarter)->addDays(2)->toDateString(), 'amount' => $this->money('250'), 'account_id' => $this->accounts['checking']->id,
+        ], range(1, 4));
+        $invest('Greenleaf Bakery partnership', InvestmentKind::Private, ['interest_rate' => '10', 'payout_frequency' => RepeatFrequency::Quarterly, 'start_date' => $start, 'notes' => 'Pays 10% a year, every quarter.'], [
+            ['type' => 'buy', 'date' => $start->toDateString(), 'amount' => $this->money('10000')],
+            ...$payouts,
+        ]);
+
+        $invest('Gold coins', InvestmentKind::Gold, [], [
+            ['type' => 'buy', 'date' => $today->subYears(2)->toDateString(), 'amount' => $this->money('1700'), 'units' => '20'],
+            ['type' => 'valuation', 'date' => $today->subWeek()->toDateString(), 'price' => $this->money('98')],
+        ]);
     }
 
     private function createRecurring(): void
