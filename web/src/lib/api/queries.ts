@@ -20,8 +20,11 @@ import type {
   Budget,
   LinkType,
   Investment,
+  InvestmentCalendarItem,
+  InvestmentIncome,
   PiggyBank,
   PortfolioSummary,
+  Zakat,
   Recurrence,
   TransactionLink,
   Category,
@@ -228,6 +231,26 @@ export const investmentQuery = (ledgerId: string, investmentId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'investments', 'detail', investmentId],
     queryFn: () => api.get<Resource<Investment>>(`/ledgers/${ledgerId}/investments/${investmentId}`).then((r) => r.data),
+  })
+
+export const investmentCalendarQuery = (ledgerId: string, months = 12) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'investments', 'calendar', months],
+    queryFn: () => api.get<Resource<InvestmentCalendarItem[]>>(`/ledgers/${ledgerId}/investments/calendar`, { months }).then((r) => r.data),
+  })
+
+export const investmentIncomeQuery = (ledgerId: string, start: string, end: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'investments', 'income', start, end],
+    queryFn: () => api.get<Resource<InvestmentIncome>>(`/ledgers/${ledgerId}/investments/income`, { start, end }).then((r) => r.data),
+    placeholderData: keepPreviousData,
+  })
+
+export const zakatQuery = (ledgerId: string, goldPrice: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'zakat', goldPrice],
+    queryFn: () => api.get<Resource<Zakat>>(`/ledgers/${ledgerId}/zakat`, { gold_price: goldPrice }).then((r) => r.data),
+    enabled: Number(goldPrice) > 0,
   })
 
 export const recurrencesQuery = (ledgerId: string) =>

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { BanknoteArrowUpIcon, CoinsIcon, PlusIcon, TrendingUpIcon, WalletIcon } from 'lucide-react'
+import { BanknoteArrowUpIcon, CalculatorIcon, CoinsIcon, PercentIcon, PlusIcon, TrendingUpIcon, WalletIcon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FormDialog } from '@/components/app/form-dialog'
@@ -8,10 +8,13 @@ import { Money } from '@/components/app/money'
 import { PageHeader } from '@/components/app/page-header'
 import { StatCard } from '@/components/app/stat-card'
 import { AllocationChart } from '@/components/investments/allocation-chart'
+import { ComingUpCard } from '@/components/investments/coming-up-card'
+import { IncomeCard } from '@/components/investments/income-card'
+import { TargetsDialog } from '@/components/investments/targets-dialog'
 import { InvestmentForm } from '@/components/investments/investment-form'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -33,6 +36,7 @@ function Investments() {
   const ledger = useLedger()
   const canEdit = useCanEdit()
   const [creating, setCreating] = useState(false)
+  const [editingTargets, setEditingTargets] = useState(false)
   const { data } = useQuery(investmentsQuery(ledger.id))
   const open = data?.data.filter((investment) => !investment.closed_at) ?? []
   const closed = data?.data.filter((investment) => investment.closed_at) ?? []
@@ -47,12 +51,20 @@ function Investments() {
         title={t('Investments')}
         description={t('Shares, funds, deposits, gold, property and private investments, valued in one place.')}
         actions={
-          canEdit && (
-            <Button onClick={() => setCreating(true)}>
-              <PlusIcon />
-              {t('New investment')}
+          <>
+            <Button variant="outline" asChild>
+              <Link to="/$ledgerId/investments/calculator" params={{ ledgerId: ledger.id }}>
+                <CalculatorIcon />
+                {t('What if')}
+              </Link>
             </Button>
-          )
+            {canEdit && (
+              <Button onClick={() => setCreating(true)}>
+                <PlusIcon />
+                {t('New investment')}
+              </Button>
+            )}
+          </>
         }
       />
       {!data && <Skeleton className="h-64 w-full" />}
@@ -94,6 +106,12 @@ function Investments() {
               hint={percent(summary.gain_percent, locale)}
             />
             <StatCard
+              label={t('Yearly return')}
+              icon={PercentIcon}
+              value={summary.annual_return === null ? t('Too early') : percent(String(summary.annual_return), locale)}
+              hint={t('Across all investments, counting income and sales.')}
+            />
+            <StatCard
               label={t('Income received')}
               icon={BanknoteArrowUpIcon}
               value={<Money amount={summary.income} currency={summary.currency} tone="none" />}
@@ -109,17 +127,29 @@ function Investments() {
             <Card>
               <CardHeader>
                 <CardTitle>{t('Allocation')}</CardTitle>
+                {canEdit && (
+                  <CardAction>
+                    <Button variant="ghost" size="sm" onClick={() => setEditingTargets(true)}>
+                      {summary.targets.length > 0 ? t('Edit targets') : t('Set targets')}
+                    </Button>
+                  </CardAction>
+                )}
               </CardHeader>
               <CardContent>
-                {summary.allocation.length > 0 ? (
-                  <AllocationChart allocation={summary.allocation} currency={summary.currency} />
+                {summary.allocation.length > 0 || summary.targets.length > 0 ? (
+                  <AllocationChart allocation={summary.allocation} targets={summary.targets} currency={summary.currency} />
                 ) : (
                   <p className="text-muted-foreground text-sm">{t('Nothing held right now.')}</p>
                 )}
               </CardContent>
             </Card>
           </div>
+          <div className="mb-6 grid grid-cols-1 gap-4 xl:grid-cols-2">
+            <ComingUpCard />
+            <IncomeCard />
+          </div>
           {closed.length > 0 && <HoldingsCard title={t('Closed')} investments={closed} />}
+          <TargetsDialog targets={summary.targets} open={editingTargets} onClose={() => setEditingTargets(false)} />
         </>
       )}
       <FormDialog open={creating} onOpenChange={setCreating} title={t('New investment')} size="lg">
