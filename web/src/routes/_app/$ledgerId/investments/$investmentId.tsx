@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BanknoteArrowDownIcon, BanknoteArrowUpIcon, ChevronDownIcon, LineChartIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { BanknoteArrowDownIcon, BanknoteArrowUpIcon, ChevronDownIcon, LineChartIcon, RefreshCwIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/app/confirm-dialog'
@@ -10,7 +10,9 @@ import { PageHeader } from '@/components/app/page-header'
 import { StatCard } from '@/components/app/stat-card'
 import { InvestmentEventDialog, type EventDraft } from '@/components/investments/investment-event-dialog'
 import { InvestmentForm } from '@/components/investments/investment-form'
+import { RenewDialog } from '@/components/investments/renew-dialog'
 import { ReturnRoadmap } from '@/components/investments/return-roadmap'
+import { ProgressBar } from '@/components/app/progress-bar'
 import { ValueChart } from '@/components/investments/value-chart'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -40,6 +42,7 @@ function InvestmentDetail() {
   const invalidate = useInvalidateLedger(ledger.id)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState<EventDraft | null>(null)
+  const [renewing, setRenewing] = useState(false)
   const investmentId = Route.useParams().investmentId
   const { data: investment } = useQuery(investmentQuery(ledger.id, investmentId))
 
@@ -98,6 +101,12 @@ function InvestmentDetail() {
                         <BanknoteArrowDownIcon />
                         {labels.sell}
                       </DropdownMenuItem>
+                      {!investment.tracks_units && (
+                        <DropdownMenuItem onSelect={() => setRenewing(true)}>
+                          <RefreshCwIcon />
+                          {t('Renew')}
+                        </DropdownMenuItem>
+                      )}
                     </>
                   )}
                 </DropdownMenuContent>
@@ -136,6 +145,11 @@ function InvestmentDetail() {
           label={t('Unrealised gain')}
           value={<Money amount={investment.gain} currency={currency} />}
           hint={percent(investment.gain_percent, locale)}
+        />
+        <StatCard
+          label={t('Yearly return')}
+          value={investment.annual_return === null ? t('Too early') : percent(String(investment.annual_return), locale)}
+          hint={t('Counts every payment in and out, and today\'s value.')}
         />
         <StatCard
           label={t('Income and realised gains')}
@@ -178,7 +192,13 @@ function InvestmentDetail() {
                   {investment.events.map((event) => (
                     <li key={event.id} className="flex items-center gap-3 py-2.5 text-sm">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium">{labels[event.type]}</p>
+                        <p className="font-medium">
+                          {labels[event.type]}
+                          {event.reinvested && <span className="text-muted-foreground font-normal"> · {t('kept invested')}</span>}
+                          {event.type === 'buy' && event.user && (investment.contributors?.length ?? 0) > 0 && (
+                            <span className="text-muted-foreground font-normal"> · {event.user.name}</span>
+                          )}
+                        </p>
                         <p className="text-muted-foreground text-xs">
                           {formatDate(event.date, locale)}
                           {event.units && ` · ${t('{{units}} units', { units: units(event.units, locale) })}`}
@@ -252,6 +272,30 @@ function InvestmentDetail() {
               </CardContent>
             </Card>
           )}
+          {investment.contributors && investment.contributors.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('Partners')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3 text-sm">
+                  {investment.contributors.map((person) => (
+                    <li key={person.id ?? 'unknown'} className="space-y-1">
+                      <div className="flex justify-between gap-2">
+                        <span className="font-medium">{person.name ?? t('Unknown')}</span>
+                        <span className="text-muted-foreground tabular-nums">{t('{{share}}%', { share: person.share })}</span>
+                      </div>
+                      <ProgressBar value={person.share} max={100} />
+                      <div className="text-muted-foreground flex justify-between gap-2 text-xs">
+                        <span>{t('Put in {{amount}}', { amount: formatMoney(person.invested, currency, locale) })}</span>
+                        <span>{t('Share of income {{amount}}', { amount: formatMoney(person.income, currency, locale) })}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
           <Card>
             <CardHeader>
               <CardTitle>{t('Details')}</CardTitle>
@@ -263,6 +307,7 @@ function InvestmentDetail() {
         </div>
       </div>
       <InvestmentEventDialog investment={investment} draft={draft} onClose={() => setDraft(null)} />
+      <RenewDialog investment={investment} open={renewing} onClose={() => setRenewing(false)} />
       <FormDialog open={editing} onOpenChange={setEditing} title={t('Edit {{name}}', { name: investment.name })} size="lg">
         <InvestmentForm investment={investment} onCancel={() => setEditing(false)} onSaved={() => setEditing(false)} />
       </FormDialog>
@@ -289,7 +334,17 @@ function Details({ investment }: { investment: Investment }) {
   if (investment.interest_rate) rows.push([t('Yearly return'), `${Number(investment.interest_rate)}%`])
   if (investment.interest_rate)
     rows.push([t('Pays out'), investment.payout_frequency ? frequencyLabels()[investment.payout_frequency] : t('At maturity')])
+  if (investment.tax_rate) rows.push([t('Tax on profit'), `${Number(investment.tax_rate)}%`])
   if (investment.payout_amount) rows.push([t('Each payout'), formatMoney(investment.payout_amount, investment.currency.code, locale)])
+  if (investment.contribution)
+    rows.push([
+      t('Installment'),
+      t('{{amount}}, {{frequency}}', {
+        amount: formatMoney(investment.contribution.amount, investment.currency.code, locale),
+        frequency: frequencyLabels()[investment.contribution.frequency].toLowerCase(),
+      }),
+    ])
+  if (investment.contribution?.next_date) rows.push([t('Next installment'), formatDate(investment.contribution.next_date, locale)])
   if (investment.start_date) rows.push([t('Start date'), formatDate(investment.start_date, locale)])
   if (investment.maturity_date) rows.push([t('Maturity date'), formatDate(investment.maturity_date, locale)])
   rows.push([t('Total put in'), formatMoney(investment.invested, investment.currency.code, locale)])

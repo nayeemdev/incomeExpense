@@ -28,7 +28,12 @@ const schema = z.object({
   symbol: z.string().max(32),
   currency_id: z.string(),
   interest_rate: z.string(),
+  tax_rate: z.string(),
   payout_frequency: z.string(),
+  contribution_amount: z.string(),
+  contribution_frequency: z.string(),
+  contribution_account_id: z.string(),
+  next_contribution_date: z.string().nullable(),
   start_date: z.string().nullable(),
   maturity_date: z.string().nullable(),
   notes: z.string(),
@@ -53,7 +58,12 @@ export function InvestmentForm({ investment, onSaved, onCancel }: InvestmentForm
       symbol: investment?.symbol ?? '',
       currency_id: investment?.currency.id ?? ledger.primary_currency.id,
       interest_rate: investment?.interest_rate ? String(Number(investment.interest_rate)) : '',
+      tax_rate: investment?.tax_rate ? String(Number(investment.tax_rate)) : '',
       payout_frequency: investment?.payout_frequency ?? 'none',
+      contribution_amount: investment?.contribution?.amount ?? '',
+      contribution_frequency: investment?.contribution?.frequency ?? 'monthly',
+      contribution_account_id: investment?.contribution?.account_id ?? '',
+      next_contribution_date: investment?.contribution?.next_date ?? null,
       start_date: investment?.start_date ?? null,
       maturity_date: investment?.maturity_date ?? null,
       notes: investment?.notes ?? '',
@@ -63,7 +73,10 @@ export function InvestmentForm({ investment, onSaved, onCancel }: InvestmentForm
       account_id: 'none',
     },
   })
-  const [kind, currencyId, amount, payoutFrequency] = useWatch({ control: form.control, name: ['kind', 'currency_id', 'amount', 'payout_frequency'] })
+  const [kind, currencyId, amount, payoutFrequency, contributionAmount] = useWatch({
+    control: form.control,
+    name: ['kind', 'currency_id', 'amount', 'payout_frequency', 'contribution_amount'],
+  })
   const units = tracksUnits(kind)
   const interest = earnsInterest(kind)
 
@@ -75,6 +88,11 @@ export function InvestmentForm({ investment, onSaved, onCancel }: InvestmentForm
         name: values.name,
         symbol: tracksUnits(values.kind) ? values.symbol || null : null,
         interest_rate: withInterest ? values.interest_rate || null : null,
+        tax_rate: withInterest ? values.tax_rate || null : null,
+        contribution_amount: withInterest ? values.contribution_amount || null : null,
+        contribution_frequency: withInterest && values.contribution_amount ? values.contribution_frequency : null,
+        contribution_account_id: withInterest && values.contribution_amount ? values.contribution_account_id || null : null,
+        next_contribution_date: withInterest && values.contribution_amount ? values.next_contribution_date : null,
         payout_frequency: withInterest && values.payout_frequency !== 'none' ? values.payout_frequency : null,
         start_date: values.start_date ?? values.date,
         maturity_date: withInterest ? values.maturity_date : null,
@@ -150,6 +168,14 @@ export function InvestmentForm({ investment, onSaved, onCancel }: InvestmentForm
                 )}
               </FormField>
             </div>
+            <FormField
+              control={form.control}
+              name="tax_rate"
+              label={t('Tax on profit (%)')}
+              description={t('Tax deducted at source, so payouts are shown as they reach you.')}
+            >
+              {(field) => <MoneyInput {...field} placeholder={t('Optional')} />}
+            </FormField>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FormField control={form.control} name="start_date" label={t('Start date')}>
                 {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} placeholder={t('Same as the first payment')} />}
@@ -159,6 +185,30 @@ export function InvestmentForm({ investment, onSaved, onCancel }: InvestmentForm
               </FormField>
             </div>
           </>
+        )}
+        {interest && (
+          <FieldSet>
+            <FieldLegend variant="label">{t('Regular installment')}</FieldLegend>
+            <p className="text-muted-foreground -mt-2 text-sm">{t('For a DPS or any scheme you pay into on a schedule. Each installment is recorded for you.')}</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField control={form.control} name="contribution_amount" label={t('Amount')}>
+                {(field) => <MoneyInput {...field} placeholder={t('Optional')} />}
+              </FormField>
+              <FormField control={form.control} name="contribution_frequency" label={t('Every')}>
+                {(field) => <SelectField id={field.id} value={field.value} onChange={field.onChange} options={frequencyLabels()} />}
+              </FormField>
+            </div>
+            {contributionAmount && (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <FormField control={form.control} name="contribution_account_id" required label={t('Paid from')}>
+                  {(field) => <CashAccountSelect id={field.id} value={field.value} onChange={field.onChange} currencyId={currencyId} />}
+                </FormField>
+                <FormField control={form.control} name="next_contribution_date" required label={t('Next installment')}>
+                  {(field) => <DatePicker id={field.id} value={field.value} onChange={field.onChange} />}
+                </FormField>
+              </div>
+            )}
+          </FieldSet>
         )}
         {!investment && (
           <FieldSet>

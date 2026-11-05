@@ -9,6 +9,8 @@ import {
   FolderIcon,
   LayoutDashboardIcon,
   PieChartIcon,
+  CalculatorIcon,
+  HandHeartIcon,
   TargetIcon,
   TrendingUpIcon,
   ReceiptIcon,
@@ -116,6 +118,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/investments', params: { ledgerId } }))}>
             <TrendingUpIcon />
             {t('Investments')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/investments/calculator', params: { ledgerId } }))}>
+            <CalculatorIcon />
+            {t('What if calculator')}
+          </CommandItem>
+          <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/zakat', params: { ledgerId } }))}>
+            <HandHeartIcon />
+            {t('Zakat')}
           </CommandItem>
           <CommandItem onSelect={() => run(() => navigate({ to: '/$ledgerId/recurring', params: { ledgerId } }))}>
             <RepeatIcon />

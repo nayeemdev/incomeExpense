@@ -1,4 +1,4 @@
-import { FlagIcon, HandCoinsIcon, TrophyIcon } from 'lucide-react'
+import { CalendarClockIcon, FlagIcon, HandCoinsIcon, TrophyIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Area, CartesianGrid, ComposedChart, ReferenceDot, ReferenceLine, XAxis, YAxis } from 'recharts'
@@ -35,14 +35,24 @@ export function ReturnRoadmap({ roadmap, invested, currency }: ReturnRoadmapProp
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Milestone icon={HandCoinsIcon} label={t('Return by {{date}}', { date: formatDate(roadmap.end, locale) })} value={money(roadmap.total_return)} />
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,11rem),1fr))] gap-3">
+        {roadmap.points.length > 0 && (
+          <Milestone icon={HandCoinsIcon} label={t('Return by {{date}}', { date: formatDate(roadmap.end, locale) })} value={money(roadmap.total_return)} />
+        )}
         {roadmap.break_even && (
           <Milestone
             icon={FlagIcon}
             label={t('Money back')}
             value={formatDate(roadmap.break_even, locale)}
             hint={t('Payouts add up to the {{amount}} put in', { amount: money(invested) })}
+          />
+        )}
+        {roadmap.installments_left > 0 && (
+          <Milestone
+            icon={CalendarClockIcon}
+            label={t('Installments left')}
+            value={t('{{count}} more', { count: roadmap.installments_left })}
+            hint={t('{{amount}} still to pay in', { amount: money(roadmap.installments_total) })}
           />
         )}
         {roadmap.maturity_value && (
