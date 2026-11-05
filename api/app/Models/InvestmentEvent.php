@@ -18,10 +18,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property ?string $price
  * @property string $amount
  * @property ?string $cost
+ * @property bool $reinvested
+ * @property ?string $user_id
+ * @property-read ?User $user
  * @property-read Investment $investment
  * @property-read ?TransactionGroup $transactionGroup
  */
-#[Fillable(['transaction_group_id', 'type', 'date', 'units', 'price', 'amount', 'cost'])]
+#[Fillable(['transaction_group_id', 'user_id', 'type', 'date', 'units', 'price', 'amount', 'cost', 'reinvested'])]
 class InvestmentEvent extends Model
 {
     use HasUlids;
@@ -34,6 +37,7 @@ class InvestmentEvent extends Model
         return [
             'type' => InvestmentEventType::class,
             'date' => 'immutable_date',
+            'reinvested' => 'boolean',
         ];
     }
 
@@ -43,6 +47,14 @@ class InvestmentEvent extends Model
     public function investment(): BelongsTo
     {
         return $this->belongsTo(Investment::class);
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

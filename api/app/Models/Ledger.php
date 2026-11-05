@@ -148,6 +148,14 @@ class Ledger extends Model
     }
 
     /**
+     * @return HasMany<InvestmentTarget, $this>
+     */
+    public function investmentTargets(): HasMany
+    {
+        return $this->hasMany(InvestmentTarget::class);
+    }
+
+    /**
      * @return HasMany<Recurrence, $this>
      */
     public function recurrences(): HasMany

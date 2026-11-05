@@ -25,6 +25,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ObjectGroupController;
 use App\Http\Controllers\PersonalAccessTokenController;
 use App\Http\Controllers\PiggyBankController;
+use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\QuickEntryController;
 use App\Http\Controllers\ReconciliationController;
 use App\Http\Controllers\RecurrenceController;
@@ -39,6 +40,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionLinkController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\ZakatController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('auth/config', AuthConfigController::class);
@@ -108,6 +110,11 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('available-budgets', [AvailableBudgetController::class, 'index']);
             Route::apiResource('bills', BillController::class)->only(['index', 'show']);
             Route::apiResource('piggy-banks', PiggyBankController::class)->only(['index', 'show']);
+            Route::get('investments/income', [PortfolioController::class, 'income']);
+            Route::get('investments/calendar', [PortfolioController::class, 'calendar']);
+            Route::post('investments/projection', [PortfolioController::class, 'projection']);
+            Route::get('investment-targets', [PortfolioController::class, 'targets']);
+            Route::get('zakat', ZakatController::class);
             Route::apiResource('investments', InvestmentController::class)->only(['index', 'show']);
             Route::apiResource('recurrences', RecurrenceController::class)->only(['index', 'show']);
             Route::get('object-groups', [ObjectGroupController::class, 'index']);
@@ -149,6 +156,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 Route::apiResource('investments', InvestmentController::class)->only(['store', 'update', 'destroy']);
                 Route::post('investments/{investment}/events', [InvestmentController::class, 'storeEvent']);
                 Route::delete('investments/{investment}/events/{event}', [InvestmentController::class, 'destroyEvent']);
+                Route::post('investments/{investment}/renew', [InvestmentController::class, 'renew']);
+                Route::put('investment-targets', [PortfolioController::class, 'updateTargets']);
                 Route::apiResource('recurrences', RecurrenceController::class)->only(['store', 'update', 'destroy']);
                 Route::post('recurrences/{recurrence}/trigger', [RecurrenceController::class, 'trigger']);
                 Route::patch('object-groups/{objectGroup}', [ObjectGroupController::class, 'update']);

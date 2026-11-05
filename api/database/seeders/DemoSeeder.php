@@ -22,6 +22,7 @@ use App\Models\TransactionGroup;
 use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -347,8 +348,33 @@ class DemoSeeder extends Seeder
             'type' => 'income', 'date' => $start->addMonthsNoOverflow(3 * $quarter)->addDays(2)->toDateString(), 'amount' => $this->money('250'), 'account_id' => $this->accounts['checking']->id,
         ], range(1, 4));
         $invest('Greenleaf Bakery partnership', InvestmentKind::Private, ['interest_rate' => '10', 'payout_frequency' => RepeatFrequency::Quarterly, 'start_date' => $start, 'notes' => 'Pays 10% a year, every quarter.'], [
-            ['type' => 'buy', 'date' => $start->toDateString(), 'amount' => $this->money('10000')],
+            ['type' => 'buy', 'date' => $start->toDateString(), 'amount' => $this->money('7000')],
+            ['type' => 'buy', 'date' => $start->toDateString(), 'amount' => $this->money('3000'), 'account_id' => $this->accounts['savings']->id, 'user_id' => $this->ledger->members()->where('users.id', '!=', $this->owner->id)->value('users.id')],
             ...$payouts,
+        ]);
+
+        $invest('Family Sanchayapatra', InvestmentKind::SavingsScheme, [
+            'interest_rate' => '11.28', 'tax_rate' => '10', 'payout_frequency' => RepeatFrequency::Quarterly,
+            'start_date' => $today->subMonths(7)->startOfMonth(), 'maturity_date' => $today->subMonths(7)->startOfMonth()->addYears(3),
+        ], [
+            ['type' => 'buy', 'date' => $today->subMonths(7)->startOfMonth()->toDateString(), 'amount' => $this->money('3000'), 'account_id' => $this->accounts['savings']->id],
+            ['type' => 'income', 'date' => $today->subMonths(4)->startOfMonth()->toDateString(), 'amount' => $this->money('76.14'), 'account_id' => $this->accounts['checking']->id],
+        ]);
+
+        $dpsStart = $today->subMonths(5)->startOfMonth();
+        $invest('Harbor Bank DPS', InvestmentKind::SavingsScheme, [
+            'interest_rate' => '8.5', 'start_date' => $dpsStart, 'maturity_date' => $dpsStart->addYears(5),
+            'contribution_amount' => $this->money('50'), 'contribution_frequency' => RepeatFrequency::Monthly,
+            'contribution_account_id' => $this->accounts['checking']->id, 'next_contribution_date' => $dpsStart,
+        ], []);
+        Artisan::call('investments:installments');
+
+        $this->ledger->investmentTargets()->createMany([
+            ['kind' => InvestmentKind::Private, 'percent' => 40],
+            ['kind' => InvestmentKind::Deposit, 'percent' => 20],
+            ['kind' => InvestmentKind::SavingsScheme, 'percent' => 15],
+            ['kind' => InvestmentKind::Stock, 'percent' => 15],
+            ['kind' => InvestmentKind::Gold, 'percent' => 10],
         ]);
 
         $invest('Gold coins', InvestmentKind::Gold, [], [
