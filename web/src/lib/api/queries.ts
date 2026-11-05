@@ -19,7 +19,9 @@ import type {
   Bill,
   Budget,
   LinkType,
+  Investment,
   PiggyBank,
+  PortfolioSummary,
   Recurrence,
   TransactionLink,
   Category,
@@ -214,6 +216,18 @@ export const piggyBankQuery = (ledgerId: string, piggyBankId: string) =>
   queryOptions({
     queryKey: [...ledgerKey(ledgerId), 'piggy-banks', 'detail', piggyBankId],
     queryFn: () => api.get<Resource<PiggyBank>>(`/ledgers/${ledgerId}/piggy-banks/${piggyBankId}`).then((r) => r.data),
+  })
+
+export const investmentsQuery = (ledgerId: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'investments'],
+    queryFn: () => api.get<{ data: Investment[]; summary: PortfolioSummary }>(`/ledgers/${ledgerId}/investments`),
+  })
+
+export const investmentQuery = (ledgerId: string, investmentId: string) =>
+  queryOptions({
+    queryKey: [...ledgerKey(ledgerId), 'investments', 'detail', investmentId],
+    queryFn: () => api.get<Resource<Investment>>(`/ledgers/${ledgerId}/investments/${investmentId}`).then((r) => r.data),
   })
 
 export const recurrencesQuery = (ledgerId: string) =>

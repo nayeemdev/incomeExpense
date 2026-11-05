@@ -32,6 +32,8 @@ import { Route as AppLedgerIdBudgetsBudgetIdRouteImport } from './routes/_app/$l
 import { Route as AppLedgerIdCategoriesIndexRouteImport } from './routes/_app/$ledgerId/categories/index'
 import { Route as AppLedgerIdCategoriesCategoryIdRouteImport } from './routes/_app/$ledgerId/categories/$categoryId'
 import { Route as AppLedgerIdImportIndexRouteImport } from './routes/_app/$ledgerId/import/index'
+import { Route as AppLedgerIdInvestmentsIndexRouteImport } from './routes/_app/$ledgerId/investments/index'
+import { Route as AppLedgerIdInvestmentsInvestmentIdRouteImport } from './routes/_app/$ledgerId/investments/$investmentId'
 import { Route as AppLedgerIdPiggyBanksIndexRouteImport } from './routes/_app/$ledgerId/piggy-banks/index'
 import { Route as AppLedgerIdPiggyBanksPiggyBankIdRouteImport } from './routes/_app/$ledgerId/piggy-banks/$piggyBankId'
 import { Route as AppLedgerIdRecurringIndexRouteImport } from './routes/_app/$ledgerId/recurring/index'
@@ -160,6 +162,18 @@ const AppLedgerIdImportIndexRoute = AppLedgerIdImportIndexRouteImport.update({
   path: '/import/',
   getParentRoute: () => AppLedgerIdRoute,
 } as any)
+const AppLedgerIdInvestmentsIndexRoute =
+  AppLedgerIdInvestmentsIndexRouteImport.update({
+    id: '/investments/',
+    path: '/investments/',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
+const AppLedgerIdInvestmentsInvestmentIdRoute =
+  AppLedgerIdInvestmentsInvestmentIdRouteImport.update({
+    id: '/investments/$investmentId',
+    path: '/investments/$investmentId',
+    getParentRoute: () => AppLedgerIdRoute,
+  } as any)
 const AppLedgerIdPiggyBanksIndexRoute =
   AppLedgerIdPiggyBanksIndexRouteImport.update({
     id: '/piggy-banks/',
@@ -228,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/$ledgerId/bills/$billId': typeof AppLedgerIdBillsBillIdRoute
   '/$ledgerId/budgets/$budgetId': typeof AppLedgerIdBudgetsBudgetIdRoute
   '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/$ledgerId/investments/$investmentId': typeof AppLedgerIdInvestmentsInvestmentIdRoute
   '/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
   '/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
@@ -235,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/$ledgerId/budgets/': typeof AppLedgerIdBudgetsIndexRoute
   '/$ledgerId/categories/': typeof AppLedgerIdCategoriesIndexRoute
   '/$ledgerId/import/': typeof AppLedgerIdImportIndexRoute
+  '/$ledgerId/investments/': typeof AppLedgerIdInvestmentsIndexRoute
   '/$ledgerId/piggy-banks/': typeof AppLedgerIdPiggyBanksIndexRoute
   '/$ledgerId/recurring/': typeof AppLedgerIdRecurringIndexRoute
   '/$ledgerId/reports/': typeof AppLedgerIdReportsIndexRoute
@@ -259,6 +275,7 @@ export interface FileRoutesByTo {
   '/$ledgerId/bills/$billId': typeof AppLedgerIdBillsBillIdRoute
   '/$ledgerId/budgets/$budgetId': typeof AppLedgerIdBudgetsBudgetIdRoute
   '/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/$ledgerId/investments/$investmentId': typeof AppLedgerIdInvestmentsInvestmentIdRoute
   '/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
   '/$ledgerId/accounts': typeof AppLedgerIdAccountsIndexRoute
@@ -266,6 +283,7 @@ export interface FileRoutesByTo {
   '/$ledgerId/budgets': typeof AppLedgerIdBudgetsIndexRoute
   '/$ledgerId/categories': typeof AppLedgerIdCategoriesIndexRoute
   '/$ledgerId/import': typeof AppLedgerIdImportIndexRoute
+  '/$ledgerId/investments': typeof AppLedgerIdInvestmentsIndexRoute
   '/$ledgerId/piggy-banks': typeof AppLedgerIdPiggyBanksIndexRoute
   '/$ledgerId/recurring': typeof AppLedgerIdRecurringIndexRoute
   '/$ledgerId/reports': typeof AppLedgerIdReportsIndexRoute
@@ -294,6 +312,7 @@ export interface FileRoutesById {
   '/_app/$ledgerId/bills/$billId': typeof AppLedgerIdBillsBillIdRoute
   '/_app/$ledgerId/budgets/$budgetId': typeof AppLedgerIdBudgetsBudgetIdRoute
   '/_app/$ledgerId/categories/$categoryId': typeof AppLedgerIdCategoriesCategoryIdRoute
+  '/_app/$ledgerId/investments/$investmentId': typeof AppLedgerIdInvestmentsInvestmentIdRoute
   '/_app/$ledgerId/piggy-banks/$piggyBankId': typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   '/_app/$ledgerId/tags/$tagId': typeof AppLedgerIdTagsTagIdRoute
   '/_app/$ledgerId/accounts/': typeof AppLedgerIdAccountsIndexRoute
@@ -301,6 +320,7 @@ export interface FileRoutesById {
   '/_app/$ledgerId/budgets/': typeof AppLedgerIdBudgetsIndexRoute
   '/_app/$ledgerId/categories/': typeof AppLedgerIdCategoriesIndexRoute
   '/_app/$ledgerId/import/': typeof AppLedgerIdImportIndexRoute
+  '/_app/$ledgerId/investments/': typeof AppLedgerIdInvestmentsIndexRoute
   '/_app/$ledgerId/piggy-banks/': typeof AppLedgerIdPiggyBanksIndexRoute
   '/_app/$ledgerId/recurring/': typeof AppLedgerIdRecurringIndexRoute
   '/_app/$ledgerId/reports/': typeof AppLedgerIdReportsIndexRoute
@@ -328,6 +348,7 @@ export interface FileRouteTypes {
     | '/$ledgerId/bills/$billId'
     | '/$ledgerId/budgets/$budgetId'
     | '/$ledgerId/categories/$categoryId'
+    | '/$ledgerId/investments/$investmentId'
     | '/$ledgerId/piggy-banks/$piggyBankId'
     | '/$ledgerId/tags/$tagId'
     | '/$ledgerId/accounts/'
@@ -335,6 +356,7 @@ export interface FileRouteTypes {
     | '/$ledgerId/budgets/'
     | '/$ledgerId/categories/'
     | '/$ledgerId/import/'
+    | '/$ledgerId/investments/'
     | '/$ledgerId/piggy-banks/'
     | '/$ledgerId/recurring/'
     | '/$ledgerId/reports/'
@@ -359,6 +381,7 @@ export interface FileRouteTypes {
     | '/$ledgerId/bills/$billId'
     | '/$ledgerId/budgets/$budgetId'
     | '/$ledgerId/categories/$categoryId'
+    | '/$ledgerId/investments/$investmentId'
     | '/$ledgerId/piggy-banks/$piggyBankId'
     | '/$ledgerId/tags/$tagId'
     | '/$ledgerId/accounts'
@@ -366,6 +389,7 @@ export interface FileRouteTypes {
     | '/$ledgerId/budgets'
     | '/$ledgerId/categories'
     | '/$ledgerId/import'
+    | '/$ledgerId/investments'
     | '/$ledgerId/piggy-banks'
     | '/$ledgerId/recurring'
     | '/$ledgerId/reports'
@@ -393,6 +417,7 @@ export interface FileRouteTypes {
     | '/_app/$ledgerId/bills/$billId'
     | '/_app/$ledgerId/budgets/$budgetId'
     | '/_app/$ledgerId/categories/$categoryId'
+    | '/_app/$ledgerId/investments/$investmentId'
     | '/_app/$ledgerId/piggy-banks/$piggyBankId'
     | '/_app/$ledgerId/tags/$tagId'
     | '/_app/$ledgerId/accounts/'
@@ -400,6 +425,7 @@ export interface FileRouteTypes {
     | '/_app/$ledgerId/budgets/'
     | '/_app/$ledgerId/categories/'
     | '/_app/$ledgerId/import/'
+    | '/_app/$ledgerId/investments/'
     | '/_app/$ledgerId/piggy-banks/'
     | '/_app/$ledgerId/recurring/'
     | '/_app/$ledgerId/reports/'
@@ -577,6 +603,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLedgerIdImportIndexRouteImport
       parentRoute: typeof AppLedgerIdRoute
     }
+    '/_app/$ledgerId/investments/': {
+      id: '/_app/$ledgerId/investments/'
+      path: '/investments'
+      fullPath: '/$ledgerId/investments/'
+      preLoaderRoute: typeof AppLedgerIdInvestmentsIndexRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
+    '/_app/$ledgerId/investments/$investmentId': {
+      id: '/_app/$ledgerId/investments/$investmentId'
+      path: '/investments/$investmentId'
+      fullPath: '/$ledgerId/investments/$investmentId'
+      preLoaderRoute: typeof AppLedgerIdInvestmentsInvestmentIdRouteImport
+      parentRoute: typeof AppLedgerIdRoute
+    }
     '/_app/$ledgerId/piggy-banks/': {
       id: '/_app/$ledgerId/piggy-banks/'
       path: '/piggy-banks'
@@ -650,6 +690,7 @@ interface AppLedgerIdRouteChildren {
   AppLedgerIdBillsBillIdRoute: typeof AppLedgerIdBillsBillIdRoute
   AppLedgerIdBudgetsBudgetIdRoute: typeof AppLedgerIdBudgetsBudgetIdRoute
   AppLedgerIdCategoriesCategoryIdRoute: typeof AppLedgerIdCategoriesCategoryIdRoute
+  AppLedgerIdInvestmentsInvestmentIdRoute: typeof AppLedgerIdInvestmentsInvestmentIdRoute
   AppLedgerIdPiggyBanksPiggyBankIdRoute: typeof AppLedgerIdPiggyBanksPiggyBankIdRoute
   AppLedgerIdTagsTagIdRoute: typeof AppLedgerIdTagsTagIdRoute
   AppLedgerIdAccountsIndexRoute: typeof AppLedgerIdAccountsIndexRoute
@@ -657,6 +698,7 @@ interface AppLedgerIdRouteChildren {
   AppLedgerIdBudgetsIndexRoute: typeof AppLedgerIdBudgetsIndexRoute
   AppLedgerIdCategoriesIndexRoute: typeof AppLedgerIdCategoriesIndexRoute
   AppLedgerIdImportIndexRoute: typeof AppLedgerIdImportIndexRoute
+  AppLedgerIdInvestmentsIndexRoute: typeof AppLedgerIdInvestmentsIndexRoute
   AppLedgerIdPiggyBanksIndexRoute: typeof AppLedgerIdPiggyBanksIndexRoute
   AppLedgerIdRecurringIndexRoute: typeof AppLedgerIdRecurringIndexRoute
   AppLedgerIdReportsIndexRoute: typeof AppLedgerIdReportsIndexRoute
@@ -673,6 +715,8 @@ const AppLedgerIdRouteChildren: AppLedgerIdRouteChildren = {
   AppLedgerIdBillsBillIdRoute: AppLedgerIdBillsBillIdRoute,
   AppLedgerIdBudgetsBudgetIdRoute: AppLedgerIdBudgetsBudgetIdRoute,
   AppLedgerIdCategoriesCategoryIdRoute: AppLedgerIdCategoriesCategoryIdRoute,
+  AppLedgerIdInvestmentsInvestmentIdRoute:
+    AppLedgerIdInvestmentsInvestmentIdRoute,
   AppLedgerIdPiggyBanksPiggyBankIdRoute: AppLedgerIdPiggyBanksPiggyBankIdRoute,
   AppLedgerIdTagsTagIdRoute: AppLedgerIdTagsTagIdRoute,
   AppLedgerIdAccountsIndexRoute: AppLedgerIdAccountsIndexRoute,
@@ -680,6 +724,7 @@ const AppLedgerIdRouteChildren: AppLedgerIdRouteChildren = {
   AppLedgerIdBudgetsIndexRoute: AppLedgerIdBudgetsIndexRoute,
   AppLedgerIdCategoriesIndexRoute: AppLedgerIdCategoriesIndexRoute,
   AppLedgerIdImportIndexRoute: AppLedgerIdImportIndexRoute,
+  AppLedgerIdInvestmentsIndexRoute: AppLedgerIdInvestmentsIndexRoute,
   AppLedgerIdPiggyBanksIndexRoute: AppLedgerIdPiggyBanksIndexRoute,
   AppLedgerIdRecurringIndexRoute: AppLedgerIdRecurringIndexRoute,
   AppLedgerIdReportsIndexRoute: AppLedgerIdReportsIndexRoute,
