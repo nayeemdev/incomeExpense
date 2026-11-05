@@ -122,7 +122,8 @@ it('records existing holdings as an opening balance and counts market value in n
     $this->postJson("/api/v1/ledgers/{$ledger->id}/investments/{$id}/events", ['type' => 'valuation', 'date' => '2026-10-01', 'price' => '800']);
 
     $this->getJson("/api/v1/ledgers/{$ledger->id}/summary?start=2026-11-01&end=2026-11-30")
-        ->assertJsonPath('data.net_worth_total.amount', '8000.00');
+        ->assertJsonPath('data.net_worth_total.amount', '8000.00')
+        ->assertJsonCount(0, 'data.accounts');
 
     $this->getJson("/api/v1/ledgers/{$ledger->id}/investments")
         ->assertJsonPath('summary.value', '8000.00')

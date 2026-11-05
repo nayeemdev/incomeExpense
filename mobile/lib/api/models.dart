@@ -411,3 +411,204 @@ class Attachment {
 
   bool get isImage => mimeType.startsWith('image/');
 }
+
+double _number(Object? raw) => double.tryParse(raw?.toString() ?? '') ?? 0;
+
+class InvestmentEvent {
+  const InvestmentEvent({
+    required this.id,
+    required this.type,
+    required this.date,
+    required this.amount,
+    this.units,
+    this.price,
+    this.gain,
+    this.groupId,
+  });
+
+  factory InvestmentEvent.fromJson(Json json) => InvestmentEvent(
+    id: json['id'] as String,
+    type: json['type'] as String,
+    date: _date(json['date'])!,
+    amount: json['amount'].toString(),
+    units: json['units']?.toString(),
+    price: json['price']?.toString(),
+    gain: json['gain']?.toString(),
+    groupId: json['transaction_group_id'] as String?,
+  );
+
+  final String id;
+  final String type;
+  final DateTime date;
+  final String amount;
+  final String? units;
+  final String? price;
+  final String? gain;
+  final String? groupId;
+}
+
+typedef Payout = ({DateTime date, String? amount, bool overdue});
+typedef RoadmapPoint = ({DateTime date, double amount, double cumulative, String status});
+
+class InvestmentRoadmap {
+  const InvestmentRoadmap({
+    required this.end,
+    required this.points,
+    required this.totalReturn,
+    this.breakEven,
+    this.maturityValue,
+    this.maturityGain,
+  });
+
+  factory InvestmentRoadmap.fromJson(Json json) => InvestmentRoadmap(
+    end: _date(json['end'])!,
+    points: _list(
+      json['points'],
+      (point) => (
+        date: _date(point['date'])!,
+        amount: _number(point['amount']),
+        cumulative: _number(point['cumulative']),
+        status: point['status'] as String,
+      ),
+    ),
+    totalReturn: json['total_return'].toString(),
+    breakEven: _date(json['break_even']),
+    maturityValue: json['maturity_value']?.toString(),
+    maturityGain: json['maturity_gain']?.toString(),
+  );
+
+  final DateTime end;
+  final List<RoadmapPoint> points;
+  final String totalReturn;
+  final DateTime? breakEven;
+  final String? maturityValue;
+  final String? maturityGain;
+}
+
+class Investment {
+  const Investment({
+    required this.id,
+    required this.name,
+    required this.kind,
+    required this.tracksUnits,
+    required this.currency,
+    required this.accountId,
+    required this.units,
+    required this.cost,
+    required this.value,
+    required this.gain,
+    required this.invested,
+    required this.income,
+    required this.realized,
+    required this.upcomingPayouts,
+    required this.events,
+    this.symbol,
+    this.interestRate,
+    this.payoutFrequency,
+    this.startDate,
+    this.maturityDate,
+    this.closedAt,
+    this.notes,
+    this.price,
+    this.gainPercent,
+    this.payoutAmount,
+    this.roadmap,
+  });
+
+  factory Investment.fromJson(Json json) => Investment(
+    id: json['id'] as String,
+    name: json['name'] as String,
+    kind: json['kind'] as String,
+    tracksUnits: json['tracks_units'] as bool? ?? false,
+    currency: Currency.fromJson(json['currency'] as Json),
+    accountId: json['account_id'] as String,
+    symbol: json['symbol'] as String?,
+    interestRate: double.tryParse(json['interest_rate']?.toString() ?? ''),
+    payoutFrequency: json['payout_frequency'] as String?,
+    startDate: _date(json['start_date']),
+    maturityDate: _date(json['maturity_date']),
+    closedAt: _date(json['closed_at']),
+    notes: json['notes'] as String?,
+    units: _number(json['units']),
+    price: json['price']?.toString(),
+    cost: json['cost'].toString(),
+    value: json['value'].toString(),
+    gain: json['gain'].toString(),
+    gainPercent: double.tryParse(json['gain_percent']?.toString() ?? ''),
+    invested: json['invested'].toString(),
+    income: json['income'].toString(),
+    realized: json['realized'].toString(),
+    payoutAmount: json['payout_amount']?.toString(),
+    upcomingPayouts: _list(
+      json['upcoming_payouts'],
+      (payout) => (date: _date(payout['date'])!, amount: payout['amount']?.toString(), overdue: payout['overdue'] as bool? ?? false),
+    ),
+    events: _list(json['events'], InvestmentEvent.fromJson),
+    roadmap: json['roadmap'] is Map ? InvestmentRoadmap.fromJson((json['roadmap'] as Map).cast<String, dynamic>()) : null,
+  );
+
+  final String id;
+  final String name;
+  final String kind;
+  final bool tracksUnits;
+  final Currency currency;
+  final String accountId;
+  final String? symbol;
+  final double? interestRate;
+  final String? payoutFrequency;
+  final DateTime? startDate;
+  final DateTime? maturityDate;
+  final DateTime? closedAt;
+  final String? notes;
+  final double units;
+  final String? price;
+  final String cost;
+  final String value;
+  final String gain;
+  final double? gainPercent;
+  final String invested;
+  final String income;
+  final String realized;
+  final String? payoutAmount;
+  final List<Payout> upcomingPayouts;
+  final List<InvestmentEvent> events;
+  final InvestmentRoadmap? roadmap;
+
+  bool get held => _number(cost) > 0 || units > 0;
+}
+
+class Portfolio {
+  const Portfolio({
+    required this.investments,
+    required this.currency,
+    required this.value,
+    required this.cost,
+    required this.gain,
+    required this.income,
+    required this.allocation,
+    this.gainPercent,
+  });
+
+  factory Portfolio.fromJson(Json json) {
+    final summary = (json['summary'] as Map).cast<String, dynamic>();
+    return Portfolio(
+      investments: _list(json['data'], Investment.fromJson),
+      currency: summary['currency'] as String,
+      value: summary['value'].toString(),
+      cost: summary['cost'].toString(),
+      gain: summary['gain'].toString(),
+      income: summary['income'].toString(),
+      gainPercent: double.tryParse(summary['gain_percent']?.toString() ?? ''),
+      allocation: _list(summary['allocation'], (item) => (kind: item['kind'] as String, value: _number(item['value']))),
+    );
+  }
+
+  final List<Investment> investments;
+  final String currency;
+  final String value;
+  final String cost;
+  final String gain;
+  final String income;
+  final double? gainPercent;
+  final List<({String kind, double value})> allocation;
+}

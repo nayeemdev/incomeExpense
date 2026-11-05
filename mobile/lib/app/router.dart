@@ -11,6 +11,7 @@ import '../features/auth/login_screen.dart';
 import '../features/auth/session.dart';
 import '../features/categories/categories.dart';
 import '../features/goals/goals_screen.dart';
+import '../features/investments/investments_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/ledger/ledger.dart';
 import '../features/ledger/ledger_data.dart';
@@ -76,6 +77,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       pushed('/accounts', (_) => const AccountsScreen()),
       pushed('/accounts/:id', (state) => AccountScreen(accountId: state.pathParameters['id']!, initial: state.extra as Account?)),
       pushed('/planning', (_) => const PlanningScreen()),
+      pushed('/investments', (_) => const InvestmentsScreen()),
+      pushed('/investments/:id', (state) => InvestmentScreen(investmentId: state.pathParameters['id']!)),
       pushed('/categories', (_) => const CategoriesScreen()),
       pushed('/notifications', (_) => const NotificationsScreen()),
       pushed('/goals/:id', (state) => GoalScreen(goalId: state.pathParameters['id']!, color: state.extra as String? ?? 'sky')),

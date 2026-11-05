@@ -173,7 +173,7 @@ return [
         'password' => env('DEMO_PASSWORD'),
     ],
 
-    'dashboard_widgets' => ['trend', 'recent', 'accounts', 'bills', 'top_spending'],
+    'dashboard_widgets' => ['trend', 'recent', 'accounts', 'investments', 'bills', 'top_spending'],
 
     'default_preferences' => [
         'locale' => env('APP_LOCALE', 'en'),

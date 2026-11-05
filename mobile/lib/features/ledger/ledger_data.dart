@@ -129,6 +129,8 @@ void refreshLedgerData(void Function(ProviderOrFamily provider) invalidate) {
   invalidate(frequentProvider);
   invalidate(reportProvider);
   invalidate(goalsProvider);
+  invalidate(portfolioProvider);
+  invalidate(investmentProvider);
   invalidate(categoriesProvider);
   invalidate(transactionGroupProvider);
 }
@@ -153,6 +155,18 @@ final goalsProvider = FutureProvider.autoDispose<List<Goal>>((ref) async {
   final ledger = ref.watch(currentLedgerProvider);
   final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'piggy-banks'));
   return _data(response, Goal.fromJson);
+});
+
+final portfolioProvider = FutureProvider.autoDispose<Portfolio>((ref) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'investments'));
+  return Portfolio.fromJson(response as Json);
+});
+
+final investmentProvider = FutureProvider.autoDispose.family<Investment, String>((ref, id) async {
+  final ledger = ref.watch(currentLedgerProvider);
+  final response = await ref.watch(apiProvider).get(ledgerPath(ledger, 'investments/$id'));
+  return Investment.fromJson(response['data'] as Json);
 });
 
 final userProvider = FutureProvider<User>((ref) async {

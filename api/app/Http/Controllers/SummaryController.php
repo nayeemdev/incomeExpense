@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\AccountType;
+use App\Enums\AssetRole;
 use App\Enums\TransactionType;
 use App\Http\Resources\AccountResource;
 use App\Models\Currency;
@@ -53,6 +54,7 @@ class SummaryController extends Controller
             'accounts' => AccountResource::collection(
                 $ledger->accounts()
                     ->where('type', AccountType::Asset)
+                    ->where(fn (Builder $query) => $query->whereNull('asset_role')->orWhere('asset_role', '!=', AssetRole::Investment))
                     ->where('active', true)
                     ->withBalance()
                     ->with('currency')
