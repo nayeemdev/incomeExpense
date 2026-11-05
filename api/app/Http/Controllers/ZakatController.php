@@ -58,8 +58,8 @@ class ZakatController extends Controller
             }
 
             $group = match (true) {
-                $account->type === AccountType::Asset => 'cash',
                 Money::isNegative($balance) => 'debts',
+                $account->type === AccountType::Asset => 'cash',
                 default => 'receivables',
             };
             $items[] = ['group' => $group, 'name' => $account->name, 'amount' => Money::round($balance, $primary->decimal_places)];
